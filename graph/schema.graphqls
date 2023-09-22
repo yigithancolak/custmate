@@ -1,0 +1,206 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Organization {
+  id: ID!
+  name: String!
+  email: String!
+}
+
+type Instructor {
+  id: ID!
+  name: String!
+  organization: Organization!
+}
+
+type Group {
+  id: ID!
+  name: String!
+  organization: Organization!
+  instructor: Instructor!
+  times: [String!]!
+}
+
+type Customer {
+  id: ID!
+  name: String!
+  organization: Organization!
+  groups: [Group!]!
+  lastPayment: String!
+  nextPayment: String!
+}
+
+type Payment {
+  id: ID!
+  amount: Float!
+  date: String!
+  customer: Customer!
+  organization: Organization!
+  group: Group!
+}
+
+type TokenResponse {
+  accessToken: String!
+  # refreshToken: String!
+}
+
+type Query {
+  # Organization
+  getOrganization(id: ID!): Organization!
+  listOrganizations(offset: Int = 0, limit: Int = 10): [Organization!]!
+
+  # Group
+  getGroup(id: ID!): Group!
+  listGroups(offset: Int = 0, limit: Int = 10): [Group!]!
+  listGroupsByOrganization(
+    orgId: ID!
+    offset: Int = 0
+    limit: Int = 10
+  ): [Group!]!
+
+  # Instructor
+  getInstructor(id: ID!): Instructor!
+  listInstructors(offset: Int = 0, limit: Int = 10): [Instructor!]!
+  listInstructorsByOrganization(
+    orgId: ID!
+    offset: Int = 0
+    limit: Int = 10
+  ): [Instructor!]!
+
+  # Customer
+  getCustomer(id: ID!): Customer!
+  listCustomers(offset: Int = 0, limit: Int = 10): [Customer!]!
+  listCustomersByGroup(
+    groupId: ID!
+    offset: Int = 0
+    limit: Int = 10
+  ): [Customer!]!
+  listCustomersByOrganization(
+    orgId: ID!
+    offset: Int = 0
+    limit: Int = 10
+  ): [Customer!]!
+
+  #Payment
+  getPayment(id: ID!): Payment!
+  listPaymentsByOrganization(
+    organizationId: ID!
+    offset: Int = 0
+    limit: Int = 10
+  ): [Payment!]!
+  listPaymentsByGroup(
+    groupId: ID!
+    offset: Int = 0
+    limit: Int = 10
+  ): [Payment!]!
+  listPaymentsByCustomer(
+    customerId: ID!
+    offset: Int = 0
+    limit: Int = 10
+  ): [Payment!]!
+}
+
+type Mutation {
+  #Login
+  loginUser(email: String!, password: String!): TokenResponse!
+
+  # Organization
+  createOrganization(input: CreateOrganizationInput!): Organization!
+  updateOrganization(id: ID!, input: UpdateOrganizationInput!): Organization!
+  deleteOrganization(id: ID!): Boolean!
+
+  # Group
+  createGroup(input: CreateGroupInput!): Group!
+  updateGroup(id: ID!, input: UpdateGroupInput!): Group!
+  deleteGroup(id: ID!): Boolean!
+
+  # Instructor
+  createInstructor(input: CreateInstructorInput!): Instructor!
+  updateInstructor(id: ID!, input: UpdateInstructorInput!): Instructor!
+  deleteInstructor(id: ID!): Boolean!
+
+  # Customer
+  createCustomer(input: CreateCustomerInput!): Customer!
+  updateCustomer(id: ID!, input: UpdateCustomerInput!): Customer!
+  deleteCustomer(id: ID!): Boolean!
+
+  #Payment
+  createPayment(input: CreatePaymentInput!): Payment!
+  updatePayment(id: ID!, input: UpdatePaymentInput!): Payment!
+  deletePayment(id: ID!): Boolean!
+}
+
+# Input for Organization
+input CreateOrganizationInput {
+  name: String!
+  email: String!
+  password: String!
+}
+
+input UpdateOrganizationInput {
+  name: String
+  email: String
+  password: String
+}
+
+# Input for Group
+input CreateGroupInput {
+  name: String!
+  organization: ID!
+  instructor: ID!
+  times: [String!]!
+}
+
+input UpdateGroupInput {
+  name: String
+  organization: ID
+  instructor: ID
+  times: [String!]
+}
+
+# Input for Instructor
+input CreateInstructorInput {
+  name: String!
+  organization: ID!
+}
+
+input UpdateInstructorInput {
+  name: String
+  organization: ID
+}
+
+# Input for Customer
+input CreateCustomerInput {
+  name: String!
+  organization: ID!
+  groups: [ID]
+  lastPayment: String!
+  nextPayment: String!
+}
+
+input UpdateCustomerInput {
+  name: String
+  organization: ID
+  groups: [ID]
+  lastPayment: String
+  nextPayment: String
+}
+
+# Input for Payment
+
+input CreatePaymentInput {
+  amount: Float!
+  date: String!
+  organizationId: ID!
+  groupId: ID!
+  customerId: ID!
+}
+
+input UpdatePaymentInput {
+  amount: Float
+  date: String
+  organizationId: ID
+  groupId: ID
+  customerId: ID
+}
