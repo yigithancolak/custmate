@@ -1,0 +1,16 @@
+Server:
+  Port: 8080
+
+Token:
+  TokenSymmetricKey: 12345678901234567890123456789012
+  AccessTokenDuration: 3600 # 1 hour in seconds
+  RefreshTokenDuration: 604800 # 1 week in seconds
+
+Database:
+  PostgresURL: postgres://postgres:secret@localhost:5432/custmate?sslmode=disable
+  MigrationURL: postgres://postgres:secret@localhost:5432/custmate?sslmode=disable
+  MaxConns: 10
+
+App:
+  LogLevel: INFO
+  Environment: development

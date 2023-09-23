@@ -3,34 +3,29 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
-	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	_ "github.com/jackc/pgx/stdlib"
-	"github.com/jmoiron/sqlx"
-	"github.com/yigithancolak/custmate/graph"
+	"github.com/yigithancolak/custmate/server"
+	"github.com/yigithancolak/custmate/util"
 )
-
-const defaultPort = "8080"
 
 func main() {
 
-	_, err := sqlx.Connect("pgx", "postgres://postgres:secret@localhost:5432/custmate")
+	config, err := util.LoadConfig(".", "development", "env")
+
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalf("error while loading config: %v", err)
 	}
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = defaultPort
+	srv, err := server.NewServer(config)
+	if err != nil {
+		log.Fatalf("error while creating server: %v", err)
 	}
-
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	http.Handle("/query", srv.GraphQL)
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", config.Port)
+	log.Fatal(http.ListenAndServe(":"+config.Port, nil))
 }

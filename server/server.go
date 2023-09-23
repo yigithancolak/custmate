@@ -4,6 +4,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/jmoiron/sqlx"
 	"github.com/yigithancolak/custmate/graph"
+	"github.com/yigithancolak/custmate/postgresdb"
 	"github.com/yigithancolak/custmate/util"
 )
 
@@ -15,7 +16,7 @@ type Server struct {
 }
 
 func NewServer(config *util.Config) (*Server, error) {
-	db, err := sqlx.Connect("pgx", config.Database.MigrationURL)
+	db, err := postgresdb.NewDB(config)
 	if err != nil {
 		return nil, err
 	}
