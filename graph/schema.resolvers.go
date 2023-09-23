@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/yigithancolak/custmate/graph/model"
 )
 
@@ -18,7 +19,20 @@ func (r *mutationResolver) LoginUser(ctx context.Context, email string, password
 
 // CreateOrganization is the resolver for the createOrganization field.
 func (r *mutationResolver) CreateOrganization(ctx context.Context, input model.CreateOrganizationInput) (*model.Organization, error) {
-	panic(fmt.Errorf("no implemented: CreateOrganization - createOrganization"))
+	org := &model.Organization{
+		ID:    uuid.New().String(),
+		Name:  input.Name,
+		Email: input.Email,
+	}
+
+	// Insert into the database
+	query := `INSERT INTO organizations (id, name, email, password) VALUES ($1, $2, $3, $4)`
+	_, err := r.DB.ExecContext(ctx, query, org.ID, org.Name, org.Email, input.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	return org, nil
 }
 
 // UpdateOrganization is the resolver for the updateOrganization field.

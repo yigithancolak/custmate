@@ -121,6 +121,13 @@ type ComplexityRoot struct {
 		ListPaymentsByOrganization    func(childComplexity int, organizationID string, offset *int, limit *int) int
 	}
 
+	Time struct {
+		Day        func(childComplexity int) int
+		FinishHour func(childComplexity int) int
+		ID         func(childComplexity int) int
+		StartHour  func(childComplexity int) int
+	}
+
 	TokenResponse struct {
 		AccessToken func(childComplexity int) int
 	}
@@ -722,6 +729,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.ListPaymentsByOrganization(childComplexity, args["organizationId"].(string), args["offset"].(*int), args["limit"].(*int)), true
+
+	case "Time.day":
+		if e.complexity.Time.Day == nil {
+			break
+		}
+
+		return e.complexity.Time.Day(childComplexity), true
+
+	case "Time.finish_hour":
+		if e.complexity.Time.FinishHour == nil {
+			break
+		}
+
+		return e.complexity.Time.FinishHour(childComplexity), true
+
+	case "Time.id":
+		if e.complexity.Time.ID == nil {
+			break
+		}
+
+		return e.complexity.Time.ID(childComplexity), true
+
+	case "Time.start_hour":
+		if e.complexity.Time.StartHour == nil {
+			break
+		}
+
+		return e.complexity.Time.StartHour(childComplexity), true
 
 	case "TokenResponse.accessToken":
 		if e.complexity.TokenResponse.AccessToken == nil {
@@ -2115,9 +2150,9 @@ func (ec *executionContext) _Group_times(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.([]*model.Time)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNTime2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Group_times(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2127,7 +2162,17 @@ func (ec *executionContext) fieldContext_Group_times(ctx context.Context, field 
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Time_id(ctx, field)
+			case "day":
+				return ec.fieldContext_Time_day(ctx, field)
+			case "start_hour":
+				return ec.fieldContext_Time_start_hour(ctx, field)
+			case "finish_hour":
+				return ec.fieldContext_Time_finish_hour(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Time", field.Name)
 		},
 	}
 	return fc, nil
@@ -4891,6 +4936,182 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 				return ec.fieldContext___Schema_directives(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Time_id(ctx context.Context, field graphql.CollectedField, obj *model.Time) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Time_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Time_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Time",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Time_day(ctx context.Context, field graphql.CollectedField, obj *model.Time) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Time_day(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Day, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.DayOfWeek)
+	fc.Result = res
+	return ec.marshalNDayOfWeek2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐDayOfWeek(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Time_day(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Time",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DayOfWeek does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Time_start_hour(ctx context.Context, field graphql.CollectedField, obj *model.Time) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Time_start_hour(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StartHour, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Time_start_hour(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Time",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Time_finish_hour(ctx context.Context, field graphql.CollectedField, obj *model.Time) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Time_finish_hour(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FinishHour, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Time_finish_hour(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Time",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -8104,6 +8325,60 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
+var timeImplementors = []string{"Time"}
+
+func (ec *executionContext) _Time(ctx context.Context, sel ast.SelectionSet, obj *model.Time) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, timeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Time")
+		case "id":
+			out.Values[i] = ec._Time_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "day":
+			out.Values[i] = ec._Time_day(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "start_hour":
+			out.Values[i] = ec._Time_start_hour(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "finish_hour":
+			out.Values[i] = ec._Time_finish_hour(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var tokenResponseImplementors = []string{"TokenResponse"}
 
 func (ec *executionContext) _TokenResponse(ctx context.Context, sel ast.SelectionSet, obj *model.TokenResponse) graphql.Marshaler {
@@ -8567,6 +8842,16 @@ func (ec *executionContext) marshalNCustomer2ᚖgithubᚗcomᚋyigithancolakᚋc
 	return ec._Customer(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNDayOfWeek2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐDayOfWeek(ctx context.Context, v interface{}) (model.DayOfWeek, error) {
+	var res model.DayOfWeek
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNDayOfWeek2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐDayOfWeek(ctx context.Context, sel ast.SelectionSet, v model.DayOfWeek) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
 	res, err := graphql.UnmarshalFloatContext(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -8874,6 +9159,60 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	}
 
 	return ret
+}
+
+func (ec *executionContext) marshalNTime2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Time) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTime2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTime(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNTime2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTime(ctx context.Context, sel ast.SelectionSet, v *model.Time) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Time(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNTokenResponse2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTokenResponse(ctx context.Context, sel ast.SelectionSet, v model.TokenResponse) graphql.Marshaler {

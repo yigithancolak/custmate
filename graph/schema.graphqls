@@ -13,13 +13,29 @@ type Instructor {
   name: String!
   organization: Organization!
 }
+type Time {
+  id: ID!
+  day: DayOfWeek!
+  start_hour: String! # You can also use custom scalars for Time, but for simplicity, I'm using String here
+  finish_hour: String!
+}
+
+enum DayOfWeek {
+  monday
+  tuesday
+  wednesday
+  thursday
+  friday
+  saturday
+  sunday
+}
 
 type Group {
   id: ID!
   name: String!
   organization: Organization!
   instructor: Instructor!
-  times: [String!]!
+  times: [Time!]!
 }
 
 type Customer {
