@@ -46,3 +46,11 @@ func (r *mutationResolver) UpdateOrganizationResolver(ctx context.Context, id st
 
 	return resp, nil
 }
+
+func (r *mutationResolver) DeleteOrganizationResolver(ctx context.Context, id string) (bool, error) {
+	err := r.Store.Organizations.DeleteOrganization(id)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}

@@ -64,3 +64,9 @@ func (s *OrganizationStore) UpdateOrganization(orgID string, input model.UpdateO
 
 	return &org, nil
 }
+
+func (s *OrganizationStore) DeleteOrganization(id string) error {
+	query := `DELETE FROM organizations WHERE id = $1`
+	_, err := s.DB.Exec(query, id)
+	return err
+}
