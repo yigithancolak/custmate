@@ -124,6 +124,7 @@ type ComplexityRoot struct {
 	Time struct {
 		Day        func(childComplexity int) int
 		FinishHour func(childComplexity int) int
+		GroupID    func(childComplexity int) int
 		ID         func(childComplexity int) int
 		StartHour  func(childComplexity int) int
 	}
@@ -744,6 +745,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Time.FinishHour(childComplexity), true
 
+	case "Time.groupId":
+		if e.complexity.Time.GroupID == nil {
+			break
+		}
+
+		return e.complexity.Time.GroupID(childComplexity), true
+
 	case "Time.id":
 		if e.complexity.Time.ID == nil {
 			break
@@ -778,6 +786,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateInstructorInput,
 		ec.unmarshalInputCreateOrganizationInput,
 		ec.unmarshalInputCreatePaymentInput,
+		ec.unmarshalInputTimeInput,
 		ec.unmarshalInputUpdateCustomerInput,
 		ec.unmarshalInputUpdateGroupInput,
 		ec.unmarshalInputUpdateInstructorInput,
@@ -2165,6 +2174,8 @@ func (ec *executionContext) fieldContext_Group_times(ctx context.Context, field 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Time_id(ctx, field)
+			case "groupId":
+				return ec.fieldContext_Time_groupId(ctx, field)
 			case "day":
 				return ec.fieldContext_Time_day(ctx, field)
 			case "start_hour":
@@ -4985,6 +4996,50 @@ func (ec *executionContext) fieldContext_Time_id(ctx context.Context, field grap
 	return fc, nil
 }
 
+func (ec *executionContext) _Time_groupId(ctx context.Context, field graphql.CollectedField, obj *model.Time) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Time_groupId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GroupID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Time_groupId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Time",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Time_day(ctx context.Context, field graphql.CollectedField, obj *model.Time) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Time_day(ctx, field)
 	if err != nil {
@@ -5011,9 +5066,9 @@ func (ec *executionContext) _Time_day(ctx context.Context, field graphql.Collect
 		}
 		return graphql.Null
 	}
-	res := resTmp.(model.DayOfWeek)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNDayOfWeek2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐDayOfWeek(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Time_day(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5023,7 +5078,7 @@ func (ec *executionContext) fieldContext_Time_day(ctx context.Context, field gra
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type DayOfWeek does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -7044,7 +7099,7 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("times"))
-			data, err := ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalNTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7205,6 +7260,53 @@ func (ec *executionContext) unmarshalInputCreatePaymentInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputTimeInput(ctx context.Context, obj interface{}) (model.TimeInput, error) {
+	var it model.TimeInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"day", "start_hour", "finish_hour"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "day":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("day"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Day = data
+		case "start_hour":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("start_hour"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StartHour = data
+		case "finish_hour":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("finish_hour"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FinishHour = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateCustomerInput(ctx context.Context, obj interface{}) (model.UpdateCustomerInput, error) {
 	var it model.UpdateCustomerInput
 	asMap := map[string]interface{}{}
@@ -7315,7 +7417,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("times"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8341,6 +8443,11 @@ func (ec *executionContext) _Time(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "groupId":
+			out.Values[i] = ec._Time_groupId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "day":
 			out.Values[i] = ec._Time_day(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -8842,16 +8949,6 @@ func (ec *executionContext) marshalNCustomer2ᚖgithubᚗcomᚋyigithancolakᚋc
 	return ec._Customer(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNDayOfWeek2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐDayOfWeek(ctx context.Context, v interface{}) (model.DayOfWeek, error) {
-	var res model.DayOfWeek
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNDayOfWeek2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐDayOfWeek(ctx context.Context, sel ast.SelectionSet, v model.DayOfWeek) graphql.Marshaler {
-	return v
-}
-
 func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
 	res, err := graphql.UnmarshalFloatContext(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -9129,38 +9226,6 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) unmarshalNString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]string, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
-	}
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) marshalNTime2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Time) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -9213,6 +9278,28 @@ func (ec *executionContext) marshalNTime2ᚖgithubᚗcomᚋyigithancolakᚋcustm
 		return graphql.Null
 	}
 	return ec._Time(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeInputᚄ(ctx context.Context, v interface{}) ([]*model.TimeInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*model.TimeInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNTimeInput2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNTimeInput2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeInput(ctx context.Context, v interface{}) (*model.TimeInput, error) {
+	res, err := ec.unmarshalInputTimeInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNTokenResponse2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTokenResponse(ctx context.Context, sel ast.SelectionSet, v model.TokenResponse) graphql.Marshaler {
@@ -9613,44 +9700,6 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return res
 }
 
-func (ec *executionContext) unmarshalOString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]string, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalOString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
-	}
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
 	if v == nil {
 		return nil, nil
@@ -9665,6 +9714,26 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeInputᚄ(ctx context.Context, v interface{}) ([]*model.TimeInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*model.TimeInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNTimeInput2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

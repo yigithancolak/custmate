@@ -55,7 +55,56 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (b
 
 // CreateGroup is the resolver for the createGroup field.
 func (r *mutationResolver) CreateGroup(ctx context.Context, input model.CreateGroupInput) (*model.Group, error) {
-	panic(fmt.Errorf("not implemented: CreateGroup - createGroup"))
+	group := &model.Group{
+		ID:           uuid.New().String(),
+		Name:         input.Name,
+		Organization: &model.Organization{ID: input.Organization},
+		Instructor:   &model.Instructor{ID: input.Instructor},
+	}
+
+	times := make([]*model.Time, len(input.Times))
+
+	for i, t := range input.Times {
+		times[i] = &model.Time{
+			ID:         uuid.New().String(),
+			Day:        t.Day,
+			GroupID:    group.ID,
+			StartHour:  t.StartHour,
+			FinishHour: t.FinishHour,
+		}
+	}
+
+	group.Times = times
+
+	tx, err := r.Store.DB.Begin()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = r.Store.Groups.CreateGroup(group); err != nil {
+		if rbErr := tx.Rollback(); rbErr != nil {
+			return nil, rbErr
+		}
+		return nil, err
+	}
+
+	for _, time := range times {
+		if err = r.Store.Time.CreateTime(time); err != nil {
+			if rbErr := tx.Rollback(); rbErr != nil {
+				return nil, rbErr
+			}
+			return nil, err
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		if rbErr := tx.Rollback(); rbErr != nil {
+			return nil, rbErr
+		}
+		return nil, err
+	}
+
+	return group, nil
 }
 
 // UpdateGroup is the resolver for the updateGroup field.
@@ -201,3 +250,10 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.

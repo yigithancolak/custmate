@@ -15,19 +15,10 @@ type Instructor {
 }
 type Time {
   id: ID!
-  day: DayOfWeek!
-  start_hour: String! # You can also use custom scalars for Time, but for simplicity, I'm using String here
+  groupId: ID!
+  day: String! # Changed from DayOfWeek!
+  start_hour: String!
   finish_hour: String!
-}
-
-enum DayOfWeek {
-  monday
-  tuesday
-  wednesday
-  thursday
-  friday
-  saturday
-  sunday
 }
 
 type Group {
@@ -165,14 +156,14 @@ input CreateGroupInput {
   name: String!
   organization: ID!
   instructor: ID!
-  times: [String!]!
+  times: [TimeInput!]!
 }
 
 input UpdateGroupInput {
   name: String
   organization: ID
   instructor: ID
-  times: [String!]
+  times: [TimeInput!]
 }
 
 # Input for Instructor
@@ -219,4 +210,10 @@ input UpdatePaymentInput {
   organizationId: ID
   groupId: ID
   customerId: ID
+}
+
+input TimeInput {
+  day: String! # Changed from DayOfWeek!
+  start_hour: String!
+  finish_hour: String!
 }

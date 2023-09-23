@@ -54,3 +54,57 @@ func (r *mutationResolver) DeleteOrganizationResolver(ctx context.Context, id st
 	}
 	return true, nil
 }
+
+func (r *mutationResolver) CreateGroupResolver(ctx context.Context, input *model.CreateGroupInput) (*model.Group, error) {
+
+	group := &model.Group{
+		ID:           uuid.New().String(),
+		Name:         input.Name,
+		Organization: &model.Organization{ID: input.Organization},
+		Instructor:   &model.Instructor{ID: input.Instructor},
+	}
+
+	times := make([]*model.Time, len(input.Times))
+
+	for i, t := range input.Times {
+		times[i] = &model.Time{
+			ID:         uuid.New().String(),
+			Day:        t.Day,
+			GroupID:    group.ID,
+			StartHour:  t.StartHour,
+			FinishHour: t.FinishHour,
+		}
+	}
+
+	group.Times = times
+
+	tx, err := r.Store.DB.Begin()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = r.Store.Groups.CreateGroup(group); err != nil {
+		if rbErr := tx.Rollback(); rbErr != nil {
+			return nil, rbErr
+		}
+		return nil, err
+	}
+
+	for _, time := range times {
+		if err = r.Store.Time.CreateTime(time); err != nil {
+			if rbErr := tx.Rollback(); rbErr != nil {
+				return nil, rbErr
+			}
+			return nil, err
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		if rbErr := tx.Rollback(); rbErr != nil {
+			return nil, rbErr
+		}
+		return nil, err
+	}
+
+	return group, nil
+}

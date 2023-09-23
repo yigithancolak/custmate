@@ -2,12 +2,6 @@
 
 package model
 
-import (
-	"fmt"
-	"io"
-	"strconv"
-)
-
 type CreateCustomerInput struct {
 	Name         string    `json:"name"`
 	Organization string    `json:"organization"`
@@ -17,10 +11,10 @@ type CreateCustomerInput struct {
 }
 
 type CreateGroupInput struct {
-	Name         string   `json:"name"`
-	Organization string   `json:"organization"`
-	Instructor   string   `json:"instructor"`
-	Times        []string `json:"times"`
+	Name         string       `json:"name"`
+	Organization string       `json:"organization"`
+	Instructor   string       `json:"instructor"`
+	Times        []*TimeInput `json:"times"`
 }
 
 type CreateInstructorInput struct {
@@ -81,10 +75,17 @@ type Payment struct {
 }
 
 type Time struct {
-	ID         string    `json:"id"`
-	Day        DayOfWeek `json:"day"`
-	StartHour  string    `json:"start_hour"`
-	FinishHour string    `json:"finish_hour"`
+	ID         string `json:"id"`
+	GroupID    string `json:"groupId"`
+	Day        string `json:"day"`
+	StartHour  string `json:"start_hour"`
+	FinishHour string `json:"finish_hour"`
+}
+
+type TimeInput struct {
+	Day        string `json:"day"`
+	StartHour  string `json:"start_hour"`
+	FinishHour string `json:"finish_hour"`
 }
 
 type TokenResponse struct {
@@ -100,10 +101,10 @@ type UpdateCustomerInput struct {
 }
 
 type UpdateGroupInput struct {
-	Name         *string  `json:"name,omitempty"`
-	Organization *string  `json:"organization,omitempty"`
-	Instructor   *string  `json:"instructor,omitempty"`
-	Times        []string `json:"times,omitempty"`
+	Name         *string      `json:"name,omitempty"`
+	Organization *string      `json:"organization,omitempty"`
+	Instructor   *string      `json:"instructor,omitempty"`
+	Times        []*TimeInput `json:"times,omitempty"`
 }
 
 type UpdateInstructorInput struct {
@@ -123,55 +124,4 @@ type UpdatePaymentInput struct {
 	OrganizationID *string  `json:"organizationId,omitempty"`
 	GroupID        *string  `json:"groupId,omitempty"`
 	CustomerID     *string  `json:"customerId,omitempty"`
-}
-
-type DayOfWeek string
-
-const (
-	DayOfWeekMonday    DayOfWeek = "monday"
-	DayOfWeekTuesday   DayOfWeek = "tuesday"
-	DayOfWeekWednesday DayOfWeek = "wednesday"
-	DayOfWeekThursday  DayOfWeek = "thursday"
-	DayOfWeekFriday    DayOfWeek = "friday"
-	DayOfWeekSaturday  DayOfWeek = "saturday"
-	DayOfWeekSunday    DayOfWeek = "sunday"
-)
-
-var AllDayOfWeek = []DayOfWeek{
-	DayOfWeekMonday,
-	DayOfWeekTuesday,
-	DayOfWeekWednesday,
-	DayOfWeekThursday,
-	DayOfWeekFriday,
-	DayOfWeekSaturday,
-	DayOfWeekSunday,
-}
-
-func (e DayOfWeek) IsValid() bool {
-	switch e {
-	case DayOfWeekMonday, DayOfWeekTuesday, DayOfWeekWednesday, DayOfWeekThursday, DayOfWeekFriday, DayOfWeekSaturday, DayOfWeekSunday:
-		return true
-	}
-	return false
-}
-
-func (e DayOfWeek) String() string {
-	return string(e)
-}
-
-func (e *DayOfWeek) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = DayOfWeek(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid DayOfWeek", str)
-	}
-	return nil
-}
-
-func (e DayOfWeek) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
 }
