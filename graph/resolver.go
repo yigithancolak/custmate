@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 	"github.com/yigithancolak/custmate/graph/model"
+	"github.com/yigithancolak/custmate/postgresdb"
 )
 
 // This file will not be regenerated automatically.
@@ -13,12 +13,12 @@ import (
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	DB *sqlx.DB
+	Store *postgresdb.Store
 }
 
-func NewResolver(db *sqlx.DB) *Resolver {
+func NewResolver(store *postgresdb.Store) *Resolver {
 	return &Resolver{
-		DB: db,
+		Store: store,
 	}
 }
 
@@ -30,11 +30,19 @@ func (r *mutationResolver) CreateOrganizationResolver(ctx context.Context, input
 	}
 
 	// Insert into the database
-	query := `INSERT INTO organizations (id, name, email, password) VALUES ($1, $2, $3, $4)`
-	_, err := r.DB.ExecContext(ctx, query, org.ID, org.Name, org.Email, input.Password)
+	err := r.Store.Organizations.CreateOrganization(org, input.Password)
 	if err != nil {
 		return nil, err
 	}
 
 	return org, nil
+}
+
+func (r *mutationResolver) UpdateOrganizationResolver(ctx context.Context, id string, input model.UpdateOrganizationInput) (*model.Organization, error) {
+	resp, err := r.Store.Organizations.UpdateOrganization(id, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }

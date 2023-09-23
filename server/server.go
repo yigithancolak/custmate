@@ -2,7 +2,6 @@ package server
 
 import (
 	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/jmoiron/sqlx"
 	"github.com/yigithancolak/custmate/graph"
 	"github.com/yigithancolak/custmate/postgresdb"
 	"github.com/yigithancolak/custmate/util"
@@ -10,7 +9,6 @@ import (
 
 type Server struct {
 	Config   *util.Config
-	DB       *sqlx.DB
 	GraphQL  *handler.Server
 	Resolver *graph.Resolver
 }
@@ -21,12 +19,12 @@ func NewServer(config *util.Config) (*Server, error) {
 		return nil, err
 	}
 
-	resolver := graph.NewResolver(db)
+	store := postgresdb.NewStore(db)
+	resolver := graph.NewResolver(store)
 	gqlServer := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))
 
 	return &Server{
 		Config:   config,
-		DB:       db,
 		GraphQL:  gqlServer,
 		Resolver: resolver,
 	}, nil
