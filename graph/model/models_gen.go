@@ -11,10 +11,10 @@ type CreateCustomerInput struct {
 }
 
 type CreateGroupInput struct {
-	Name         string       `json:"name"`
-	Organization string       `json:"organization"`
-	Instructor   string       `json:"instructor"`
-	Times        []*TimeInput `json:"times"`
+	Name         string             `json:"name"`
+	Organization string             `json:"organization"`
+	Instructor   string             `json:"instructor"`
+	Times        []*CreateTimeInput `json:"times"`
 }
 
 type CreateInstructorInput struct {
@@ -34,6 +34,12 @@ type CreatePaymentInput struct {
 	OrganizationID string  `json:"organizationId"`
 	GroupID        string  `json:"groupId"`
 	CustomerID     string  `json:"customerId"`
+}
+
+type CreateTimeInput struct {
+	Day        string `json:"day"`
+	StartHour  string `json:"start_hour"`
+	FinishHour string `json:"finish_hour"`
 }
 
 type Customer struct {
@@ -82,12 +88,6 @@ type Time struct {
 	FinishHour string `json:"finish_hour"`
 }
 
-type TimeInput struct {
-	Day        string `json:"day"`
-	StartHour  string `json:"start_hour"`
-	FinishHour string `json:"finish_hour"`
-}
-
 type TokenResponse struct {
 	AccessToken string `json:"accessToken"`
 }
@@ -101,10 +101,9 @@ type UpdateCustomerInput struct {
 }
 
 type UpdateGroupInput struct {
-	Name         *string      `json:"name,omitempty"`
-	Organization *string      `json:"organization,omitempty"`
-	Instructor   *string      `json:"instructor,omitempty"`
-	Times        []*TimeInput `json:"times,omitempty"`
+	Name       *string            `json:"name,omitempty"`
+	Instructor *string            `json:"instructor,omitempty"`
+	Times      []*UpdateTimeInput `json:"times,omitempty"`
 }
 
 type UpdateInstructorInput struct {
@@ -124,4 +123,11 @@ type UpdatePaymentInput struct {
 	OrganizationID *string  `json:"organizationId,omitempty"`
 	GroupID        *string  `json:"groupId,omitempty"`
 	CustomerID     *string  `json:"customerId,omitempty"`
+}
+
+type UpdateTimeInput struct {
+	ID         string  `json:"id"`
+	Day        *string `json:"day,omitempty"`
+	StartHour  *string `json:"start_hour,omitempty"`
+	FinishHour *string `json:"finish_hour,omitempty"`
 }

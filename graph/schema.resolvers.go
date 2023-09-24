@@ -55,28 +55,7 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (b
 
 // CreateGroup is the resolver for the createGroup field.
 func (r *mutationResolver) CreateGroup(ctx context.Context, input model.CreateGroupInput) (*model.Group, error) {
-	group := &model.Group{
-		ID:           uuid.New().String(),
-		Name:         input.Name,
-		Organization: &model.Organization{ID: input.Organization},
-		Instructor:   &model.Instructor{ID: input.Instructor},
-	}
-
-	times := make([]*model.Time, len(input.Times))
-
-	for i, t := range input.Times {
-		times[i] = &model.Time{
-			ID:         uuid.New().String(),
-			Day:        t.Day,
-			GroupID:    group.ID,
-			StartHour:  t.StartHour,
-			FinishHour: t.FinishHour,
-		}
-	}
-
-	group.Times = times
-
-	err := r.Store.CreateGroupWithTimeTx(group, times)
+	group, err := r.Store.CreateGroupWithTimeTx(input)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +65,12 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input model.CreateGr
 
 // UpdateGroup is the resolver for the updateGroup field.
 func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input model.UpdateGroupInput) (*model.Group, error) {
-	panic(fmt.Errorf("not implemented: UpdateGroup - updateGroup"))
+	group, err := r.Store.UpdateGroupWithTimeTx(id, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return group, nil
 }
 
 // DeleteGroup is the resolver for the deleteGroup field.

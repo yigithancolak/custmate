@@ -12,6 +12,8 @@ import (
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
+//DELETE THE **Resolver part of func name before generate
+
 type Resolver struct {
 	Store *postgresdb.Store
 }
@@ -55,33 +57,22 @@ func (r *mutationResolver) DeleteOrganizationResolver(ctx context.Context, id st
 	return true, nil
 }
 
-func (r *mutationResolver) CreateGroupResolver(ctx context.Context, input *model.CreateGroupInput) (*model.Group, error) {
+func (r *mutationResolver) CreateGroupResolver(ctx context.Context, input model.CreateGroupInput) (*model.Group, error) {
 
-	group := &model.Group{
-		ID:           uuid.New().String(),
-		Name:         input.Name,
-		Organization: &model.Organization{ID: input.Organization},
-		Instructor:   &model.Instructor{ID: input.Instructor},
-	}
-
-	times := make([]*model.Time, len(input.Times))
-
-	for i, t := range input.Times {
-		times[i] = &model.Time{
-			ID:         uuid.New().String(),
-			Day:        t.Day,
-			GroupID:    group.ID,
-			StartHour:  t.StartHour,
-			FinishHour: t.FinishHour,
-		}
-	}
-
-	group.Times = times
-
-	err := r.Store.CreateGroupWithTimeTx(group, times)
+	group, err := r.Store.CreateGroupWithTimeTx(input)
 	if err != nil {
 		return nil, err
 	}
 
 	return group, nil
+}
+
+func (r *mutationResolver) UpdateGroupResolver(ctx context.Context, id string, input model.UpdateGroupInput) (*model.Group, error) {
+	group, err := r.Store.UpdateGroupWithTimeTx(id, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return group, nil
+
 }

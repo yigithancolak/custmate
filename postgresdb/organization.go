@@ -52,8 +52,7 @@ func (s *OrganizationStore) UpdateOrganization(orgID string, input model.UpdateO
 		return nil, errors.New("no fields provided to update")
 	}
 
-	args = append(args, orgID) // Add the orgID as the last argument
-
+	args = append(args, orgID)
 	query := baseQuery + strings.Join(updates, ", ") + fmt.Sprintf(" WHERE id = $%d", idx) + returnQuery
 
 	var org model.Organization

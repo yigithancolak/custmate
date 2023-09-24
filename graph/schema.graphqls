@@ -156,14 +156,13 @@ input CreateGroupInput {
   name: String!
   organization: ID!
   instructor: ID!
-  times: [TimeInput!]!
+  times: [CreateTimeInput!]!
 }
 
 input UpdateGroupInput {
   name: String
-  organization: ID
   instructor: ID
-  times: [TimeInput!]
+  times: [UpdateTimeInput!]
 }
 
 # Input for Instructor
@@ -212,8 +211,17 @@ input UpdatePaymentInput {
   customerId: ID
 }
 
-input TimeInput {
-  day: String! # Changed from DayOfWeek!
+#Input for time
+
+input CreateTimeInput {
+  day: String!
   start_hour: String!
   finish_hour: String!
+}
+
+input UpdateTimeInput {
+  id: ID!
+  day: String
+  start_hour: String
+  finish_hour: String
 }

@@ -786,12 +786,13 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateInstructorInput,
 		ec.unmarshalInputCreateOrganizationInput,
 		ec.unmarshalInputCreatePaymentInput,
-		ec.unmarshalInputTimeInput,
+		ec.unmarshalInputCreateTimeInput,
 		ec.unmarshalInputUpdateCustomerInput,
 		ec.unmarshalInputUpdateGroupInput,
 		ec.unmarshalInputUpdateInstructorInput,
 		ec.unmarshalInputUpdateOrganizationInput,
 		ec.unmarshalInputUpdatePaymentInput,
+		ec.unmarshalInputUpdateTimeInput,
 	)
 	first := true
 
@@ -7099,7 +7100,7 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("times"))
-			data, err := ec.unmarshalNTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeInputᚄ(ctx, v)
+			data, err := ec.unmarshalNCreateTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCreateTimeInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7260,8 +7261,8 @@ func (ec *executionContext) unmarshalInputCreatePaymentInput(ctx context.Context
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputTimeInput(ctx context.Context, obj interface{}) (model.TimeInput, error) {
-	var it model.TimeInput
+func (ec *executionContext) unmarshalInputCreateTimeInput(ctx context.Context, obj interface{}) (model.CreateTimeInput, error) {
+	var it model.CreateTimeInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -7379,7 +7380,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "organization", "instructor", "times"}
+	fieldsInOrder := [...]string{"name", "instructor", "times"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7395,15 +7396,6 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.Name = data
-		case "organization":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organization"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Organization = data
 		case "instructor":
 			var err error
 
@@ -7417,7 +7409,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("times"))
-			data, err := ec.unmarshalOTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeInputᚄ(ctx, v)
+			data, err := ec.unmarshalOUpdateTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdateTimeInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7572,6 +7564,62 @@ func (ec *executionContext) unmarshalInputUpdatePaymentInput(ctx context.Context
 				return it, err
 			}
 			it.CustomerID = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateTimeInput(ctx context.Context, obj interface{}) (model.UpdateTimeInput, error) {
+	var it model.UpdateTimeInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "day", "start_hour", "finish_hour"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "day":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("day"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Day = data
+		case "start_hour":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("start_hour"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StartHour = data
+		case "finish_hour":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("finish_hour"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FinishHour = data
 		}
 	}
 
@@ -8891,6 +8939,28 @@ func (ec *executionContext) unmarshalNCreatePaymentInput2githubᚗcomᚋyigithan
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCreateTimeInputᚄ(ctx context.Context, v interface{}) ([]*model.CreateTimeInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*model.CreateTimeInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNCreateTimeInput2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCreateTimeInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNCreateTimeInput2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCreateTimeInput(ctx context.Context, v interface{}) (*model.CreateTimeInput, error) {
+	res, err := ec.unmarshalInputCreateTimeInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNCustomer2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCustomer(ctx context.Context, sel ast.SelectionSet, v model.Customer) graphql.Marshaler {
 	return ec._Customer(ctx, sel, &v)
 }
@@ -9280,28 +9350,6 @@ func (ec *executionContext) marshalNTime2ᚖgithubᚗcomᚋyigithancolakᚋcustm
 	return ec._Time(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeInputᚄ(ctx context.Context, v interface{}) ([]*model.TimeInput, error) {
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*model.TimeInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNTimeInput2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalNTimeInput2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeInput(ctx context.Context, v interface{}) (*model.TimeInput, error) {
-	res, err := ec.unmarshalInputTimeInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) marshalNTokenResponse2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTokenResponse(ctx context.Context, sel ast.SelectionSet, v model.TokenResponse) graphql.Marshaler {
 	return ec._TokenResponse(ctx, sel, &v)
 }
@@ -9339,6 +9387,11 @@ func (ec *executionContext) unmarshalNUpdateOrganizationInput2githubᚗcomᚋyig
 func (ec *executionContext) unmarshalNUpdatePaymentInput2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdatePaymentInput(ctx context.Context, v interface{}) (model.UpdatePaymentInput, error) {
 	res, err := ec.unmarshalInputUpdatePaymentInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateTimeInput2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdateTimeInput(ctx context.Context, v interface{}) (*model.UpdateTimeInput, error) {
+	res, err := ec.unmarshalInputUpdateTimeInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
@@ -9716,7 +9769,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) unmarshalOTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeInputᚄ(ctx context.Context, v interface{}) ([]*model.TimeInput, error) {
+func (ec *executionContext) unmarshalOUpdateTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdateTimeInputᚄ(ctx context.Context, v interface{}) ([]*model.UpdateTimeInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -9725,10 +9778,10 @@ func (ec *executionContext) unmarshalOTimeInput2ᚕᚖgithubᚗcomᚋyigithancol
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]*model.TimeInput, len(vSlice))
+	res := make([]*model.UpdateTimeInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNTimeInput2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNUpdateTimeInput2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdateTimeInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
