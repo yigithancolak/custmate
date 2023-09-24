@@ -22,7 +22,7 @@ CREATE TABLE org_groups (
 
 CREATE TABLE times (
     id UUID PRIMARY KEY,
-    org_group_id UUID NOT NULL REFERENCES org_groups(id),
+    org_group_id UUID NOT NULL REFERENCES org_groups(id) ON DELETE CASCADE,
     day days_of_week NOT NULL,
     start_hour TIME NOT NULL,
     finish_hour TIME NOT NULL

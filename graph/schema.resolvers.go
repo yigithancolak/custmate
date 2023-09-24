@@ -76,31 +76,8 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input model.CreateGr
 
 	group.Times = times
 
-	tx, err := r.Store.DB.Begin()
+	err := r.Store.CreateGroupWithTimeTx(group, times)
 	if err != nil {
-		return nil, err
-	}
-
-	if err = r.Store.Groups.CreateGroup(group); err != nil {
-		if rbErr := tx.Rollback(); rbErr != nil {
-			return nil, rbErr
-		}
-		return nil, err
-	}
-
-	for _, time := range times {
-		if err = r.Store.Time.CreateTime(time); err != nil {
-			if rbErr := tx.Rollback(); rbErr != nil {
-				return nil, rbErr
-			}
-			return nil, err
-		}
-	}
-
-	if err = tx.Commit(); err != nil {
-		if rbErr := tx.Rollback(); rbErr != nil {
-			return nil, rbErr
-		}
 		return nil, err
 	}
 
