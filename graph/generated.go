@@ -46,26 +46,23 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Customer struct {
-		Groups       func(childComplexity int) int
-		ID           func(childComplexity int) int
-		LastPayment  func(childComplexity int) int
-		Name         func(childComplexity int) int
-		NextPayment  func(childComplexity int) int
-		Organization func(childComplexity int) int
+		Groups      func(childComplexity int) int
+		ID          func(childComplexity int) int
+		LastPayment func(childComplexity int) int
+		Name        func(childComplexity int) int
+		NextPayment func(childComplexity int) int
 	}
 
 	Group struct {
-		ID           func(childComplexity int) int
-		Instructor   func(childComplexity int) int
-		Name         func(childComplexity int) int
-		Organization func(childComplexity int) int
-		Times        func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Instructor func(childComplexity int) int
+		Name       func(childComplexity int) int
+		Times      func(childComplexity int) int
 	}
 
 	Instructor struct {
-		ID           func(childComplexity int) int
-		Name         func(childComplexity int) int
-		Organization func(childComplexity int) int
+		ID   func(childComplexity int) int
+		Name func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -221,13 +218,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Customer.NextPayment(childComplexity), true
 
-	case "Customer.organization":
-		if e.complexity.Customer.Organization == nil {
-			break
-		}
-
-		return e.complexity.Customer.Organization(childComplexity), true
-
 	case "Group.id":
 		if e.complexity.Group.ID == nil {
 			break
@@ -249,13 +239,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Group.Name(childComplexity), true
 
-	case "Group.organization":
-		if e.complexity.Group.Organization == nil {
-			break
-		}
-
-		return e.complexity.Group.Organization(childComplexity), true
-
 	case "Group.times":
 		if e.complexity.Group.Times == nil {
 			break
@@ -276,13 +259,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Instructor.Name(childComplexity), true
-
-	case "Instructor.organization":
-		if e.complexity.Instructor.Organization == nil {
-			break
-		}
-
-		return e.complexity.Instructor.Organization(childComplexity), true
 
 	case "Mutation.createCustomer":
 		if e.complexity.Mutation.CreateCustomer == nil {
@@ -1746,58 +1722,6 @@ func (ec *executionContext) fieldContext_Customer_name(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Customer_organization(ctx context.Context, field graphql.CollectedField, obj *model.Customer) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Customer_organization(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Organization, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Organization)
-	fc.Result = res
-	return ec.marshalNOrganization2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐOrganization(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Customer_organization(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Customer",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Organization_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Organization_name(ctx, field)
-			case "email":
-				return ec.fieldContext_Organization_email(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Customer_groups(ctx context.Context, field graphql.CollectedField, obj *model.Customer) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Customer_groups(ctx, field)
 	if err != nil {
@@ -1841,8 +1765,6 @@ func (ec *executionContext) fieldContext_Customer_groups(ctx context.Context, fi
 				return ec.fieldContext_Group_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Group_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Group_organization(ctx, field)
 			case "instructor":
 				return ec.fieldContext_Group_instructor(ctx, field)
 			case "times":
@@ -2030,58 +1952,6 @@ func (ec *executionContext) fieldContext_Group_name(ctx context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _Group_organization(ctx context.Context, field graphql.CollectedField, obj *model.Group) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Group_organization(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Organization, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Organization)
-	fc.Result = res
-	return ec.marshalNOrganization2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐOrganization(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Group_organization(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Group",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Organization_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Organization_name(ctx, field)
-			case "email":
-				return ec.fieldContext_Organization_email(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Group_instructor(ctx context.Context, field graphql.CollectedField, obj *model.Group) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Group_instructor(ctx, field)
 	if err != nil {
@@ -2125,8 +1995,6 @@ func (ec *executionContext) fieldContext_Group_instructor(ctx context.Context, f
 				return ec.fieldContext_Instructor_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Instructor_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Instructor_organization(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -2273,58 +2141,6 @@ func (ec *executionContext) fieldContext_Instructor_name(ctx context.Context, fi
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Instructor_organization(ctx context.Context, field graphql.CollectedField, obj *model.Instructor) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Instructor_organization(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Organization, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Organization)
-	fc.Result = res
-	return ec.marshalNOrganization2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐOrganization(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Instructor_organization(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Instructor",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Organization_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Organization_name(ctx, field)
-			case "email":
-				return ec.fieldContext_Organization_email(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
 	}
 	return fc, nil
@@ -2613,8 +2429,6 @@ func (ec *executionContext) fieldContext_Mutation_createGroup(ctx context.Contex
 				return ec.fieldContext_Group_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Group_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Group_organization(ctx, field)
 			case "instructor":
 				return ec.fieldContext_Group_instructor(ctx, field)
 			case "times":
@@ -2680,8 +2494,6 @@ func (ec *executionContext) fieldContext_Mutation_updateGroup(ctx context.Contex
 				return ec.fieldContext_Group_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Group_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Group_organization(ctx, field)
 			case "instructor":
 				return ec.fieldContext_Group_instructor(ctx, field)
 			case "times":
@@ -2802,8 +2614,6 @@ func (ec *executionContext) fieldContext_Mutation_createInstructor(ctx context.C
 				return ec.fieldContext_Instructor_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Instructor_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Instructor_organization(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -2865,8 +2675,6 @@ func (ec *executionContext) fieldContext_Mutation_updateInstructor(ctx context.C
 				return ec.fieldContext_Instructor_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Instructor_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Instructor_organization(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -2983,8 +2791,6 @@ func (ec *executionContext) fieldContext_Mutation_createCustomer(ctx context.Con
 				return ec.fieldContext_Customer_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Customer_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Customer_organization(ctx, field)
 			case "groups":
 				return ec.fieldContext_Customer_groups(ctx, field)
 			case "lastPayment":
@@ -3052,8 +2858,6 @@ func (ec *executionContext) fieldContext_Mutation_updateCustomer(ctx context.Con
 				return ec.fieldContext_Customer_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Customer_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Customer_organization(ctx, field)
 			case "groups":
 				return ec.fieldContext_Customer_groups(ctx, field)
 			case "lastPayment":
@@ -3633,8 +3437,6 @@ func (ec *executionContext) fieldContext_Payment_customer(ctx context.Context, f
 				return ec.fieldContext_Customer_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Customer_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Customer_organization(ctx, field)
 			case "groups":
 				return ec.fieldContext_Customer_groups(ctx, field)
 			case "lastPayment":
@@ -3743,8 +3545,6 @@ func (ec *executionContext) fieldContext_Payment_group(ctx context.Context, fiel
 				return ec.fieldContext_Group_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Group_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Group_organization(ctx, field)
 			case "instructor":
 				return ec.fieldContext_Group_instructor(ctx, field)
 			case "times":
@@ -3925,8 +3725,6 @@ func (ec *executionContext) fieldContext_Query_getGroup(ctx context.Context, fie
 				return ec.fieldContext_Group_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Group_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Group_organization(ctx, field)
 			case "instructor":
 				return ec.fieldContext_Group_instructor(ctx, field)
 			case "times":
@@ -3992,8 +3790,6 @@ func (ec *executionContext) fieldContext_Query_listGroups(ctx context.Context, f
 				return ec.fieldContext_Group_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Group_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Group_organization(ctx, field)
 			case "instructor":
 				return ec.fieldContext_Group_instructor(ctx, field)
 			case "times":
@@ -4059,8 +3855,6 @@ func (ec *executionContext) fieldContext_Query_listGroupsByOrganization(ctx cont
 				return ec.fieldContext_Group_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Group_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Group_organization(ctx, field)
 			case "instructor":
 				return ec.fieldContext_Group_instructor(ctx, field)
 			case "times":
@@ -4126,8 +3920,6 @@ func (ec *executionContext) fieldContext_Query_getInstructor(ctx context.Context
 				return ec.fieldContext_Instructor_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Instructor_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Instructor_organization(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -4189,8 +3981,6 @@ func (ec *executionContext) fieldContext_Query_listInstructors(ctx context.Conte
 				return ec.fieldContext_Instructor_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Instructor_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Instructor_organization(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -4252,8 +4042,6 @@ func (ec *executionContext) fieldContext_Query_listInstructorsByOrganization(ctx
 				return ec.fieldContext_Instructor_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Instructor_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Instructor_organization(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -4315,8 +4103,6 @@ func (ec *executionContext) fieldContext_Query_getCustomer(ctx context.Context, 
 				return ec.fieldContext_Customer_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Customer_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Customer_organization(ctx, field)
 			case "groups":
 				return ec.fieldContext_Customer_groups(ctx, field)
 			case "lastPayment":
@@ -4384,8 +4170,6 @@ func (ec *executionContext) fieldContext_Query_listCustomers(ctx context.Context
 				return ec.fieldContext_Customer_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Customer_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Customer_organization(ctx, field)
 			case "groups":
 				return ec.fieldContext_Customer_groups(ctx, field)
 			case "lastPayment":
@@ -4453,8 +4237,6 @@ func (ec *executionContext) fieldContext_Query_listCustomersByGroup(ctx context.
 				return ec.fieldContext_Customer_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Customer_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Customer_organization(ctx, field)
 			case "groups":
 				return ec.fieldContext_Customer_groups(ctx, field)
 			case "lastPayment":
@@ -4522,8 +4304,6 @@ func (ec *executionContext) fieldContext_Query_listCustomersByOrganization(ctx c
 				return ec.fieldContext_Customer_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Customer_name(ctx, field)
-			case "organization":
-				return ec.fieldContext_Customer_organization(ctx, field)
 			case "groups":
 				return ec.fieldContext_Customer_groups(ctx, field)
 			case "lastPayment":
@@ -7655,11 +7435,6 @@ func (ec *executionContext) _Customer(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "organization":
-			out.Values[i] = ec._Customer_organization(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "groups":
 			out.Values[i] = ec._Customer_groups(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -7719,11 +7494,6 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "organization":
-			out.Values[i] = ec._Group_organization(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "instructor":
 			out.Values[i] = ec._Group_instructor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -7775,11 +7545,6 @@ func (ec *executionContext) _Instructor(ctx context.Context, sel ast.SelectionSe
 			}
 		case "name":
 			out.Values[i] = ec._Instructor_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "organization":
-			out.Values[i] = ec._Instructor_organization(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

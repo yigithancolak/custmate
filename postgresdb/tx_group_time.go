@@ -1,6 +1,8 @@
 package postgresdb
 
-import "github.com/yigithancolak/custmate/graph/model"
+import (
+	"github.com/yigithancolak/custmate/graph/model"
+)
 
 func (s *Store) CreateGroupWithTimeTx(group model.CreateGroupInput) (*model.Group, error) {
 	tx, err := s.DB.Begin()
@@ -70,6 +72,8 @@ func (s *Store) UpdateGroupWithTimeTx(id string, groupInput model.UpdateGroupInp
 	}
 
 	group.Times = times
+
+	//s.Instructor.GetInstructor
 
 	return group, nil
 }

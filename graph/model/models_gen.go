@@ -43,26 +43,23 @@ type CreateTimeInput struct {
 }
 
 type Customer struct {
-	ID           string        `json:"id"`
-	Name         string        `json:"name"`
-	Organization *Organization `json:"organization"`
-	Groups       []*Group      `json:"groups"`
-	LastPayment  string        `json:"lastPayment"`
-	NextPayment  string        `json:"nextPayment"`
+	ID          string   `json:"id"`
+	Name        string   `json:"name"`
+	Groups      []*Group `json:"groups"`
+	LastPayment string   `json:"lastPayment"`
+	NextPayment string   `json:"nextPayment"`
 }
 
 type Group struct {
-	ID           string        `json:"id"`
-	Name         string        `json:"name"`
-	Organization *Organization `json:"organization"`
-	Instructor   *Instructor   `json:"instructor"`
-	Times        []*Time       `json:"times"`
+	ID         string      `json:"id"`
+	Name       string      `json:"name"`
+	Instructor *Instructor `json:"instructor"`
+	Times      []*Time     `json:"times"`
 }
 
 type Instructor struct {
-	ID           string        `json:"id"`
-	Name         string        `json:"name"`
-	Organization *Organization `json:"organization"`
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type Organization struct {
