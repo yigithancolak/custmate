@@ -17,10 +17,9 @@ type Store struct {
 func NewStore(db *sqlx.DB, jwtMaker *token.JWTMaker) *Store {
 	return &Store{
 		DB:            db,
-		Organizations: NewOrganizationStore(db),
+		Organizations: NewOrganizationStore(db, jwtMaker),
 		Groups:        NewGroupStore(db),
 		Time:          NewTimeStore(db),
 		Instructors:   NewInstructorStore(db),
-		JWTMaker:      jwtMaker,
 	}
 }

@@ -27,7 +27,11 @@ func NewResolver(store *postgresdb.Store) *Resolver {
 }
 
 func (r *mutationResolver) Login(ctx context.Context, email string, password string) (*model.TokenResponse, error) {
-	return nil, nil
+	tokenResponse, err := r.Store.Organizations.LoginOrganization(email, password)
+	if err != nil {
+		return nil, err
+	}
+	return tokenResponse, nil
 }
 
 func (r *mutationResolver) CreateOrganization(ctx context.Context, input model.CreateOrganizationInput) (*model.Organization, error) {

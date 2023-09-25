@@ -5,23 +5,31 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/yigithancolak/custmate/util"
 )
 
 type JWTMaker struct {
-	secretKey string
+	secretKey            string
+	AccessTokenDuration  time.Duration
+	RefreshTokenDuration time.Duration
 }
 
 const minSecretKeySize = 32
 
-func NewJWTMaker(secretKey string) (*JWTMaker, error) {
-	if len(secretKey) < minSecretKeySize {
+func NewJWTMaker(config *util.Config) (*JWTMaker, error) {
+	if len(config.TokenSymmetricKey) < minSecretKeySize {
 		return nil, fmt.Errorf("invalid key size. must be at leat %d characters", minSecretKeySize)
 	}
 
-	return &JWTMaker{secretKey}, nil
+	return &JWTMaker{
+		secretKey:            config.TokenSymmetricKey,
+		AccessTokenDuration:  config.AccessTokenDuration,
+		RefreshTokenDuration: config.RefreshTokenDuration,
+	}, nil
 }
 
 func (maker JWTMaker) CreateToken(id string, duration time.Duration) (string, *Payload, error) {
+
 	payload, err := NewPayload(id, duration)
 
 	if err != nil {

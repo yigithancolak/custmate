@@ -20,7 +20,7 @@ func NewServer(config *util.Config) (*Server, error) {
 		return nil, err
 	}
 
-	jwtMaker, err := token.NewJWTMaker(config.TokenSymmetricKey)
+	jwtMaker, err := token.NewJWTMaker(config)
 	if err != nil {
 		return nil, err
 	}

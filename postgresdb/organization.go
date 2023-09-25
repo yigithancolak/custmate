@@ -7,16 +7,42 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/yigithancolak/custmate/graph/model"
+	"github.com/yigithancolak/custmate/token"
+	"github.com/yigithancolak/custmate/util"
 )
 
 type OrganizationStore struct {
-	DB *sqlx.DB
+	DB       *sqlx.DB
+	JWTMaker *token.JWTMaker
 }
 
-func NewOrganizationStore(db *sqlx.DB) *OrganizationStore {
+func NewOrganizationStore(db *sqlx.DB, jwtMaker *token.JWTMaker) *OrganizationStore {
 	return &OrganizationStore{
-		DB: db,
+		DB:       db,
+		JWTMaker: jwtMaker,
 	}
+}
+
+func (s *OrganizationStore) LoginOrganization(email, password string) (*model.TokenResponse, error) {
+	query := "SELECT id,password FROM organizations WHERE email = $1"
+
+	var orgID string
+	var foundPassword string
+	err := s.DB.QueryRow(query, email).Scan(&orgID, &foundPassword)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = util.ComparePassword(password, foundPassword); err != nil {
+		return nil, errors.New("wrong credentials")
+	}
+
+	accessToken, _, err := s.JWTMaker.CreateToken(orgID, s.JWTMaker.AccessTokenDuration)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.TokenResponse{AccessToken: accessToken}, nil
 }
 
 func (s *OrganizationStore) CreateOrganization(org *model.Organization, password string) error {
