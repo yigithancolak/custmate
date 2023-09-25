@@ -11,7 +11,9 @@ type Organization {
 type Instructor {
   id: ID!
   name: String!
+  organizationId: String!
 }
+
 type Time {
   id: ID!
   groupId: ID!
@@ -107,7 +109,7 @@ type Query {
 
 type Mutation {
   #Login
-  loginUser(email: String!, password: String!): TokenResponse!
+  login(email: String!, password: String!): TokenResponse!
 
   # Organization
   createOrganization(input: CreateOrganizationInput!): Organization!
@@ -133,6 +135,11 @@ type Mutation {
   createPayment(input: CreatePaymentInput!): Payment!
   updatePayment(id: ID!, input: UpdatePaymentInput!): Payment!
   deletePayment(id: ID!): Boolean!
+
+  # Time
+  createTime(input: CreateTimeInput!): Time!
+  updateTime(id: ID!, input: UpdateTimeInput!): Time!
+  deleteTime(id: ID!): Boolean!
 }
 
 # Input for Organization
@@ -170,7 +177,6 @@ input CreateInstructorInput {
 
 input UpdateInstructorInput {
   name: String
-  organization: ID
 }
 
 # Input for Customer

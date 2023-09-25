@@ -58,8 +58,9 @@ type Group struct {
 }
 
 type Instructor struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID             string `json:"id"`
+	Name           string `json:"name"`
+	OrganizationID string `json:"organizationId"`
 }
 
 type Organization struct {
@@ -104,8 +105,7 @@ type UpdateGroupInput struct {
 }
 
 type UpdateInstructorInput struct {
-	Name         *string `json:"name,omitempty"`
-	Organization *string `json:"organization,omitempty"`
+	Name *string `json:"name,omitempty"`
 }
 
 type UpdateOrganizationInput struct {

@@ -61,8 +61,9 @@ type ComplexityRoot struct {
 	}
 
 	Instructor struct {
-		ID   func(childComplexity int) int
-		Name func(childComplexity int) int
+		ID             func(childComplexity int) int
+		Name           func(childComplexity int) int
+		OrganizationID func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -71,17 +72,20 @@ type ComplexityRoot struct {
 		CreateInstructor   func(childComplexity int, input model.CreateInstructorInput) int
 		CreateOrganization func(childComplexity int, input model.CreateOrganizationInput) int
 		CreatePayment      func(childComplexity int, input model.CreatePaymentInput) int
+		CreateTime         func(childComplexity int, input model.CreateTimeInput) int
 		DeleteCustomer     func(childComplexity int, id string) int
 		DeleteGroup        func(childComplexity int, id string) int
 		DeleteInstructor   func(childComplexity int, id string) int
 		DeleteOrganization func(childComplexity int, id string) int
 		DeletePayment      func(childComplexity int, id string) int
-		LoginUser          func(childComplexity int, email string, password string) int
+		DeleteTime         func(childComplexity int, id string) int
+		Login              func(childComplexity int, email string, password string) int
 		UpdateCustomer     func(childComplexity int, id string, input model.UpdateCustomerInput) int
 		UpdateGroup        func(childComplexity int, id string, input model.UpdateGroupInput) int
 		UpdateInstructor   func(childComplexity int, id string, input model.UpdateInstructorInput) int
 		UpdateOrganization func(childComplexity int, id string, input model.UpdateOrganizationInput) int
 		UpdatePayment      func(childComplexity int, id string, input model.UpdatePaymentInput) int
+		UpdateTime         func(childComplexity int, id string, input model.UpdateTimeInput) int
 	}
 
 	Organization struct {
@@ -132,7 +136,7 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	LoginUser(ctx context.Context, email string, password string) (*model.TokenResponse, error)
+	Login(ctx context.Context, email string, password string) (*model.TokenResponse, error)
 	CreateOrganization(ctx context.Context, input model.CreateOrganizationInput) (*model.Organization, error)
 	UpdateOrganization(ctx context.Context, id string, input model.UpdateOrganizationInput) (*model.Organization, error)
 	DeleteOrganization(ctx context.Context, id string) (bool, error)
@@ -148,6 +152,9 @@ type MutationResolver interface {
 	CreatePayment(ctx context.Context, input model.CreatePaymentInput) (*model.Payment, error)
 	UpdatePayment(ctx context.Context, id string, input model.UpdatePaymentInput) (*model.Payment, error)
 	DeletePayment(ctx context.Context, id string) (bool, error)
+	CreateTime(ctx context.Context, input model.CreateTimeInput) (*model.Time, error)
+	UpdateTime(ctx context.Context, id string, input model.UpdateTimeInput) (*model.Time, error)
+	DeleteTime(ctx context.Context, id string) (bool, error)
 }
 type QueryResolver interface {
 	GetOrganization(ctx context.Context, id string) (*model.Organization, error)
@@ -260,6 +267,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Instructor.Name(childComplexity), true
 
+	case "Instructor.organizationId":
+		if e.complexity.Instructor.OrganizationID == nil {
+			break
+		}
+
+		return e.complexity.Instructor.OrganizationID(childComplexity), true
+
 	case "Mutation.createCustomer":
 		if e.complexity.Mutation.CreateCustomer == nil {
 			break
@@ -319,6 +333,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreatePayment(childComplexity, args["input"].(model.CreatePaymentInput)), true
+
+	case "Mutation.createTime":
+		if e.complexity.Mutation.CreateTime == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createTime_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateTime(childComplexity, args["input"].(model.CreateTimeInput)), true
 
 	case "Mutation.deleteCustomer":
 		if e.complexity.Mutation.DeleteCustomer == nil {
@@ -380,17 +406,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeletePayment(childComplexity, args["id"].(string)), true
 
-	case "Mutation.loginUser":
-		if e.complexity.Mutation.LoginUser == nil {
+	case "Mutation.deleteTime":
+		if e.complexity.Mutation.DeleteTime == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_loginUser_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteTime_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.LoginUser(childComplexity, args["email"].(string), args["password"].(string)), true
+		return e.complexity.Mutation.DeleteTime(childComplexity, args["id"].(string)), true
+
+	case "Mutation.login":
+		if e.complexity.Mutation.Login == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_login_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.Login(childComplexity, args["email"].(string), args["password"].(string)), true
 
 	case "Mutation.updateCustomer":
 		if e.complexity.Mutation.UpdateCustomer == nil {
@@ -451,6 +489,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdatePayment(childComplexity, args["id"].(string), args["input"].(model.UpdatePaymentInput)), true
+
+	case "Mutation.updateTime":
+		if e.complexity.Mutation.UpdateTime == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateTime_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateTime(childComplexity, args["id"].(string), args["input"].(model.UpdateTimeInput)), true
 
 	case "Organization.email":
 		if e.complexity.Organization.Email == nil {
@@ -960,6 +1010,21 @@ func (ec *executionContext) field_Mutation_createPayment_args(ctx context.Contex
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createTime_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.CreateTimeInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateTimeInput2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCreateTimeInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteCustomer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1035,7 +1100,22 @@ func (ec *executionContext) field_Mutation_deletePayment_args(ctx context.Contex
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_loginUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_deleteTime_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -1171,6 +1251,30 @@ func (ec *executionContext) field_Mutation_updatePayment_args(ctx context.Contex
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg1, err = ec.unmarshalNUpdatePaymentInput2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdatePaymentInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateTime_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 model.UpdateTimeInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdateTimeInput2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdateTimeInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1995,6 +2099,8 @@ func (ec *executionContext) fieldContext_Group_instructor(ctx context.Context, f
 				return ec.fieldContext_Instructor_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Instructor_name(ctx, field)
+			case "organizationId":
+				return ec.fieldContext_Instructor_organizationId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -2146,8 +2252,8 @@ func (ec *executionContext) fieldContext_Instructor_name(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_loginUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_loginUser(ctx, field)
+func (ec *executionContext) _Instructor_organizationId(ctx context.Context, field graphql.CollectedField, obj *model.Instructor) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Instructor_organizationId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2160,7 +2266,51 @@ func (ec *executionContext) _Mutation_loginUser(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().LoginUser(rctx, fc.Args["email"].(string), fc.Args["password"].(string))
+		return obj.OrganizationID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Instructor_organizationId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Instructor",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_login(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().Login(rctx, fc.Args["email"].(string), fc.Args["password"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2177,7 +2327,7 @@ func (ec *executionContext) _Mutation_loginUser(ctx context.Context, field graph
 	return ec.marshalNTokenResponse2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTokenResponse(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_loginUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_login(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -2198,7 +2348,7 @@ func (ec *executionContext) fieldContext_Mutation_loginUser(ctx context.Context,
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_loginUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_login_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -2614,6 +2764,8 @@ func (ec *executionContext) fieldContext_Mutation_createInstructor(ctx context.C
 				return ec.fieldContext_Instructor_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Instructor_name(ctx, field)
+			case "organizationId":
+				return ec.fieldContext_Instructor_organizationId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -2675,6 +2827,8 @@ func (ec *executionContext) fieldContext_Mutation_updateInstructor(ctx context.C
 				return ec.fieldContext_Instructor_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Instructor_name(ctx, field)
+			case "organizationId":
+				return ec.fieldContext_Instructor_organizationId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -3124,6 +3278,195 @@ func (ec *executionContext) fieldContext_Mutation_deletePayment(ctx context.Cont
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deletePayment_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createTime(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateTime(rctx, fc.Args["input"].(model.CreateTimeInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createTime(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Time_id(ctx, field)
+			case "groupId":
+				return ec.fieldContext_Time_groupId(ctx, field)
+			case "day":
+				return ec.fieldContext_Time_day(ctx, field)
+			case "start_hour":
+				return ec.fieldContext_Time_start_hour(ctx, field)
+			case "finish_hour":
+				return ec.fieldContext_Time_finish_hour(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Time", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createTime_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateTime(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateTime(rctx, fc.Args["id"].(string), fc.Args["input"].(model.UpdateTimeInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateTime(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Time_id(ctx, field)
+			case "groupId":
+				return ec.fieldContext_Time_groupId(ctx, field)
+			case "day":
+				return ec.fieldContext_Time_day(ctx, field)
+			case "start_hour":
+				return ec.fieldContext_Time_start_hour(ctx, field)
+			case "finish_hour":
+				return ec.fieldContext_Time_finish_hour(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Time", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateTime_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteTime(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteTime(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteTime(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteTime_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -3920,6 +4263,8 @@ func (ec *executionContext) fieldContext_Query_getInstructor(ctx context.Context
 				return ec.fieldContext_Instructor_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Instructor_name(ctx, field)
+			case "organizationId":
+				return ec.fieldContext_Instructor_organizationId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -3981,6 +4326,8 @@ func (ec *executionContext) fieldContext_Query_listInstructors(ctx context.Conte
 				return ec.fieldContext_Instructor_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Instructor_name(ctx, field)
+			case "organizationId":
+				return ec.fieldContext_Instructor_organizationId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -4042,6 +4389,8 @@ func (ec *executionContext) fieldContext_Query_listInstructorsByOrganization(ctx
 				return ec.fieldContext_Instructor_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Instructor_name(ctx, field)
+			case "organizationId":
+				return ec.fieldContext_Instructor_organizationId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -7207,7 +7556,7 @@ func (ec *executionContext) unmarshalInputUpdateInstructorInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "organization"}
+	fieldsInOrder := [...]string{"name"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7223,15 +7572,6 @@ func (ec *executionContext) unmarshalInputUpdateInstructorInput(ctx context.Cont
 				return it, err
 			}
 			it.Name = data
-		case "organization":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organization"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Organization = data
 		}
 	}
 
@@ -7548,6 +7888,11 @@ func (ec *executionContext) _Instructor(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "organizationId":
+			out.Values[i] = ec._Instructor_organizationId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -7590,9 +7935,9 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
-		case "loginUser":
+		case "login":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_loginUser(ctx, field)
+				return ec._Mutation_login(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -7698,6 +8043,27 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deletePayment":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deletePayment(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createTime":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createTime(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateTime":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateTime(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteTime":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteTime(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -8704,6 +9070,11 @@ func (ec *executionContext) unmarshalNCreatePaymentInput2githubᚗcomᚋyigithan
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateTimeInput2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCreateTimeInput(ctx context.Context, v interface{}) (model.CreateTimeInput, error) {
+	res, err := ec.unmarshalInputCreateTimeInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreateTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCreateTimeInputᚄ(ctx context.Context, v interface{}) ([]*model.CreateTimeInput, error) {
 	var vSlice []interface{}
 	if v != nil {
@@ -9061,6 +9432,10 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
+func (ec *executionContext) marshalNTime2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTime(ctx context.Context, sel ast.SelectionSet, v model.Time) graphql.Marshaler {
+	return ec._Time(ctx, sel, &v)
+}
+
 func (ec *executionContext) marshalNTime2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Time) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -9151,6 +9526,11 @@ func (ec *executionContext) unmarshalNUpdateOrganizationInput2githubᚗcomᚋyig
 
 func (ec *executionContext) unmarshalNUpdatePaymentInput2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdatePaymentInput(ctx context.Context, v interface{}) (model.UpdatePaymentInput, error) {
 	res, err := ec.unmarshalInputUpdatePaymentInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateTimeInput2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdateTimeInput(ctx context.Context, v interface{}) (model.UpdateTimeInput, error) {
+	res, err := ec.unmarshalInputUpdateTimeInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

@@ -1,5 +1,7 @@
 package graph
 
+//go:generate go run github.com/99designs/gqlgen
+
 import (
 	"context"
 
@@ -24,7 +26,11 @@ func NewResolver(store *postgresdb.Store) *Resolver {
 	}
 }
 
-func (r *mutationResolver) CreateOrganizationResolver(ctx context.Context, input model.CreateOrganizationInput) (*model.Organization, error) {
+func (r *mutationResolver) Login(ctx context.Context, email string, password string) (*model.TokenResponse, error) {
+	return nil, nil
+}
+
+func (r *mutationResolver) CreateOrganization(ctx context.Context, input model.CreateOrganizationInput) (*model.Organization, error) {
 	org := &model.Organization{
 		ID:    uuid.New().String(),
 		Name:  input.Name,
@@ -40,7 +46,7 @@ func (r *mutationResolver) CreateOrganizationResolver(ctx context.Context, input
 	return org, nil
 }
 
-func (r *mutationResolver) UpdateOrganizationResolver(ctx context.Context, id string, input model.UpdateOrganizationInput) (*model.Organization, error) {
+func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, input model.UpdateOrganizationInput) (*model.Organization, error) {
 	resp, err := r.Store.Organizations.UpdateOrganization(id, input)
 	if err != nil {
 		return nil, err
@@ -49,7 +55,7 @@ func (r *mutationResolver) UpdateOrganizationResolver(ctx context.Context, id st
 	return resp, nil
 }
 
-func (r *mutationResolver) DeleteOrganizationResolver(ctx context.Context, id string) (bool, error) {
+func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (bool, error) {
 	err := r.Store.Organizations.DeleteOrganization(id)
 	if err != nil {
 		return false, err
@@ -57,7 +63,7 @@ func (r *mutationResolver) DeleteOrganizationResolver(ctx context.Context, id st
 	return true, nil
 }
 
-func (r *mutationResolver) CreateGroupResolver(ctx context.Context, input model.CreateGroupInput) (*model.Group, error) {
+func (r *mutationResolver) CreateGroup(ctx context.Context, input model.CreateGroupInput) (*model.Group, error) {
 
 	group, err := r.Store.CreateGroupWithTimeTx(input)
 	if err != nil {
@@ -67,12 +73,41 @@ func (r *mutationResolver) CreateGroupResolver(ctx context.Context, input model.
 	return group, nil
 }
 
-func (r *mutationResolver) UpdateGroupResolver(ctx context.Context, id string, input model.UpdateGroupInput) (*model.Group, error) {
+func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input model.UpdateGroupInput) (*model.Group, error) {
 	group, err := r.Store.UpdateGroupWithTimeTx(id, input)
 	if err != nil {
 		return nil, err
 	}
 
 	return group, nil
+}
 
+func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (bool, error) {
+	ok, err := r.Store.Groups.DeleteGroup(id)
+
+	return ok, err
+}
+
+func (r *mutationResolver) CreateInstructor(ctx context.Context, input model.CreateInstructorInput) (*model.Instructor, error) {
+	instructor, err := r.Store.Instructors.CreateInstructor(input)
+	if err != nil {
+		return nil, err
+	}
+
+	return instructor, err
+}
+
+func (r *mutationResolver) UpdateInstructor(ctx context.Context, id string, input model.UpdateInstructorInput) (*model.Instructor, error) {
+	instructor, err := r.Store.Instructors.UpdateInstructor(id, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return instructor, err
+}
+
+func (r *mutationResolver) DeleteInstructor(ctx context.Context, id string) (bool, error) {
+	ok, err := r.Store.Instructors.DeleteInstructor(id)
+
+	return ok, err
 }

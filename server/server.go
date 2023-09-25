@@ -4,6 +4,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/yigithancolak/custmate/graph"
 	"github.com/yigithancolak/custmate/postgresdb"
+	"github.com/yigithancolak/custmate/token"
 	"github.com/yigithancolak/custmate/util"
 )
 
@@ -19,7 +20,11 @@ func NewServer(config *util.Config) (*Server, error) {
 		return nil, err
 	}
 
-	store := postgresdb.NewStore(db)
+	jwtMaker, err := token.NewJWTMaker(config.TokenSymmetricKey)
+	if err != nil {
+		return nil, err
+	}
+	store := postgresdb.NewStore(db, jwtMaker)
 	resolver := graph.NewResolver(store)
 	gqlServer := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))
 

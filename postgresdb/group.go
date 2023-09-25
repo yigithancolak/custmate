@@ -67,3 +67,13 @@ func (s *GroupStore) UpdateGroup(tx *sql.Tx, id string, input *model.UpdateGroup
 	return &group, nil
 
 }
+
+func (s *GroupStore) DeleteGroup(id string) (bool, error) {
+	query := "DELETE FROM org_groups WHERE id = $1"
+	_, err := s.DB.Exec(query, id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}

@@ -8,90 +8,103 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/yigithancolak/custmate/graph/model"
 )
 
-// LoginUser is the resolver for the loginUser field.
-func (r *mutationResolver) LoginUser(ctx context.Context, email string, password string) (*model.TokenResponse, error) {
-	panic(fmt.Errorf("not implemented: LoginUser - loginUser"))
-}
+// // Login is the resolver for the login field.
+// func (r *mutationResolver) Login(ctx context.Context, email string, password string) (*model.TokenResponse, error) {
+// 	panic(fmt.Errorf("not implemented: Login - login"))
+// }
 
-// CreateOrganization is the resolver for the createOrganization field.
-func (r *mutationResolver) CreateOrganization(ctx context.Context, input model.CreateOrganizationInput) (*model.Organization, error) {
-	org := &model.Organization{
-		ID:    uuid.New().String(),
-		Name:  input.Name,
-		Email: input.Email,
-	}
+// // CreateOrganization is the resolver for the createOrganization field.
+// func (r *mutationResolver) CreateOrganization(ctx context.Context, input model.CreateOrganizationInput) (*model.Organization, error) {
+// 	org := &model.Organization{
+// 		ID:    uuid.New().String(),
+// 		Name:  input.Name,
+// 		Email: input.Email,
+// 	}
 
-	// Insert into the database
-	err := r.Store.Organizations.CreateOrganization(org, input.Password)
-	if err != nil {
-		return nil, err
-	}
+// 	// Insert into the database
+// 	err := r.Store.Organizations.CreateOrganization(org, input.Password)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return org, nil
-}
+// 	return org, nil
+// }
 
-// UpdateOrganization is the resolver for the updateOrganization field.
-func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, input model.UpdateOrganizationInput) (*model.Organization, error) {
-	resp, err := r.Store.Organizations.UpdateOrganization(id, input)
-	if err != nil {
-		return nil, err
-	}
+// // UpdateOrganization is the resolver for the updateOrganization field.
+// func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, input model.UpdateOrganizationInput) (*model.Organization, error) {
+// 	resp, err := r.Store.Organizations.UpdateOrganization(id, input)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return resp, nil
-}
+// 	return resp, nil
+// }
 
-// DeleteOrganization is the resolver for the deleteOrganization field.
-func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (bool, error) {
-	err := r.Store.Organizations.DeleteOrganization(id)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
+// // DeleteOrganization is the resolver for the deleteOrganization field.
+// func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (bool, error) {
+// 	err := r.Store.Organizations.DeleteOrganization(id)
+// 	if err != nil {
+// 		return false, err
+// 	}
+// 	return true, nil
+// }
 
-// CreateGroup is the resolver for the createGroup field.
-func (r *mutationResolver) CreateGroup(ctx context.Context, input model.CreateGroupInput) (*model.Group, error) {
-	group, err := r.Store.CreateGroupWithTimeTx(input)
-	if err != nil {
-		return nil, err
-	}
+// // CreateGroup is the resolver for the createGroup field.
+// func (r *mutationResolver) CreateGroup(ctx context.Context, input model.CreateGroupInput) (*model.Group, error) {
+// 	group, err := r.Store.CreateGroupWithTimeTx(input)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return group, nil
-}
+// 	return group, nil
+// }
 
-// UpdateGroup is the resolver for the updateGroup field.
-func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input model.UpdateGroupInput) (*model.Group, error) {
-	group, err := r.Store.UpdateGroupWithTimeTx(id, input)
-	if err != nil {
-		return nil, err
-	}
+// // UpdateGroup is the resolver for the updateGroup field.
+// func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input model.UpdateGroupInput) (*model.Group, error) {
+// 	group, err := r.Store.UpdateGroupWithTimeTx(id, input)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return group, nil
-}
+// 	return group, nil
+// }
 
-// DeleteGroup is the resolver for the deleteGroup field.
-func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteGroup - deleteGroup"))
-}
+// // DeleteGroup is the resolver for the deleteGroup field.
+// func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (bool, error) {
+// 	ok, err := r.Store.Groups.DeleteGroup(id)
 
-// CreateInstructor is the resolver for the createInstructor field.
-func (r *mutationResolver) CreateInstructor(ctx context.Context, input model.CreateInstructorInput) (*model.Instructor, error) {
-	panic(fmt.Errorf("not implemented: CreateInstructor - createInstructor"))
-}
+// 	return ok, err
+// }
 
-// UpdateInstructor is the resolver for the updateInstructor field.
-func (r *mutationResolver) UpdateInstructor(ctx context.Context, id string, input model.UpdateInstructorInput) (*model.Instructor, error) {
-	panic(fmt.Errorf("not implemented: UpdateInstructor - updateInstructor"))
-}
+// // CreateInstructor is the resolver for the createInstructor field.
+// func (r *mutationResolver) CreateInstructor(ctx context.Context, input model.CreateInstructorInput) (*model.Instructor, error) {
+// 	instructor, err := r.Store.Instructors.CreateInstructor(input)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-// DeleteInstructor is the resolver for the deleteInstructor field.
-func (r *mutationResolver) DeleteInstructor(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteInstructor - deleteInstructor"))
-}
+// 	return instructor, err
+// }
+
+// // UpdateInstructor is the resolver for the updateInstructor field.
+// func (r *mutationResolver) UpdateInstructor(ctx context.Context, id string, input model.UpdateInstructorInput) (*model.Instructor, error) {
+// 	instructor, err := r.Store.Instructors.UpdateInstructor(id, input)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return instructor, err
+// }
+
+// // DeleteInstructor is the resolver for the deleteInstructor field.
+// func (r *mutationResolver) DeleteInstructor(ctx context.Context, id string) (bool, error) {
+// 	ok, err := r.Store.Instructors.DeleteInstructor(id)
+
+// 	return ok, err
+// }
 
 // CreateCustomer is the resolver for the createCustomer field.
 func (r *mutationResolver) CreateCustomer(ctx context.Context, input model.CreateCustomerInput) (*model.Customer, error) {
@@ -121,6 +134,21 @@ func (r *mutationResolver) UpdatePayment(ctx context.Context, id string, input m
 // DeletePayment is the resolver for the deletePayment field.
 func (r *mutationResolver) DeletePayment(ctx context.Context, id string) (bool, error) {
 	panic(fmt.Errorf("not implemented: DeletePayment - deletePayment"))
+}
+
+// CreateTime is the resolver for the createTime field.
+func (r *mutationResolver) CreateTime(ctx context.Context, input model.CreateTimeInput) (*model.Time, error) {
+	panic(fmt.Errorf("not implemented: CreateTime - createTime"))
+}
+
+// UpdateTime is the resolver for the updateTime field.
+func (r *mutationResolver) UpdateTime(ctx context.Context, id string, input model.UpdateTimeInput) (*model.Time, error) {
+	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
+}
+
+// DeleteTime is the resolver for the deleteTime field.
+func (r *mutationResolver) DeleteTime(ctx context.Context, id string) (bool, error) {
+	panic(fmt.Errorf("not implemented: DeleteTime - deleteTime"))
 }
 
 // GetOrganization is the resolver for the getOrganization field.
@@ -211,3 +239,13 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *mutationResolver) LoginUser(ctx context.Context, email string, password string) (*model.TokenResponse, error) {
+	panic(fmt.Errorf("not implemented: LoginUser - loginUser"))
+}
