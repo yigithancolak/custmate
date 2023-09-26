@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/yigithancolak/custmate/graph/model"
 	"github.com/yigithancolak/custmate/token"
@@ -45,10 +46,17 @@ func (s *OrganizationStore) LoginOrganization(email, password string) (*model.To
 	return &model.TokenResponse{AccessToken: accessToken}, nil
 }
 
-func (s *OrganizationStore) CreateOrganization(org *model.Organization, password string) error {
-	query := `INSERT INTO organizations (id, name, email, password) VALUES ($1, $2, $3, $4)`
-	_, err := s.DB.Exec(query, org.ID, org.Name, org.Email, password)
-	return err
+func (s *OrganizationStore) CreateOrganization(input model.CreateOrganizationInput) (*model.Organization, error) {
+	query := `INSERT INTO organizations (id, name, email, password) VALUES ($1, $2, $3, $4) RETURNING id, name, email`
+	hashedPassword, err := util.HashPassword(input.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	orgId := uuid.New().String()
+	var org model.Organization
+	err = s.DB.QueryRow(query, orgId, input.Name, input.Email, hashedPassword).Scan(&org.ID, &org.Name, &org.Email)
+	return &org, nil
 }
 
 func (s *OrganizationStore) UpdateOrganization(orgID string, input model.UpdateOrganizationInput) (*model.Organization, error) {

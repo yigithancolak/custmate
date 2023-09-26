@@ -13,19 +13,16 @@ import (
 
 // // Login is the resolver for the login field.
 // func (r *mutationResolver) Login(ctx context.Context, email string, password string) (*model.TokenResponse, error) {
-// 	panic(fmt.Errorf("not implemented: Login - login"))
+// 	tokenResponse, err := r.Store.Organizations.LoginOrganization(email, password)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return tokenResponse, nil
 // }
 
 // // CreateOrganization is the resolver for the createOrganization field.
 // func (r *mutationResolver) CreateOrganization(ctx context.Context, input model.CreateOrganizationInput) (*model.Organization, error) {
-// 	org := &model.Organization{
-// 		ID:    uuid.New().String(),
-// 		Name:  input.Name,
-// 		Email: input.Email,
-// 	}
-
-// 	// Insert into the database
-// 	err := r.Store.Organizations.CreateOrganization(org, input.Password)
+// 	org, err := r.Store.Organizations.CreateOrganization(input)
 // 	if err != nil {
 // 		return nil, err
 // 	}

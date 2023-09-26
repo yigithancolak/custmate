@@ -5,7 +5,6 @@ package graph
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/yigithancolak/custmate/graph/model"
 	"github.com/yigithancolak/custmate/postgresdb"
 )
@@ -35,14 +34,8 @@ func (r *mutationResolver) Login(ctx context.Context, email string, password str
 }
 
 func (r *mutationResolver) CreateOrganization(ctx context.Context, input model.CreateOrganizationInput) (*model.Organization, error) {
-	org := &model.Organization{
-		ID:    uuid.New().String(),
-		Name:  input.Name,
-		Email: input.Email,
-	}
 
-	// Insert into the database
-	err := r.Store.Organizations.CreateOrganization(org, input.Password)
+	org, err := r.Store.Organizations.CreateOrganization(input)
 	if err != nil {
 		return nil, err
 	}
