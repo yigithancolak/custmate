@@ -15,7 +15,7 @@ CREATE TABLE org_groups (
     id UUID PRIMARY KEY,
     name VARCHAR NOT NULL,
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-    instructor_id UUID NOT NULL REFERENCES instructors(id)
+    instructor_id UUID NOT NULL REFERENCES instructors(id) ON DELETE CASCADE
 );
 
 CREATE TYPE days_of_week AS ENUM ('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday');
