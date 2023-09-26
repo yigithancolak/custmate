@@ -20,16 +20,19 @@ func NewTimeStore(db *sqlx.DB) *TimeStore {
 	}
 }
 
-func (s *TimeStore) CreateTime(groupId string, input *model.CreateTimeInput) (*model.Time, error) {
+func (s *TimeStore) CreateTime(tx *sql.Tx, groupId string, input *model.CreateTimeInput) (*model.Time, error) {
 	query := `INSERT INTO times (id, org_group_id, day, start_hour, finish_hour) VALUES ($1, $2, $3, $4, $5) RETURNING *`
 
 	timeId := uuid.New().String() // Assuming you use UUID for your 'id' column
 
 	time := &model.Time{}
-	err := s.DB.QueryRow(query, timeId, groupId, input.Day, input.StartHour, input.FinishHour).Scan(&time.ID, &time.GroupID, &time.Day, &time.StartHour, &time.FinishHour)
+	err := tx.QueryRow(query, timeId, groupId, input.Day, input.StartHour, input.FinishHour).Scan(&time.ID, &time.GroupID, &time.Day, &time.StartHour, &time.FinishHour)
 
 	if err != nil {
-		return nil, err
+		if rbErr := tx.Rollback(); rbErr != nil {
+			return nil, fmt.Errorf("%w: %v", ErrRollbackTransaction, rbErr)
+		}
+		return nil, fmt.Errorf("%w: %v", ErrCreateTime, err)
 	}
 	return time, nil
 }

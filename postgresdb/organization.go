@@ -56,6 +56,9 @@ func (s *OrganizationStore) CreateOrganization(input model.CreateOrganizationInp
 	orgId := uuid.New().String()
 	var org model.Organization
 	err = s.DB.QueryRow(query, orgId, input.Name, input.Email, hashedPassword).Scan(&org.ID, &org.Name, &org.Email)
+	if err != nil {
+		return nil, err
+	}
 	return &org, nil
 }
 

@@ -4,25 +4,25 @@ import (
 	"github.com/yigithancolak/custmate/graph/model"
 )
 
-func (s *Store) CreateGroupWithTimeTx(group model.CreateGroupInput) (*model.Group, error) {
+func (s *Store) CreateGroupWithTimeTx(input model.CreateGroupInput) (*model.Group, error) {
+
 	tx, err := s.DB.Begin()
 	if err != nil {
-		return nil, err
+		return nil, ErrBeginTransaction
 	}
-
-	createdGroup, err := s.Groups.CreateGroup(&group)
+	createdGroup, err := s.Groups.CreateGroup(tx, &input)
 	if err != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {
-			return nil, rbErr
+			return nil, ErrRollbackTransaction
 		}
 		return nil, err
 	}
 
-	for _, t := range group.Times {
-		createdTime, err := s.Time.CreateTime(createdGroup.ID, t)
+	for _, t := range input.Times {
+		createdTime, err := s.Time.CreateTime(tx, createdGroup.ID, t)
 		if err != nil {
 			if rbErr := tx.Rollback(); rbErr != nil {
-				return nil, rbErr
+				return nil, ErrRollbackTransaction
 			}
 			return nil, err
 		}
@@ -31,7 +31,7 @@ func (s *Store) CreateGroupWithTimeTx(group model.CreateGroupInput) (*model.Grou
 
 	if err = tx.Commit(); err != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {
-			return nil, rbErr
+			return nil, ErrRollbackTransaction
 		}
 		return nil, err
 	}
