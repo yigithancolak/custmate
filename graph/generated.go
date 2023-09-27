@@ -42,6 +42,7 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
+	Auth func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
@@ -2431,8 +2432,28 @@ func (ec *executionContext) _Mutation_updateOrganization(ctx context.Context, fi
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateOrganization(rctx, fc.Args["id"].(string), fc.Args["input"].(model.UpdateOrganizationInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateOrganization(rctx, fc.Args["id"].(string), fc.Args["input"].(model.UpdateOrganizationInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Organization); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yigithancolak/custmate/graph/model.Organization`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2494,8 +2515,28 @@ func (ec *executionContext) _Mutation_deleteOrganization(ctx context.Context, fi
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteOrganization(rctx, fc.Args["id"].(string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteOrganization(rctx, fc.Args["id"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2549,8 +2590,28 @@ func (ec *executionContext) _Mutation_createGroup(ctx context.Context, field gra
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateGroup(rctx, fc.Args["input"].(model.CreateGroupInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateGroup(rctx, fc.Args["input"].(model.CreateGroupInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Group); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yigithancolak/custmate/graph/model.Group`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7191,7 +7252,7 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "organization", "instructor", "times"}
+	fieldsInOrder := [...]string{"name", "instructor", "times"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7207,15 +7268,6 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.Name = data
-		case "organization":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organization"))
-			data, err := ec.unmarshalNID2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Organization = data
 		case "instructor":
 			var err error
 

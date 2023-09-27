@@ -4,8 +4,10 @@ package graph
 
 import (
 	"context"
+	"log"
 
 	"github.com/yigithancolak/custmate/graph/model"
+	"github.com/yigithancolak/custmate/middleware"
 	"github.com/yigithancolak/custmate/postgresdb"
 )
 
@@ -26,6 +28,7 @@ func NewResolver(store *postgresdb.Store) *Resolver {
 }
 
 func (r *mutationResolver) Login(ctx context.Context, email string, password string) (*model.TokenResponse, error) {
+
 	tokenResponse, err := r.Store.Organizations.LoginOrganization(email, password)
 	if err != nil {
 		return nil, err
@@ -62,7 +65,10 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (b
 
 func (r *mutationResolver) CreateGroup(ctx context.Context, input model.CreateGroupInput) (*model.Group, error) {
 
-	group, err := r.Store.CreateGroupWithTimeTx(input)
+	org := middleware.ForContext(ctx)
+	log.Printf("%+v", org)
+
+	group, err := r.Store.CreateGroupWithTimeTx(input, org.ID)
 	if err != nil {
 		return nil, err
 	}

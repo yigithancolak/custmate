@@ -2,6 +2,11 @@
 #
 # https://gqlgen.com/getting-started/
 
+# directive @goField(forceResolver: Boolean, name: String) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+# new directive
+directive @auth on FIELD_DEFINITION
+
 type Organization {
   id: ID!
   name: String!
@@ -114,10 +119,11 @@ type Mutation {
   # Organization
   createOrganization(input: CreateOrganizationInput!): Organization!
   updateOrganization(id: ID!, input: UpdateOrganizationInput!): Organization!
-  deleteOrganization(id: ID!): Boolean!
+    @auth
+  deleteOrganization(id: ID!): Boolean! @auth
 
   # Group
-  createGroup(input: CreateGroupInput!): Group!
+  createGroup(input: CreateGroupInput!): Group! @auth
   updateGroup(id: ID!, input: UpdateGroupInput!): Group!
   deleteGroup(id: ID!): Boolean!
 
@@ -158,7 +164,6 @@ input UpdateOrganizationInput {
 # Input for Group
 input CreateGroupInput {
   name: String!
-  organization: ID!
   instructor: ID!
   times: [CreateTimeInput!]!
 }

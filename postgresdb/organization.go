@@ -24,6 +24,19 @@ func NewOrganizationStore(db *sqlx.DB, jwtMaker *token.JWTMaker) *OrganizationSt
 	}
 }
 
+func (s *OrganizationStore) GetOrganizationById(id string) (*model.Organization, error) {
+	query := "SELECT id,name,email FROM organizations"
+
+	var organization model.Organization
+	err := s.DB.QueryRow(query).Scan(&organization.ID, &organization.Name, &organization.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	return &organization, err
+
+}
+
 func (s *OrganizationStore) LoginOrganization(email, password string) (*model.TokenResponse, error) {
 	query := "SELECT id,password FROM organizations WHERE email = $1"
 

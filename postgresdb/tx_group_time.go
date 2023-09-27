@@ -4,13 +4,13 @@ import (
 	"github.com/yigithancolak/custmate/graph/model"
 )
 
-func (s *Store) CreateGroupWithTimeTx(input model.CreateGroupInput) (*model.Group, error) {
+func (s *Store) CreateGroupWithTimeTx(input model.CreateGroupInput, organizationID string) (*model.Group, error) {
 
 	tx, err := s.DB.Begin()
 	if err != nil {
 		return nil, ErrBeginTransaction
 	}
-	createdGroup, err := s.Groups.CreateGroup(tx, &input)
+	createdGroup, err := s.Groups.CreateGroup(tx, &input, organizationID)
 	if err != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {
 			return nil, ErrRollbackTransaction

@@ -11,9 +11,7 @@ import (
 )
 
 func main() {
-
 	config, err := util.LoadConfig(".", "development", "env")
-
 	if err != nil {
 		log.Fatalf("error while loading config: %v", err)
 	}
@@ -23,9 +21,9 @@ func main() {
 		log.Fatalf("error while creating server: %v", err)
 	}
 
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv.GraphQL)
+	srv.Router.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	srv.Router.Handle("/query", srv.GraphQL)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", config.Port)
-	log.Fatal(http.ListenAndServe(":"+config.Port, nil))
+	log.Fatal(http.ListenAndServe(":"+config.Port, srv.Router))
 }

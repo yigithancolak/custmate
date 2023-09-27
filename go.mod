@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/99designs/gqlgen v0.17.38
+	github.com/go-chi/chi v1.5.5
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/jackc/pgx v3.6.2+incompatible

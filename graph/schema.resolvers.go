@@ -51,7 +51,10 @@ import (
 
 // // CreateGroup is the resolver for the createGroup field.
 // func (r *mutationResolver) CreateGroup(ctx context.Context, input model.CreateGroupInput) (*model.Group, error) {
-// 	group, err := r.Store.CreateGroupWithTimeTx(input)
+// 	org := middleware.ForContext(ctx)
+// 	log.Printf("%+v", org)
+
+// 	group, err := r.Store.CreateGroupWithTimeTx(input, org.ID)
 // 	if err != nil {
 // 		return nil, err
 // 	}

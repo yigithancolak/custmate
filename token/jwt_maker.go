@@ -42,13 +42,11 @@ func (maker JWTMaker) CreateToken(id string, duration time.Duration) (string, *P
 }
 
 func (maker *JWTMaker) VerifyToken(token string) (*Payload, error) {
-
 	keyFunc := func(token *jwt.Token) (interface{}, error) {
 		_, ok := token.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
 			return nil, ErrInvalidToken
 		}
-
 		return []byte(maker.secretKey), nil
 	}
 

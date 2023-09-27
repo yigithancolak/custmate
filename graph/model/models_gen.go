@@ -11,10 +11,9 @@ type CreateCustomerInput struct {
 }
 
 type CreateGroupInput struct {
-	Name         string             `json:"name"`
-	Organization string             `json:"organization"`
-	Instructor   string             `json:"instructor"`
-	Times        []*CreateTimeInput `json:"times"`
+	Name       string             `json:"name"`
+	Instructor string             `json:"instructor"`
+	Times      []*CreateTimeInput `json:"times"`
 }
 
 type CreateInstructorInput struct {

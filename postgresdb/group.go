@@ -20,13 +20,13 @@ func NewGroupStore(db *sqlx.DB) *GroupStore {
 	}
 }
 
-func (s *GroupStore) CreateGroup(tx *sql.Tx, input *model.CreateGroupInput) (*model.Group, error) {
+func (s *GroupStore) CreateGroup(tx *sql.Tx, input *model.CreateGroupInput, organizationID string) (*model.Group, error) {
 	query := `INSERT INTO org_groups (id, name, organization_id, instructor_id) VALUES ($1, $2, $3, $4) RETURNING id, name`
 
 	groupId := uuid.New().String()
 
 	group := &model.Group{}
-	err := tx.QueryRow(query, groupId, input.Name, input.Organization, input.Instructor).Scan(&group.ID, &group.Name)
+	err := tx.QueryRow(query, groupId, input.Name, organizationID, input.Instructor).Scan(&group.ID, &group.Name)
 	if err != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {
 			return nil, ErrRollbackTransaction
