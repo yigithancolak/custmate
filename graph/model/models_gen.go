@@ -4,6 +4,7 @@ package model
 
 type CreateCustomerInput struct {
 	Name        string   `json:"name"`
+	PhoneNumber string   `json:"phoneNumber"`
 	Groups      []string `json:"groups"`
 	LastPayment string   `json:"lastPayment"`
 	NextPayment string   `json:"nextPayment"`
@@ -41,6 +42,7 @@ type CreateTimeInput struct {
 type Customer struct {
 	ID          string   `json:"id"`
 	Name        string   `json:"name"`
+	PhoneNumber string   `json:"phoneNumber"`
 	Groups      []*Group `json:"groups"`
 	LastPayment string   `json:"lastPayment"`
 	NextPayment string   `json:"nextPayment"`
@@ -88,6 +90,7 @@ type TokenResponse struct {
 
 type UpdateCustomerInput struct {
 	Name        *string   `json:"name,omitempty"`
+	PhoneNumber *string   `json:"phoneNumber,omitempty"`
 	Groups      []*string `json:"groups,omitempty"`
 	LastPayment *string   `json:"lastPayment,omitempty"`
 	NextPayment *string   `json:"nextPayment,omitempty"`

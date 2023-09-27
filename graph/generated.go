@@ -52,6 +52,7 @@ type ComplexityRoot struct {
 		LastPayment func(childComplexity int) int
 		Name        func(childComplexity int) int
 		NextPayment func(childComplexity int) int
+		PhoneNumber func(childComplexity int) int
 	}
 
 	Group struct {
@@ -219,6 +220,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Customer.NextPayment(childComplexity), true
+
+	case "Customer.phoneNumber":
+		if e.complexity.Customer.PhoneNumber == nil {
+			break
+		}
+
+		return e.complexity.Customer.PhoneNumber(childComplexity), true
 
 	case "Group.id":
 		if e.complexity.Group.ID == nil {
@@ -1628,6 +1636,50 @@ func (ec *executionContext) fieldContext_Customer_name(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Customer_phoneNumber(ctx context.Context, field graphql.CollectedField, obj *model.Customer) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Customer_phoneNumber(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PhoneNumber, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Customer_phoneNumber(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Customer",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Customer_groups(ctx context.Context, field graphql.CollectedField, obj *model.Customer) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Customer_groups(ctx, field)
 	if err != nil {
@@ -2916,6 +2968,8 @@ func (ec *executionContext) fieldContext_Mutation_createCustomer(ctx context.Con
 				return ec.fieldContext_Customer_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Customer_name(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_Customer_phoneNumber(ctx, field)
 			case "groups":
 				return ec.fieldContext_Customer_groups(ctx, field)
 			case "lastPayment":
@@ -3003,6 +3057,8 @@ func (ec *executionContext) fieldContext_Mutation_updateCustomer(ctx context.Con
 				return ec.fieldContext_Customer_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Customer_name(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_Customer_phoneNumber(ctx, field)
 			case "groups":
 				return ec.fieldContext_Customer_groups(ctx, field)
 			case "lastPayment":
@@ -3911,6 +3967,8 @@ func (ec *executionContext) fieldContext_Payment_customer(ctx context.Context, f
 				return ec.fieldContext_Customer_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Customer_name(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_Customer_phoneNumber(ctx, field)
 			case "groups":
 				return ec.fieldContext_Customer_groups(ctx, field)
 			case "lastPayment":
@@ -4584,6 +4642,8 @@ func (ec *executionContext) fieldContext_Query_getCustomer(ctx context.Context, 
 				return ec.fieldContext_Customer_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Customer_name(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_Customer_phoneNumber(ctx, field)
 			case "groups":
 				return ec.fieldContext_Customer_groups(ctx, field)
 			case "lastPayment":
@@ -4671,6 +4731,8 @@ func (ec *executionContext) fieldContext_Query_listCustomersByGroup(ctx context.
 				return ec.fieldContext_Customer_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Customer_name(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_Customer_phoneNumber(ctx, field)
 			case "groups":
 				return ec.fieldContext_Customer_groups(ctx, field)
 			case "lastPayment":
@@ -4758,6 +4820,8 @@ func (ec *executionContext) fieldContext_Query_listCustomersByOrganization(ctx c
 				return ec.fieldContext_Customer_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Customer_name(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_Customer_phoneNumber(ctx, field)
 			case "groups":
 				return ec.fieldContext_Customer_groups(ctx, field)
 			case "lastPayment":
@@ -7311,7 +7375,7 @@ func (ec *executionContext) unmarshalInputCreateCustomerInput(ctx context.Contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "groups", "lastPayment", "nextPayment"}
+	fieldsInOrder := [...]string{"name", "phoneNumber", "groups", "lastPayment", "nextPayment"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7327,6 +7391,15 @@ func (ec *executionContext) unmarshalInputCreateCustomerInput(ctx context.Contex
 				return it, err
 			}
 			it.Name = data
+		case "phoneNumber":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumber"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumber = data
 		case "groups":
 			var err error
 
@@ -7593,7 +7666,7 @@ func (ec *executionContext) unmarshalInputUpdateCustomerInput(ctx context.Contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "groups", "lastPayment", "nextPayment"}
+	fieldsInOrder := [...]string{"name", "phoneNumber", "groups", "lastPayment", "nextPayment"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7609,6 +7682,15 @@ func (ec *executionContext) unmarshalInputUpdateCustomerInput(ctx context.Contex
 				return it, err
 			}
 			it.Name = data
+		case "phoneNumber":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumber"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumber = data
 		case "groups":
 			var err error
 
@@ -7903,6 +7985,11 @@ func (ec *executionContext) _Customer(ctx context.Context, sel ast.SelectionSet,
 			}
 		case "name":
 			out.Values[i] = ec._Customer_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "phoneNumber":
+			out.Values[i] = ec._Customer_phoneNumber(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

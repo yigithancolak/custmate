@@ -31,6 +31,9 @@ CREATE TABLE times (
 CREATE TABLE customers (
     id UUID PRIMARY KEY,
     name VARCHAR NOT NULL,
+    phone_number VARCHAR NOT NULL,
+    last_payment DATE DEFAULT CURRENT_DATE,
+    next_payment DATE NOT NULL,
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     active BOOLEAN NOT NULL DEFAULT TRUE
 );

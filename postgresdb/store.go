@@ -11,6 +11,7 @@ type Store struct {
 	Groups        *GroupStore
 	Time          *TimeStore
 	Instructors   *InstructorStore
+	Customers     *CustomerStore
 	JWTMaker      *token.JWTMaker
 }
 
@@ -21,5 +22,6 @@ func NewStore(db *sqlx.DB, jwtMaker *token.JWTMaker) *Store {
 		Groups:        NewGroupStore(db),
 		Time:          NewTimeStore(db),
 		Instructors:   NewInstructorStore(db),
+		Customers:     NewCustomerStore(db),
 	}
 }

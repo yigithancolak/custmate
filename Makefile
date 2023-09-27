@@ -26,6 +26,10 @@ migrateup:
 migratedown:
 	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose down
 
+migratezero:
+	migrate -path ${MIGRATION_PATH} -database "${DB_URL}" force 0
+
+
 create-migration:
 	@migrate create -ext sql -dir $(MIGRATION_PATH) -seq $(name)
 

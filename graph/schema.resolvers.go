@@ -32,7 +32,9 @@ import (
 
 // // UpdateOrganization is the resolver for the updateOrganization field.
 // func (r *mutationResolver) UpdateOrganization(ctx context.Context, input model.UpdateOrganizationInput) (*model.Organization, error) {
-// 	resp, err := r.Store.Organizations.UpdateOrganization(id, input)
+// 	org := middleware.ForContext(ctx)
+
+// 	resp, err := r.Store.Organizations.UpdateOrganization(org.ID, input)
 // 	if err != nil {
 // 		return nil, err
 // 	}
@@ -42,7 +44,9 @@ import (
 
 // // DeleteOrganization is the resolver for the deleteOrganization field.
 // func (r *mutationResolver) DeleteOrganization(ctx context.Context) (bool, error) {
-// 	err := r.Store.Organizations.DeleteOrganization(id)
+// 	org := middleware.ForContext(ctx)
+
+// 	err := r.Store.Organizations.DeleteOrganization(org.ID)
 // 	if err != nil {
 // 		return false, err
 // 	}
@@ -52,7 +56,6 @@ import (
 // // CreateGroup is the resolver for the createGroup field.
 // func (r *mutationResolver) CreateGroup(ctx context.Context, input model.CreateGroupInput) (*model.Group, error) {
 // 	org := middleware.ForContext(ctx)
-// 	log.Printf("%+v", org)
 
 // 	group, err := r.Store.CreateGroupWithTimeTx(input, org.ID)
 // 	if err != nil {
@@ -81,7 +84,8 @@ import (
 
 // // CreateInstructor is the resolver for the createInstructor field.
 // func (r *mutationResolver) CreateInstructor(ctx context.Context, input model.CreateInstructorInput) (*model.Instructor, error) {
-// 	instructor, err := r.Store.Instructors.CreateInstructor(input)
+// 	org := middleware.ForContext(ctx)
+// 	instructor, err := r.Store.Instructors.CreateInstructor(org.ID, input)
 // 	if err != nil {
 // 		return nil, err
 // 	}
@@ -107,9 +111,9 @@ import (
 // }
 
 // CreateCustomer is the resolver for the createCustomer field.
-func (r *mutationResolver) CreateCustomer(ctx context.Context, input model.CreateCustomerInput) (*model.Customer, error) {
-	panic(fmt.Errorf("not implemented: CreateCustomer - createCustomer"))
-}
+// func (r *mutationResolver) CreateCustomer(ctx context.Context, input model.CreateCustomerInput) (*model.Customer, error) {
+// 	panic(fmt.Errorf("not implemented: CreateCustomer - createCustomer"))
+// }
 
 // UpdateCustomer is the resolver for the updateCustomer field.
 func (r *mutationResolver) UpdateCustomer(ctx context.Context, id string, input model.UpdateCustomerInput) (*model.Customer, error) {
@@ -224,10 +228,3 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.

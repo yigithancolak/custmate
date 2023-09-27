@@ -37,6 +37,7 @@ type Group {
 type Customer {
   id: ID!
   name: String!
+  phoneNumber: String!
   groups: [Group!]!
   lastPayment: String!
   nextPayment: String!
@@ -171,6 +172,7 @@ input UpdateInstructorInput {
 # Input for Customer
 input CreateCustomerInput {
   name: String!
+  phoneNumber: String!
   groups: [ID!]!
   lastPayment: String!
   nextPayment: String!
@@ -178,6 +180,7 @@ input CreateCustomerInput {
 
 input UpdateCustomerInput {
   name: String
+  phoneNumber: String
   groups: [ID]
   lastPayment: String
   nextPayment: String

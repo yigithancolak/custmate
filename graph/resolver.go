@@ -117,3 +117,7 @@ func (r *mutationResolver) DeleteInstructor(ctx context.Context, id string) (boo
 
 	return ok, err
 }
+
+func (r *mutationResolver) CreateCustomer(ctx context.Context, input model.CreateCustomerInput) (*model.Customer, error) {
+	//todo
+}
