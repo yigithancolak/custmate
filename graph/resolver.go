@@ -119,5 +119,12 @@ func (r *mutationResolver) DeleteInstructor(ctx context.Context, id string) (boo
 }
 
 func (r *mutationResolver) CreateCustomer(ctx context.Context, input model.CreateCustomerInput) (*model.Customer, error) {
-	//todo
+	org := middleware.ForContext(ctx)
+
+	customer, err := r.Store.CreateCustomerWithTx(&input, org.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return customer, nil
 }
