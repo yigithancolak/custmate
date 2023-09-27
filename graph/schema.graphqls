@@ -58,58 +58,44 @@ type TokenResponse {
 
 type Query {
   # Organization
-  getOrganization(id: ID!): Organization!
-  listOrganizations(offset: Int = 0, limit: Int = 10): [Organization!]!
+  getOrganization: Organization! @auth
 
   # Group
-  getGroup(id: ID!): Group!
-  listGroups(offset: Int = 0, limit: Int = 10): [Group!]!
-  listGroupsByOrganization(
-    orgId: ID!
-    offset: Int = 0
-    limit: Int = 10
-  ): [Group!]!
+  getGroup(id: ID!): Group! @auth
+  listGroupsByOrganization(offset: Int = 0, limit: Int = 10): [Group!]! @auth
 
   # Instructor
-  getInstructor(id: ID!): Instructor!
-  listInstructors(offset: Int = 0, limit: Int = 10): [Instructor!]!
+  getInstructor(id: ID!): Instructor! @auth
+  listInstructors(offset: Int = 0, limit: Int = 10): [Instructor!]! @auth
   listInstructorsByOrganization(
-    orgId: ID!
     offset: Int = 0
     limit: Int = 10
-  ): [Instructor!]!
+  ): [Instructor!]! @auth
 
   # Customer
-  getCustomer(id: ID!): Customer!
-  listCustomers(offset: Int = 0, limit: Int = 10): [Customer!]!
+  getCustomer(id: ID!): Customer! @auth
   listCustomersByGroup(
     groupId: ID!
     offset: Int = 0
     limit: Int = 10
-  ): [Customer!]!
-  listCustomersByOrganization(
-    orgId: ID!
-    offset: Int = 0
-    limit: Int = 10
-  ): [Customer!]!
+  ): [Customer!]! @auth
+  listCustomersByOrganization(offset: Int = 0, limit: Int = 10): [Customer!]!
+    @auth
 
   #Payment
-  getPayment(id: ID!): Payment!
-  listPaymentsByOrganization(
-    organizationId: ID!
-    offset: Int = 0
-    limit: Int = 10
-  ): [Payment!]!
+  getPayment(id: ID!): Payment! @auth
+  listPaymentsByOrganization(offset: Int = 0, limit: Int = 10): [Payment!]!
+    @auth
   listPaymentsByGroup(
     groupId: ID!
     offset: Int = 0
     limit: Int = 10
-  ): [Payment!]!
+  ): [Payment!]! @auth
   listPaymentsByCustomer(
     customerId: ID!
     offset: Int = 0
     limit: Int = 10
-  ): [Payment!]!
+  ): [Payment!]! @auth
 }
 
 type Mutation {
@@ -118,34 +104,33 @@ type Mutation {
 
   # Organization
   createOrganization(input: CreateOrganizationInput!): Organization!
-  updateOrganization(id: ID!, input: UpdateOrganizationInput!): Organization!
-    @auth
-  deleteOrganization(id: ID!): Boolean! @auth
+  updateOrganization(input: UpdateOrganizationInput!): Organization! @auth
+  deleteOrganization: Boolean! @auth
 
   # Group
   createGroup(input: CreateGroupInput!): Group! @auth
-  updateGroup(id: ID!, input: UpdateGroupInput!): Group!
-  deleteGroup(id: ID!): Boolean!
+  updateGroup(id: ID!, input: UpdateGroupInput!): Group! @auth
+  deleteGroup(id: ID!): Boolean! @auth
 
   # Instructor
-  createInstructor(input: CreateInstructorInput!): Instructor!
-  updateInstructor(id: ID!, input: UpdateInstructorInput!): Instructor!
-  deleteInstructor(id: ID!): Boolean!
+  createInstructor(input: CreateInstructorInput!): Instructor! @auth
+  updateInstructor(id: ID!, input: UpdateInstructorInput!): Instructor! @auth
+  deleteInstructor(id: ID!): Boolean! @auth
 
   # Customer
-  createCustomer(input: CreateCustomerInput!): Customer!
-  updateCustomer(id: ID!, input: UpdateCustomerInput!): Customer!
-  deleteCustomer(id: ID!): Boolean!
+  createCustomer(input: CreateCustomerInput!): Customer! @auth
+  updateCustomer(id: ID!, input: UpdateCustomerInput!): Customer! @auth
+  deleteCustomer(id: ID!): Boolean! @auth
 
   #Payment
-  createPayment(input: CreatePaymentInput!): Payment!
-  updatePayment(id: ID!, input: UpdatePaymentInput!): Payment!
-  deletePayment(id: ID!): Boolean!
+  createPayment(input: CreatePaymentInput!): Payment! @auth
+  updatePayment(id: ID!, input: UpdatePaymentInput!): Payment! @auth
+  deletePayment(id: ID!): Boolean! @auth
 
   # Time
-  createTime(input: CreateTimeInput!): Time!
-  updateTime(id: ID!, input: UpdateTimeInput!): Time!
-  deleteTime(id: ID!): Boolean!
+  createTime(input: CreateTimeInput!): Time! @auth
+  updateTime(id: ID!, input: UpdateTimeInput!): Time! @auth
+  deleteTime(id: ID!): Boolean! @auth
 }
 
 # Input for Organization
@@ -177,7 +162,6 @@ input UpdateGroupInput {
 # Input for Instructor
 input CreateInstructorInput {
   name: String!
-  organization: ID!
 }
 
 input UpdateInstructorInput {
@@ -187,15 +171,13 @@ input UpdateInstructorInput {
 # Input for Customer
 input CreateCustomerInput {
   name: String!
-  organization: ID!
-  groups: [ID]
+  groups: [ID!]!
   lastPayment: String!
   nextPayment: String!
 }
 
 input UpdateCustomerInput {
   name: String
-  organization: ID
   groups: [ID]
   lastPayment: String
   nextPayment: String
@@ -206,7 +188,6 @@ input UpdateCustomerInput {
 input CreatePaymentInput {
   amount: Float!
   date: String!
-  organizationId: ID!
   groupId: ID!
   customerId: ID!
 }
@@ -214,7 +195,6 @@ input CreatePaymentInput {
 input UpdatePaymentInput {
   amount: Float
   date: String
-  organizationId: ID
   groupId: ID
   customerId: ID
 }

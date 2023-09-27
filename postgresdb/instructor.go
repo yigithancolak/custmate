@@ -19,13 +19,13 @@ func NewInstructorStore(db *sqlx.DB) *InstructorStore {
 	}
 }
 
-func (s *InstructorStore) CreateInstructor(input model.CreateInstructorInput) (*model.Instructor, error) {
+func (s *InstructorStore) CreateInstructor(orgID string, input model.CreateInstructorInput) (*model.Instructor, error) {
 	query := `INSERT INTO instructors (id, name, organization_id) VALUES ($1, $2, $3) RETURNING id, name, organization_id`
 
 	instructorId := uuid.New().String()
 
 	var instructor model.Instructor
-	err := s.DB.QueryRow(query, instructorId, input.Name, input.Organization).Scan(&instructor.ID, &instructor.Name, &instructor.OrganizationID)
+	err := s.DB.QueryRow(query, instructorId, input.Name, orgID).Scan(&instructor.ID, &instructor.Name, &instructor.OrganizationID)
 	if err != nil {
 		return nil, err
 	}

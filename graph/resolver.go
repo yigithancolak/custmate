@@ -4,7 +4,6 @@ package graph
 
 import (
 	"context"
-	"log"
 
 	"github.com/yigithancolak/custmate/graph/model"
 	"github.com/yigithancolak/custmate/middleware"
@@ -46,8 +45,10 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input model.C
 	return org, nil
 }
 
-func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, input model.UpdateOrganizationInput) (*model.Organization, error) {
-	resp, err := r.Store.Organizations.UpdateOrganization(id, input)
+func (r *mutationResolver) UpdateOrganization(ctx context.Context, input model.UpdateOrganizationInput) (*model.Organization, error) {
+	org := middleware.ForContext(ctx)
+
+	resp, err := r.Store.Organizations.UpdateOrganization(org.ID, input)
 	if err != nil {
 		return nil, err
 	}
@@ -55,8 +56,10 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 	return resp, nil
 }
 
-func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (bool, error) {
-	err := r.Store.Organizations.DeleteOrganization(id)
+func (r *mutationResolver) DeleteOrganization(ctx context.Context) (bool, error) {
+	org := middleware.ForContext(ctx)
+
+	err := r.Store.Organizations.DeleteOrganization(org.ID)
 	if err != nil {
 		return false, err
 	}
@@ -66,7 +69,6 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (b
 func (r *mutationResolver) CreateGroup(ctx context.Context, input model.CreateGroupInput) (*model.Group, error) {
 
 	org := middleware.ForContext(ctx)
-	log.Printf("%+v", org)
 
 	group, err := r.Store.CreateGroupWithTimeTx(input, org.ID)
 	if err != nil {
@@ -92,7 +94,8 @@ func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (bool, er
 }
 
 func (r *mutationResolver) CreateInstructor(ctx context.Context, input model.CreateInstructorInput) (*model.Instructor, error) {
-	instructor, err := r.Store.Instructors.CreateInstructor(input)
+	org := middleware.ForContext(ctx)
+	instructor, err := r.Store.Instructors.CreateInstructor(org.ID, input)
 	if err != nil {
 		return nil, err
 	}

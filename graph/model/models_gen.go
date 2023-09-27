@@ -3,11 +3,10 @@
 package model
 
 type CreateCustomerInput struct {
-	Name         string    `json:"name"`
-	Organization string    `json:"organization"`
-	Groups       []*string `json:"groups,omitempty"`
-	LastPayment  string    `json:"lastPayment"`
-	NextPayment  string    `json:"nextPayment"`
+	Name        string   `json:"name"`
+	Groups      []string `json:"groups"`
+	LastPayment string   `json:"lastPayment"`
+	NextPayment string   `json:"nextPayment"`
 }
 
 type CreateGroupInput struct {
@@ -17,8 +16,7 @@ type CreateGroupInput struct {
 }
 
 type CreateInstructorInput struct {
-	Name         string `json:"name"`
-	Organization string `json:"organization"`
+	Name string `json:"name"`
 }
 
 type CreateOrganizationInput struct {
@@ -28,11 +26,10 @@ type CreateOrganizationInput struct {
 }
 
 type CreatePaymentInput struct {
-	Amount         float64 `json:"amount"`
-	Date           string  `json:"date"`
-	OrganizationID string  `json:"organizationId"`
-	GroupID        string  `json:"groupId"`
-	CustomerID     string  `json:"customerId"`
+	Amount     float64 `json:"amount"`
+	Date       string  `json:"date"`
+	GroupID    string  `json:"groupId"`
+	CustomerID string  `json:"customerId"`
 }
 
 type CreateTimeInput struct {
@@ -90,11 +87,10 @@ type TokenResponse struct {
 }
 
 type UpdateCustomerInput struct {
-	Name         *string   `json:"name,omitempty"`
-	Organization *string   `json:"organization,omitempty"`
-	Groups       []*string `json:"groups,omitempty"`
-	LastPayment  *string   `json:"lastPayment,omitempty"`
-	NextPayment  *string   `json:"nextPayment,omitempty"`
+	Name        *string   `json:"name,omitempty"`
+	Groups      []*string `json:"groups,omitempty"`
+	LastPayment *string   `json:"lastPayment,omitempty"`
+	NextPayment *string   `json:"nextPayment,omitempty"`
 }
 
 type UpdateGroupInput struct {
@@ -114,11 +110,10 @@ type UpdateOrganizationInput struct {
 }
 
 type UpdatePaymentInput struct {
-	Amount         *float64 `json:"amount,omitempty"`
-	Date           *string  `json:"date,omitempty"`
-	OrganizationID *string  `json:"organizationId,omitempty"`
-	GroupID        *string  `json:"groupId,omitempty"`
-	CustomerID     *string  `json:"customerId,omitempty"`
+	Amount     *float64 `json:"amount,omitempty"`
+	Date       *string  `json:"date,omitempty"`
+	GroupID    *string  `json:"groupId,omitempty"`
+	CustomerID *string  `json:"customerId,omitempty"`
 }
 
 type UpdateTimeInput struct {

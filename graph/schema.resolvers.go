@@ -31,7 +31,7 @@ import (
 // }
 
 // // UpdateOrganization is the resolver for the updateOrganization field.
-// func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, input model.UpdateOrganizationInput) (*model.Organization, error) {
+// func (r *mutationResolver) UpdateOrganization(ctx context.Context, input model.UpdateOrganizationInput) (*model.Organization, error) {
 // 	resp, err := r.Store.Organizations.UpdateOrganization(id, input)
 // 	if err != nil {
 // 		return nil, err
@@ -41,7 +41,7 @@ import (
 // }
 
 // // DeleteOrganization is the resolver for the deleteOrganization field.
-// func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (bool, error) {
+// func (r *mutationResolver) DeleteOrganization(ctx context.Context) (bool, error) {
 // 	err := r.Store.Organizations.DeleteOrganization(id)
 // 	if err != nil {
 // 		return false, err
@@ -152,13 +152,8 @@ func (r *mutationResolver) DeleteTime(ctx context.Context, id string) (bool, err
 }
 
 // GetOrganization is the resolver for the getOrganization field.
-func (r *queryResolver) GetOrganization(ctx context.Context, id string) (*model.Organization, error) {
+func (r *queryResolver) GetOrganization(ctx context.Context) (*model.Organization, error) {
 	panic(fmt.Errorf("not implemented: GetOrganization - getOrganization"))
-}
-
-// ListOrganizations is the resolver for the listOrganizations field.
-func (r *queryResolver) ListOrganizations(ctx context.Context, offset *int, limit *int) ([]*model.Organization, error) {
-	panic(fmt.Errorf("not implemented: ListOrganizations - listOrganizations"))
 }
 
 // GetGroup is the resolver for the getGroup field.
@@ -166,13 +161,8 @@ func (r *queryResolver) GetGroup(ctx context.Context, id string) (*model.Group, 
 	panic(fmt.Errorf("not implemented: GetGroup - getGroup"))
 }
 
-// ListGroups is the resolver for the listGroups field.
-func (r *queryResolver) ListGroups(ctx context.Context, offset *int, limit *int) ([]*model.Group, error) {
-	panic(fmt.Errorf("not implemented: ListGroups - listGroups"))
-}
-
 // ListGroupsByOrganization is the resolver for the listGroupsByOrganization field.
-func (r *queryResolver) ListGroupsByOrganization(ctx context.Context, orgID string, offset *int, limit *int) ([]*model.Group, error) {
+func (r *queryResolver) ListGroupsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Group, error) {
 	panic(fmt.Errorf("not implemented: ListGroupsByOrganization - listGroupsByOrganization"))
 }
 
@@ -187,7 +177,7 @@ func (r *queryResolver) ListInstructors(ctx context.Context, offset *int, limit 
 }
 
 // ListInstructorsByOrganization is the resolver for the listInstructorsByOrganization field.
-func (r *queryResolver) ListInstructorsByOrganization(ctx context.Context, orgID string, offset *int, limit *int) ([]*model.Instructor, error) {
+func (r *queryResolver) ListInstructorsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Instructor, error) {
 	panic(fmt.Errorf("not implemented: ListInstructorsByOrganization - listInstructorsByOrganization"))
 }
 
@@ -196,18 +186,13 @@ func (r *queryResolver) GetCustomer(ctx context.Context, id string) (*model.Cust
 	panic(fmt.Errorf("not implemented: GetCustomer - getCustomer"))
 }
 
-// ListCustomers is the resolver for the listCustomers field.
-func (r *queryResolver) ListCustomers(ctx context.Context, offset *int, limit *int) ([]*model.Customer, error) {
-	panic(fmt.Errorf("not implemented: ListCustomers - listCustomers"))
-}
-
 // ListCustomersByGroup is the resolver for the listCustomersByGroup field.
 func (r *queryResolver) ListCustomersByGroup(ctx context.Context, groupID string, offset *int, limit *int) ([]*model.Customer, error) {
 	panic(fmt.Errorf("not implemented: ListCustomersByGroup - listCustomersByGroup"))
 }
 
 // ListCustomersByOrganization is the resolver for the listCustomersByOrganization field.
-func (r *queryResolver) ListCustomersByOrganization(ctx context.Context, orgID string, offset *int, limit *int) ([]*model.Customer, error) {
+func (r *queryResolver) ListCustomersByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Customer, error) {
 	panic(fmt.Errorf("not implemented: ListCustomersByOrganization - listCustomersByOrganization"))
 }
 
@@ -217,7 +202,7 @@ func (r *queryResolver) GetPayment(ctx context.Context, id string) (*model.Payme
 }
 
 // ListPaymentsByOrganization is the resolver for the listPaymentsByOrganization field.
-func (r *queryResolver) ListPaymentsByOrganization(ctx context.Context, organizationID string, offset *int, limit *int) ([]*model.Payment, error) {
+func (r *queryResolver) ListPaymentsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Payment, error) {
 	panic(fmt.Errorf("not implemented: ListPaymentsByOrganization - listPaymentsByOrganization"))
 }
 
@@ -246,6 +231,3 @@ type queryResolver struct{ *Resolver }
 //   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //     it when you're done.
 //   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *mutationResolver) LoginUser(ctx context.Context, email string, password string) (*model.TokenResponse, error) {
-	panic(fmt.Errorf("not implemented: LoginUser - loginUser"))
-}
