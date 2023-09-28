@@ -149,10 +149,10 @@ import (
 // 	return true, nil
 // }
 
-// CreatePayment is the resolver for the createPayment field.
-func (r *mutationResolver) CreatePayment(ctx context.Context, input model.CreatePaymentInput) (*model.Payment, error) {
-	panic(fmt.Errorf("not implemented: CreatePayment - createPayment"))
-}
+// // CreatePayment is the resolver for the createPayment field.
+// func (r *mutationResolver) CreatePayment(ctx context.Context, input model.CreatePaymentInput) (*model.Payment, error) {
+// 	panic(fmt.Errorf("not implemented: CreatePayment - createPayment"))
+// }
 
 // UpdatePayment is the resolver for the updatePayment field.
 func (r *mutationResolver) UpdatePayment(ctx context.Context, id string, input model.UpdatePaymentInput) (string, error) {

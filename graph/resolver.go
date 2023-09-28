@@ -166,3 +166,12 @@ func (r *mutationResolver) DeleteCustomer(ctx context.Context, id string) (bool,
 
 	return true, nil
 }
+
+func (r *mutationResolver) CreatePayment(ctx context.Context, input model.CreatePaymentInput) (*model.Payment, error) {
+	payment, err := r.Store.Payments.CreatePayment(&input)
+	if err != nil {
+		return nil, err
+	}
+
+	return payment, nil
+}
