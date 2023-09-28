@@ -141,7 +141,7 @@ type Mutation {
   deletePayment(id: ID!): Boolean! @auth
 
   # Time
-  createTime(input: CreateTimeInput!): Time! @auth
+  createTime(groupId: String!, input: CreateTimeInput!): Time! @auth
   updateTime(id: ID!, input: UpdateTimeInput!): String! @auth
   deleteTime(id: ID!): Boolean! @auth
 }

@@ -192,3 +192,12 @@ func (r *mutationResolver) DeletePayment(ctx context.Context, id string) (bool, 
 	}
 	return true, nil
 }
+
+func (r *mutationResolver) CreateTime(ctx context.Context, groupID string, input model.CreateTimeInput) (*model.Time, error) {
+	time, err := r.Store.Time.CreateTime(r.Store.DB, groupID, &input)
+	if err != nil {
+		return nil, err
+	}
+
+	return time, nil
+}

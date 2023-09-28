@@ -151,23 +151,37 @@ import (
 
 // // CreatePayment is the resolver for the createPayment field.
 // func (r *mutationResolver) CreatePayment(ctx context.Context, input model.CreatePaymentInput) (*model.Payment, error) {
-// 	panic(fmt.Errorf("not implemented: CreatePayment - createPayment"))
+// 	payment, err := r.Store.Payments.CreatePayment(&input)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return payment, nil
 // }
 
 // // UpdatePayment is the resolver for the updatePayment field.
 // func (r *mutationResolver) UpdatePayment(ctx context.Context, id string, input model.UpdatePaymentInput) (string, error) {
-// 	panic(fmt.Errorf("not implemented: UpdatePayment - updatePayment"))
+// 	err := r.Store.Payments.UpdatePayment(id, &input)
+// 	if err != nil {
+// 		return messageUpdateFailed, err
+// 	}
+
+// 	return messagePaymentUpdated, nil
 // }
 
 // // DeletePayment is the resolver for the deletePayment field.
 // func (r *mutationResolver) DeletePayment(ctx context.Context, id string) (bool, error) {
-// 	panic(fmt.Errorf("not implemented: DeletePayment - deletePayment"))
+// 	err := r.Store.Payments.DeletePayment(id)
+// 	if err != nil {
+// 		return false, err
+// 	}
+// 	return true, nil
 // }
 
-// CreateTime is the resolver for the createTime field.
-func (r *mutationResolver) CreateTime(ctx context.Context, input model.CreateTimeInput) (*model.Time, error) {
-	panic(fmt.Errorf("not implemented: CreateTime - createTime"))
-}
+// // CreateTime is the resolver for the createTime field.
+// func (r *mutationResolver) CreateTime(ctx context.Context, groupID string, input model.CreateTimeInput) (*model.Time, error) {
+// 	panic(fmt.Errorf("not implemented: CreateTime - createTime"))
+// }
 
 // UpdateTime is the resolver for the updateTime field.
 func (r *mutationResolver) UpdateTime(ctx context.Context, id string, input model.UpdateTimeInput) (string, error) {

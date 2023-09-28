@@ -75,7 +75,7 @@ type ComplexityRoot struct {
 		CreateInstructor   func(childComplexity int, input model.CreateInstructorInput) int
 		CreateOrganization func(childComplexity int, input model.CreateOrganizationInput) int
 		CreatePayment      func(childComplexity int, input model.CreatePaymentInput) int
-		CreateTime         func(childComplexity int, input model.CreateTimeInput) int
+		CreateTime         func(childComplexity int, groupID string, input model.CreateTimeInput) int
 		DeleteCustomer     func(childComplexity int, id string) int
 		DeleteGroup        func(childComplexity int, id string) int
 		DeleteInstructor   func(childComplexity int, id string) int
@@ -152,7 +152,7 @@ type MutationResolver interface {
 	CreatePayment(ctx context.Context, input model.CreatePaymentInput) (*model.Payment, error)
 	UpdatePayment(ctx context.Context, id string, input model.UpdatePaymentInput) (string, error)
 	DeletePayment(ctx context.Context, id string) (bool, error)
-	CreateTime(ctx context.Context, input model.CreateTimeInput) (*model.Time, error)
+	CreateTime(ctx context.Context, groupID string, input model.CreateTimeInput) (*model.Time, error)
 	UpdateTime(ctx context.Context, id string, input model.UpdateTimeInput) (string, error)
 	DeleteTime(ctx context.Context, id string) (bool, error)
 }
@@ -355,7 +355,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateTime(childComplexity, args["input"].(model.CreateTimeInput)), true
+		return e.complexity.Mutation.CreateTime(childComplexity, args["groupId"].(string), args["input"].(model.CreateTimeInput)), true
 
 	case "Mutation.deleteCustomer":
 		if e.complexity.Mutation.DeleteCustomer == nil {
@@ -978,15 +978,24 @@ func (ec *executionContext) field_Mutation_createPayment_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_createTime_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.CreateTimeInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateTimeInput2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCreateTimeInput(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["groupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["groupId"] = arg0
+	var arg1 model.CreateTimeInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNCreateTimeInput2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCreateTimeInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -3423,7 +3432,7 @@ func (ec *executionContext) _Mutation_createTime(ctx context.Context, field grap
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().CreateTime(rctx, fc.Args["input"].(model.CreateTimeInput))
+			return ec.resolvers.Mutation().CreateTime(rctx, fc.Args["groupId"].(string), fc.Args["input"].(model.CreateTimeInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Auth == nil {
