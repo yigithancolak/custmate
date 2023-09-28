@@ -41,6 +41,7 @@ type Customer {
   groups: [Group!]!
   lastPayment: String!
   nextPayment: String!
+  active: Boolean
 }
 
 type Payment {
@@ -120,7 +121,7 @@ type Mutation {
 
   # Customer
   createCustomer(input: CreateCustomerInput!): Customer! @auth
-  updateCustomer(id: ID!, input: UpdateCustomerInput!): Customer! @auth
+  updateCustomer(id: ID!, input: UpdateCustomerInput!): String! @auth
   deleteCustomer(id: ID!): Boolean! @auth
 
   #Payment
@@ -184,6 +185,7 @@ input UpdateCustomerInput {
   groups: [ID]
   lastPayment: String
   nextPayment: String
+  active: Boolean
 }
 
 # Input for Payment

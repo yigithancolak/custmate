@@ -4,10 +4,13 @@ package graph
 
 import (
 	"context"
+	"log"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/yigithancolak/custmate/graph/model"
 	"github.com/yigithancolak/custmate/middleware"
 	"github.com/yigithancolak/custmate/postgresdb"
+	"github.com/yigithancolak/custmate/util"
 )
 
 // This file will not be regenerated automatically.
@@ -75,6 +78,13 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input model.CreateGr
 		return nil, err
 	}
 
+	fields := graphql.CollectAllFields(ctx)
+
+	if util.Contains[string](fields, "instructor") {
+		//TODO: ADD INSTRUCTOR TO RETURN OBJECT
+		log.Println("instructor wanted")
+	}
+
 	return group, nil
 }
 
@@ -127,4 +137,13 @@ func (r *mutationResolver) CreateCustomer(ctx context.Context, input model.Creat
 	}
 
 	return customer, nil
+}
+
+func (r *mutationResolver) UpdateCustomer(ctx context.Context, id string, input model.UpdateCustomerInput) (string, error) {
+	err := r.Store.UpdateCustomerWithTx(id, &input)
+	if err != nil {
+		return "Uptade failed", err
+	}
+
+	return "Customer updated", nil
 }

@@ -37,3 +37,38 @@ func (s *Store) CreateCustomerWithTx(input *model.CreateCustomerInput, organizat
 
 	return customer, nil
 }
+
+func (s *Store) UpdateCustomerWithTx(customerID string, input *model.UpdateCustomerInput) error {
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return ErrBeginTransaction
+	}
+
+	_, err = s.Customers.UpdateCustomer(tx, customerID, input)
+	if err != nil {
+		if rbErr := tx.Rollback(); rbErr != nil {
+			return ErrRollbackTransaction
+		}
+		return err
+	}
+
+	if input.Groups != nil {
+		err = s.Customers.UpdateCustomerGroupsAssociations(tx, customerID, input.Groups)
+		if err != nil {
+			if rbErr := tx.Rollback(); rbErr != nil {
+				return ErrRollbackTransaction
+			}
+			return err
+		}
+		//TODO: ADD GROUPS TO RETURN OBJECT
+	}
+
+	if err = tx.Commit(); err != nil {
+		if rbErr := tx.Rollback(); rbErr != nil {
+			return ErrRollbackTransaction
+		}
+		return err
+	}
+
+	return nil
+}

@@ -47,6 +47,7 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Customer struct {
+		Active      func(childComplexity int) int
 		Groups      func(childComplexity int) int
 		ID          func(childComplexity int) int
 		LastPayment func(childComplexity int) int
@@ -146,7 +147,7 @@ type MutationResolver interface {
 	UpdateInstructor(ctx context.Context, id string, input model.UpdateInstructorInput) (*model.Instructor, error)
 	DeleteInstructor(ctx context.Context, id string) (bool, error)
 	CreateCustomer(ctx context.Context, input model.CreateCustomerInput) (*model.Customer, error)
-	UpdateCustomer(ctx context.Context, id string, input model.UpdateCustomerInput) (*model.Customer, error)
+	UpdateCustomer(ctx context.Context, id string, input model.UpdateCustomerInput) (string, error)
 	DeleteCustomer(ctx context.Context, id string) (bool, error)
 	CreatePayment(ctx context.Context, input model.CreatePaymentInput) (*model.Payment, error)
 	UpdatePayment(ctx context.Context, id string, input model.UpdatePaymentInput) (*model.Payment, error)
@@ -185,6 +186,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Customer.active":
+		if e.complexity.Customer.Active == nil {
+			break
+		}
+
+		return e.complexity.Customer.Active(childComplexity), true
 
 	case "Customer.groups":
 		if e.complexity.Customer.Groups == nil {
@@ -1822,6 +1830,47 @@ func (ec *executionContext) fieldContext_Customer_nextPayment(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Customer_active(ctx context.Context, field graphql.CollectedField, obj *model.Customer) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Customer_active(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Active, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Customer_active(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Customer",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Group_id(ctx context.Context, field graphql.CollectedField, obj *model.Group) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Group_id(ctx, field)
 	if err != nil {
@@ -2976,6 +3025,8 @@ func (ec *executionContext) fieldContext_Mutation_createCustomer(ctx context.Con
 				return ec.fieldContext_Customer_lastPayment(ctx, field)
 			case "nextPayment":
 				return ec.fieldContext_Customer_nextPayment(ctx, field)
+			case "active":
+				return ec.fieldContext_Customer_active(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Customer", field.Name)
 		},
@@ -3025,10 +3076,10 @@ func (ec *executionContext) _Mutation_updateCustomer(ctx context.Context, field 
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.Customer); ok {
+		if data, ok := tmp.(string); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yigithancolak/custmate/graph/model.Customer`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3040,9 +3091,9 @@ func (ec *executionContext) _Mutation_updateCustomer(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Customer)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNCustomer2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCustomer(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateCustomer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3052,21 +3103,7 @@ func (ec *executionContext) fieldContext_Mutation_updateCustomer(ctx context.Con
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Customer_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Customer_name(ctx, field)
-			case "phoneNumber":
-				return ec.fieldContext_Customer_phoneNumber(ctx, field)
-			case "groups":
-				return ec.fieldContext_Customer_groups(ctx, field)
-			case "lastPayment":
-				return ec.fieldContext_Customer_lastPayment(ctx, field)
-			case "nextPayment":
-				return ec.fieldContext_Customer_nextPayment(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Customer", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	defer func() {
@@ -3975,6 +4012,8 @@ func (ec *executionContext) fieldContext_Payment_customer(ctx context.Context, f
 				return ec.fieldContext_Customer_lastPayment(ctx, field)
 			case "nextPayment":
 				return ec.fieldContext_Customer_nextPayment(ctx, field)
+			case "active":
+				return ec.fieldContext_Customer_active(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Customer", field.Name)
 		},
@@ -4650,6 +4689,8 @@ func (ec *executionContext) fieldContext_Query_getCustomer(ctx context.Context, 
 				return ec.fieldContext_Customer_lastPayment(ctx, field)
 			case "nextPayment":
 				return ec.fieldContext_Customer_nextPayment(ctx, field)
+			case "active":
+				return ec.fieldContext_Customer_active(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Customer", field.Name)
 		},
@@ -4739,6 +4780,8 @@ func (ec *executionContext) fieldContext_Query_listCustomersByGroup(ctx context.
 				return ec.fieldContext_Customer_lastPayment(ctx, field)
 			case "nextPayment":
 				return ec.fieldContext_Customer_nextPayment(ctx, field)
+			case "active":
+				return ec.fieldContext_Customer_active(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Customer", field.Name)
 		},
@@ -4828,6 +4871,8 @@ func (ec *executionContext) fieldContext_Query_listCustomersByOrganization(ctx c
 				return ec.fieldContext_Customer_lastPayment(ctx, field)
 			case "nextPayment":
 				return ec.fieldContext_Customer_nextPayment(ctx, field)
+			case "active":
+				return ec.fieldContext_Customer_active(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Customer", field.Name)
 		},
@@ -7666,7 +7711,7 @@ func (ec *executionContext) unmarshalInputUpdateCustomerInput(ctx context.Contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "phoneNumber", "groups", "lastPayment", "nextPayment"}
+	fieldsInOrder := [...]string{"name", "phoneNumber", "groups", "lastPayment", "nextPayment", "active"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7718,6 +7763,15 @@ func (ec *executionContext) unmarshalInputUpdateCustomerInput(ctx context.Contex
 				return it, err
 			}
 			it.NextPayment = data
+		case "active":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Active = data
 		}
 	}
 
@@ -8008,6 +8062,8 @@ func (ec *executionContext) _Customer(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "active":
+			out.Values[i] = ec._Customer_active(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

@@ -46,6 +46,7 @@ type Customer struct {
 	Groups      []*Group `json:"groups"`
 	LastPayment string   `json:"lastPayment"`
 	NextPayment string   `json:"nextPayment"`
+	Active      *bool    `json:"active,omitempty"`
 }
 
 type Group struct {
@@ -94,6 +95,7 @@ type UpdateCustomerInput struct {
 	Groups      []*string `json:"groups,omitempty"`
 	LastPayment *string   `json:"lastPayment,omitempty"`
 	NextPayment *string   `json:"nextPayment,omitempty"`
+	Active      *bool     `json:"active,omitempty"`
 }
 
 type UpdateGroupInput struct {

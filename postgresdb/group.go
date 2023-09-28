@@ -64,6 +64,9 @@ func (s *GroupStore) UpdateGroup(tx *sql.Tx, id string, input *model.UpdateGroup
 
 	err := tx.QueryRow(query, args...).Scan(&group.ID, &group.Name)
 	if err != nil {
+		if rbErr := tx.Rollback(); rbErr != nil {
+			return nil, ErrRollbackTransaction
+		}
 		return nil, err
 	}
 

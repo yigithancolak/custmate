@@ -62,6 +62,13 @@ import (
 // 		return nil, err
 // 	}
 
+// 	fields := graphql.CollectAllFields(ctx)
+
+// 	if util.Contains[string](fields, "instructor") {
+// 		//TODO: ADD INSTRUCTOR TO RETURN OBJECT
+// 		log.Println("instructor wanted")
+// 	}
+
 // 	return group, nil
 // }
 
@@ -110,15 +117,22 @@ import (
 // 	return ok, err
 // }
 
-// CreateCustomer is the resolver for the createCustomer field.
+// // CreateCustomer is the resolver for the createCustomer field.
 // func (r *mutationResolver) CreateCustomer(ctx context.Context, input model.CreateCustomerInput) (*model.Customer, error) {
-// 	panic(fmt.Errorf("not implemented: CreateCustomer - createCustomer"))
+// 	org := middleware.ForContext(ctx)
+
+// 	customer, err := r.Store.CreateCustomerWithTx(&input, org.ID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return customer, nil
 // }
 
-// UpdateCustomer is the resolver for the updateCustomer field.
-func (r *mutationResolver) UpdateCustomer(ctx context.Context, id string, input model.UpdateCustomerInput) (*model.Customer, error) {
-	panic(fmt.Errorf("not implemented: UpdateCustomer - updateCustomer"))
-}
+// // UpdateCustomer is the resolver for the updateCustomer field.
+// func (r *mutationResolver) UpdateCustomer(ctx context.Context, id string, input model.UpdateCustomerInput) (string, error) {
+// 	return nil, nil
+// }
 
 // DeleteCustomer is the resolver for the deleteCustomer field.
 func (r *mutationResolver) DeleteCustomer(ctx context.Context, id string) (bool, error) {
