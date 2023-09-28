@@ -157,3 +157,12 @@ func (r *mutationResolver) UpdateCustomer(ctx context.Context, id string, input 
 
 	return messageCustomerUpdated, nil
 }
+
+func (r *mutationResolver) DeleteCustomer(ctx context.Context, id string) (bool, error) {
+	err := r.Store.Customers.DeleteCustomer(id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}

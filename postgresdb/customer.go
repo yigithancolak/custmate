@@ -114,3 +114,9 @@ func (s *CustomerStore) UpdateCustomerGroupsAssociations(tx *sql.Tx, customerID 
 
 	return nil
 }
+
+func (s *CustomerStore) DeleteCustomer(id string) error {
+	query := "DELETE FROM customers WHERE id = $1"
+	_, err := s.DB.Exec(query, id)
+	return err
+}

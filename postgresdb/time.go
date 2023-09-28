@@ -73,3 +73,9 @@ func (s *TimeStore) UpdateTime(tx *sql.Tx, time *model.UpdateTimeInput) (*model.
 
 	return &updatedTime, nil
 }
+
+func (s *TimeStore) DeleteTime(id string) error {
+	query := "DELETE FROM times WHERE id = $1"
+	_, err := s.DB.Exec(query, id)
+	return err
+}

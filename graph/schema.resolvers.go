@@ -140,9 +140,9 @@ import (
 // }
 
 // DeleteCustomer is the resolver for the deleteCustomer field.
-func (r *mutationResolver) DeleteCustomer(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteCustomer - deleteCustomer"))
-}
+// func (r *mutationResolver) DeleteCustomer(ctx context.Context, id string) (bool, error) {
+// 	panic(fmt.Errorf("not implemented: DeleteCustomer - deleteCustomer"))
+// }
 
 // CreatePayment is the resolver for the createPayment field.
 func (r *mutationResolver) CreatePayment(ctx context.Context, input model.CreatePaymentInput) (*model.Payment, error) {
