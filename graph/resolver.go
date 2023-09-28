@@ -175,3 +175,20 @@ func (r *mutationResolver) CreatePayment(ctx context.Context, input model.Create
 
 	return payment, nil
 }
+
+func (r *mutationResolver) UpdatePayment(ctx context.Context, id string, input model.UpdatePaymentInput) (string, error) {
+	err := r.Store.Payments.UpdatePayment(id, &input)
+	if err != nil {
+		return messageUpdateFailed, err
+	}
+
+	return messagePaymentUpdated, nil
+}
+
+func (r *mutationResolver) DeletePayment(ctx context.Context, id string) (bool, error) {
+	err := r.Store.Payments.DeletePayment(id)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
