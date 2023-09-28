@@ -106,17 +106,17 @@ type Mutation {
 
   # Organization
   createOrganization(input: CreateOrganizationInput!): Organization!
-  updateOrganization(input: UpdateOrganizationInput!): Organization! @auth
+  updateOrganization(input: UpdateOrganizationInput!): String! @auth
   deleteOrganization: Boolean! @auth
 
   # Group
   createGroup(input: CreateGroupInput!): Group! @auth
-  updateGroup(id: ID!, input: UpdateGroupInput!): Group! @auth
+  updateGroup(id: ID!, input: UpdateGroupInput!): String! @auth
   deleteGroup(id: ID!): Boolean! @auth
 
   # Instructor
   createInstructor(input: CreateInstructorInput!): Instructor! @auth
-  updateInstructor(id: ID!, input: UpdateInstructorInput!): Instructor! @auth
+  updateInstructor(id: ID!, input: UpdateInstructorInput!): String! @auth
   deleteInstructor(id: ID!): Boolean! @auth
 
   # Customer
@@ -126,12 +126,12 @@ type Mutation {
 
   #Payment
   createPayment(input: CreatePaymentInput!): Payment! @auth
-  updatePayment(id: ID!, input: UpdatePaymentInput!): Payment! @auth
+  updatePayment(id: ID!, input: UpdatePaymentInput!): String! @auth
   deletePayment(id: ID!): Boolean! @auth
 
   # Time
   createTime(input: CreateTimeInput!): Time! @auth
-  updateTime(id: ID!, input: UpdateTimeInput!): Time! @auth
+  updateTime(id: ID!, input: UpdateTimeInput!): String! @auth
   deleteTime(id: ID!): Boolean! @auth
 }
 

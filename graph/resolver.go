@@ -30,8 +30,13 @@ func NewResolver(store *postgresdb.Store) *Resolver {
 }
 
 const (
-	messageUpdateFailed    = "Update failed"
-	messageCustomerUpdated = "Customer updated"
+	messageUpdateFailed        = "Update failed"
+	messageOrganizationUpdated = "Organization updated"
+	messageCustomerUpdated     = "Customer updated"
+	messageInstructorUpdated   = "Instructor updated"
+	messageGroupUpdated        = "Group updated"
+	messageTimeUpdated         = "Time updated"
+	messagePaymentUpdated      = "Payment updated"
 )
 
 func (r *mutationResolver) Login(ctx context.Context, email string, password string) (*model.TokenResponse, error) {
@@ -53,15 +58,15 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input model.C
 	return org, nil
 }
 
-func (r *mutationResolver) UpdateOrganization(ctx context.Context, input model.UpdateOrganizationInput) (*model.Organization, error) {
+func (r *mutationResolver) UpdateOrganization(ctx context.Context, input model.UpdateOrganizationInput) (string, error) {
 	org := middleware.ForContext(ctx)
 
-	resp, err := r.Store.Organizations.UpdateOrganization(org.ID, input)
+	_, err := r.Store.Organizations.UpdateOrganization(org.ID, input)
 	if err != nil {
-		return nil, err
+		return messageUpdateFailed, err
 	}
 
-	return resp, nil
+	return messageOrganizationUpdated, nil
 }
 
 func (r *mutationResolver) DeleteOrganization(ctx context.Context) (bool, error) {
@@ -93,13 +98,13 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input model.CreateGr
 	return group, nil
 }
 
-func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input model.UpdateGroupInput) (*model.Group, error) {
-	group, err := r.Store.UpdateGroupWithTimeTx(id, input)
+func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input model.UpdateGroupInput) (string, error) {
+	err := r.Store.UpdateGroupWithTimeTx(id, input)
 	if err != nil {
-		return nil, err
+		return messageUpdateFailed, err
 	}
 
-	return group, nil
+	return messageGroupUpdated, nil
 }
 
 func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (bool, error) {
@@ -118,13 +123,13 @@ func (r *mutationResolver) CreateInstructor(ctx context.Context, input model.Cre
 	return instructor, err
 }
 
-func (r *mutationResolver) UpdateInstructor(ctx context.Context, id string, input model.UpdateInstructorInput) (*model.Instructor, error) {
-	instructor, err := r.Store.Instructors.UpdateInstructor(id, input)
+func (r *mutationResolver) UpdateInstructor(ctx context.Context, id string, input model.UpdateInstructorInput) (string, error) {
+	_, err := r.Store.Instructors.UpdateInstructor(id, input)
 	if err != nil {
-		return nil, err
+		return messageUpdateFailed, err
 	}
 
-	return instructor, err
+	return messageInstructorUpdated, err
 }
 
 func (r *mutationResolver) DeleteInstructor(ctx context.Context, id string) (bool, error) {

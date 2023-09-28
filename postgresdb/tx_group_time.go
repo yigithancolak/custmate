@@ -39,41 +39,35 @@ func (s *Store) CreateGroupWithTimeTx(input model.CreateGroupInput, organization
 	return createdGroup, nil
 }
 
-func (s *Store) UpdateGroupWithTimeTx(id string, groupInput model.UpdateGroupInput) (*model.Group, error) {
+func (s *Store) UpdateGroupWithTimeTx(id string, groupInput model.UpdateGroupInput) error {
 
 	tx, err := s.DB.Begin()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	group, err := s.Groups.UpdateGroup(tx, id, &groupInput)
+	_, err = s.Groups.UpdateGroup(tx, id, &groupInput)
 	if err != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {
-			return nil, rbErr
+			return rbErr
 		}
-		return nil, err
+		return err
 	}
 
-	var times []*model.Time
 	for _, t := range groupInput.Times {
-		time, err := s.Time.UpdateTime(tx, t)
+		_, err := s.Time.UpdateTime(tx, t)
 		if err != nil {
 			tx.Rollback()
-			return nil, err
+			return err
 		}
-		times = append(times, time)
 	}
 
 	if err = tx.Commit(); err != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {
-			return nil, rbErr
+			return rbErr
 		}
-		return nil, err
+		return err
 	}
 
-	group.Times = times
-
-	//s.Instructor.GetInstructor
-
-	return group, nil
+	return nil
 }

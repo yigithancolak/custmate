@@ -138,22 +138,22 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	Login(ctx context.Context, email string, password string) (*model.TokenResponse, error)
 	CreateOrganization(ctx context.Context, input model.CreateOrganizationInput) (*model.Organization, error)
-	UpdateOrganization(ctx context.Context, input model.UpdateOrganizationInput) (*model.Organization, error)
+	UpdateOrganization(ctx context.Context, input model.UpdateOrganizationInput) (string, error)
 	DeleteOrganization(ctx context.Context) (bool, error)
 	CreateGroup(ctx context.Context, input model.CreateGroupInput) (*model.Group, error)
-	UpdateGroup(ctx context.Context, id string, input model.UpdateGroupInput) (*model.Group, error)
+	UpdateGroup(ctx context.Context, id string, input model.UpdateGroupInput) (string, error)
 	DeleteGroup(ctx context.Context, id string) (bool, error)
 	CreateInstructor(ctx context.Context, input model.CreateInstructorInput) (*model.Instructor, error)
-	UpdateInstructor(ctx context.Context, id string, input model.UpdateInstructorInput) (*model.Instructor, error)
+	UpdateInstructor(ctx context.Context, id string, input model.UpdateInstructorInput) (string, error)
 	DeleteInstructor(ctx context.Context, id string) (bool, error)
 	CreateCustomer(ctx context.Context, input model.CreateCustomerInput) (*model.Customer, error)
 	UpdateCustomer(ctx context.Context, id string, input model.UpdateCustomerInput) (string, error)
 	DeleteCustomer(ctx context.Context, id string) (bool, error)
 	CreatePayment(ctx context.Context, input model.CreatePaymentInput) (*model.Payment, error)
-	UpdatePayment(ctx context.Context, id string, input model.UpdatePaymentInput) (*model.Payment, error)
+	UpdatePayment(ctx context.Context, id string, input model.UpdatePaymentInput) (string, error)
 	DeletePayment(ctx context.Context, id string) (bool, error)
 	CreateTime(ctx context.Context, input model.CreateTimeInput) (*model.Time, error)
-	UpdateTime(ctx context.Context, id string, input model.UpdateTimeInput) (*model.Time, error)
+	UpdateTime(ctx context.Context, id string, input model.UpdateTimeInput) (string, error)
 	DeleteTime(ctx context.Context, id string) (bool, error)
 }
 type QueryResolver interface {
@@ -2352,10 +2352,10 @@ func (ec *executionContext) _Mutation_updateOrganization(ctx context.Context, fi
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.Organization); ok {
+		if data, ok := tmp.(string); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yigithancolak/custmate/graph/model.Organization`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2367,9 +2367,9 @@ func (ec *executionContext) _Mutation_updateOrganization(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Organization)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNOrganization2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐOrganization(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateOrganization(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2379,15 +2379,7 @@ func (ec *executionContext) fieldContext_Mutation_updateOrganization(ctx context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Organization_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Organization_name(ctx, field)
-			case "email":
-				return ec.fieldContext_Organization_email(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	defer func() {
@@ -2584,10 +2576,10 @@ func (ec *executionContext) _Mutation_updateGroup(ctx context.Context, field gra
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.Group); ok {
+		if data, ok := tmp.(string); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yigithancolak/custmate/graph/model.Group`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2599,9 +2591,9 @@ func (ec *executionContext) _Mutation_updateGroup(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Group)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNGroup2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐGroup(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2611,17 +2603,7 @@ func (ec *executionContext) fieldContext_Mutation_updateGroup(ctx context.Contex
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Group_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Group_name(ctx, field)
-			case "instructor":
-				return ec.fieldContext_Group_instructor(ctx, field)
-			case "times":
-				return ec.fieldContext_Group_times(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	defer func() {
@@ -2827,10 +2809,10 @@ func (ec *executionContext) _Mutation_updateInstructor(ctx context.Context, fiel
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.Instructor); ok {
+		if data, ok := tmp.(string); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yigithancolak/custmate/graph/model.Instructor`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2842,9 +2824,9 @@ func (ec *executionContext) _Mutation_updateInstructor(ctx context.Context, fiel
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Instructor)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNInstructor2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐInstructor(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateInstructor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2854,15 +2836,7 @@ func (ec *executionContext) fieldContext_Mutation_updateInstructor(ctx context.C
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Instructor_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Instructor_name(ctx, field)
-			case "organizationId":
-				return ec.fieldContext_Instructor_organizationId(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	defer func() {
@@ -3315,10 +3289,10 @@ func (ec *executionContext) _Mutation_updatePayment(ctx context.Context, field g
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.Payment); ok {
+		if data, ok := tmp.(string); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yigithancolak/custmate/graph/model.Payment`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3330,9 +3304,9 @@ func (ec *executionContext) _Mutation_updatePayment(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Payment)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNPayment2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐPayment(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updatePayment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3342,21 +3316,7 @@ func (ec *executionContext) fieldContext_Mutation_updatePayment(ctx context.Cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Payment_id(ctx, field)
-			case "amount":
-				return ec.fieldContext_Payment_amount(ctx, field)
-			case "date":
-				return ec.fieldContext_Payment_date(ctx, field)
-			case "customer":
-				return ec.fieldContext_Payment_customer(ctx, field)
-			case "organization":
-				return ec.fieldContext_Payment_organization(ctx, field)
-			case "group":
-				return ec.fieldContext_Payment_group(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Payment", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	defer func() {
@@ -3566,10 +3526,10 @@ func (ec *executionContext) _Mutation_updateTime(ctx context.Context, field grap
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.Time); ok {
+		if data, ok := tmp.(string); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yigithancolak/custmate/graph/model.Time`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3581,9 +3541,9 @@ func (ec *executionContext) _Mutation_updateTime(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Time)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNTime2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTime(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateTime(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3593,19 +3553,7 @@ func (ec *executionContext) fieldContext_Mutation_updateTime(ctx context.Context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Time_id(ctx, field)
-			case "groupId":
-				return ec.fieldContext_Time_groupId(ctx, field)
-			case "day":
-				return ec.fieldContext_Time_day(ctx, field)
-			case "start_hour":
-				return ec.fieldContext_Time_start_hour(ctx, field)
-			case "finish_hour":
-				return ec.fieldContext_Time_finish_hour(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Time", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	defer func() {

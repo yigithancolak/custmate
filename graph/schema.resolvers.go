@@ -31,7 +31,7 @@ import (
 // }
 
 // // UpdateOrganization is the resolver for the updateOrganization field.
-// func (r *mutationResolver) UpdateOrganization(ctx context.Context, input model.UpdateOrganizationInput) (*model.Organization, error) {
+// func (r *mutationResolver) UpdateOrganization(ctx context.Context, input model.UpdateOrganizationInput) (string, error) {
 // 	org := middleware.ForContext(ctx)
 
 // 	resp, err := r.Store.Organizations.UpdateOrganization(org.ID, input)
@@ -73,7 +73,7 @@ import (
 // }
 
 // // UpdateGroup is the resolver for the updateGroup field.
-// func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input model.UpdateGroupInput) (*model.Group, error) {
+// func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input model.UpdateGroupInput) (string, error) {
 // 	group, err := r.Store.UpdateGroupWithTimeTx(id, input)
 // 	if err != nil {
 // 		return nil, err
@@ -101,7 +101,7 @@ import (
 // }
 
 // // UpdateInstructor is the resolver for the updateInstructor field.
-// func (r *mutationResolver) UpdateInstructor(ctx context.Context, id string, input model.UpdateInstructorInput) (*model.Instructor, error) {
+// func (r *mutationResolver) UpdateInstructor(ctx context.Context, id string, input model.UpdateInstructorInput) (string, error) {
 // 	instructor, err := r.Store.Instructors.UpdateInstructor(id, input)
 // 	if err != nil {
 // 		return nil, err
@@ -131,7 +131,12 @@ import (
 
 // // UpdateCustomer is the resolver for the updateCustomer field.
 // func (r *mutationResolver) UpdateCustomer(ctx context.Context, id string, input model.UpdateCustomerInput) (string, error) {
-// 	return nil, nil
+// 	err := r.Store.UpdateCustomerWithTx(id, &input)
+// 	if err != nil {
+// 		return messageUpdateFailed, err
+// 	}
+
+// 	return messageCustomerUpdated, nil
 // }
 
 // DeleteCustomer is the resolver for the deleteCustomer field.
@@ -145,7 +150,7 @@ func (r *mutationResolver) CreatePayment(ctx context.Context, input model.Create
 }
 
 // UpdatePayment is the resolver for the updatePayment field.
-func (r *mutationResolver) UpdatePayment(ctx context.Context, id string, input model.UpdatePaymentInput) (*model.Payment, error) {
+func (r *mutationResolver) UpdatePayment(ctx context.Context, id string, input model.UpdatePaymentInput) (string, error) {
 	panic(fmt.Errorf("not implemented: UpdatePayment - updatePayment"))
 }
 
@@ -160,7 +165,7 @@ func (r *mutationResolver) CreateTime(ctx context.Context, input model.CreateTim
 }
 
 // UpdateTime is the resolver for the updateTime field.
-func (r *mutationResolver) UpdateTime(ctx context.Context, id string, input model.UpdateTimeInput) (*model.Time, error) {
+func (r *mutationResolver) UpdateTime(ctx context.Context, id string, input model.UpdateTimeInput) (string, error) {
 	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
 }
 
