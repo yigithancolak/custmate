@@ -2,6 +2,12 @@
 
 package model
 
+import (
+	"fmt"
+	"io"
+	"strconv"
+)
+
 type CreateCustomerInput struct {
 	Name        string   `json:"name"`
 	PhoneNumber string   `json:"phoneNumber"`
@@ -27,10 +33,11 @@ type CreateOrganizationInput struct {
 }
 
 type CreatePaymentInput struct {
-	Amount     float64 `json:"amount"`
-	Date       string  `json:"date"`
-	GroupID    string  `json:"groupId"`
-	CustomerID string  `json:"customerId"`
+	Amount      int         `json:"amount"`
+	Date        string      `json:"date"`
+	CustomerID  string      `json:"customerId"`
+	PaymentType PaymentType `json:"paymentType"`
+	Currency    Currency    `json:"currency"`
 }
 
 type CreateTimeInput struct {
@@ -69,12 +76,12 @@ type Organization struct {
 }
 
 type Payment struct {
-	ID           string        `json:"id"`
-	Amount       float64       `json:"amount"`
-	Date         string        `json:"date"`
-	Customer     *Customer     `json:"customer"`
-	Organization *Organization `json:"organization"`
-	Group        *Group        `json:"group"`
+	ID          string      `json:"id"`
+	Amount      int         `json:"amount"`
+	Date        string      `json:"date"`
+	Customer    *Customer   `json:"customer"`
+	PaymentType PaymentType `json:"paymentType"`
+	Currency    Currency    `json:"currency"`
 }
 
 type Time struct {
@@ -115,10 +122,10 @@ type UpdateOrganizationInput struct {
 }
 
 type UpdatePaymentInput struct {
-	Amount     *float64 `json:"amount,omitempty"`
-	Date       *string  `json:"date,omitempty"`
-	GroupID    *string  `json:"groupId,omitempty"`
-	CustomerID *string  `json:"customerId,omitempty"`
+	Amount      *int         `json:"amount,omitempty"`
+	Date        *string      `json:"date,omitempty"`
+	PaymentType *PaymentType `json:"paymentType,omitempty"`
+	Currency    *Currency    `json:"currency,omitempty"`
 }
 
 type UpdateTimeInput struct {
@@ -126,4 +133,88 @@ type UpdateTimeInput struct {
 	Day        *string `json:"day,omitempty"`
 	StartHour  *string `json:"start_hour,omitempty"`
 	FinishHour *string `json:"finish_hour,omitempty"`
+}
+
+type Currency string
+
+const (
+	CurrencyTry Currency = "try"
+	CurrencyUsd Currency = "usd"
+	CurrencyEur Currency = "eur"
+)
+
+var AllCurrency = []Currency{
+	CurrencyTry,
+	CurrencyUsd,
+	CurrencyEur,
+}
+
+func (e Currency) IsValid() bool {
+	switch e {
+	case CurrencyTry, CurrencyUsd, CurrencyEur:
+		return true
+	}
+	return false
+}
+
+func (e Currency) String() string {
+	return string(e)
+}
+
+func (e *Currency) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Currency(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Currency", str)
+	}
+	return nil
+}
+
+func (e Currency) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type PaymentType string
+
+const (
+	PaymentTypeCreditCard PaymentType = "credit_card"
+	PaymentTypeCash       PaymentType = "cash"
+)
+
+var AllPaymentType = []PaymentType{
+	PaymentTypeCreditCard,
+	PaymentTypeCash,
+}
+
+func (e PaymentType) IsValid() bool {
+	switch e {
+	case PaymentTypeCreditCard, PaymentTypeCash:
+		return true
+	}
+	return false
+}
+
+func (e PaymentType) String() string {
+	return string(e)
+}
+
+func (e *PaymentType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = PaymentType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid PaymentType", str)
+	}
+	return nil
+}
+
+func (e PaymentType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }

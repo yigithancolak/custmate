@@ -44,13 +44,24 @@ type Customer {
   active: Boolean
 }
 
+enum PaymentType {
+  credit_card
+  cash
+}
+
+enum Currency {
+  try
+  usd
+  eur
+}
+
 type Payment {
   id: ID!
-  amount: Float!
+  amount: Int!
   date: String!
   customer: Customer!
-  organization: Organization!
-  group: Group!
+  paymentType: PaymentType!
+  currency: Currency!
 }
 
 type TokenResponse {
@@ -191,17 +202,18 @@ input UpdateCustomerInput {
 # Input for Payment
 
 input CreatePaymentInput {
-  amount: Float!
+  amount: Int!
   date: String!
-  groupId: ID!
   customerId: ID!
+  paymentType: PaymentType!
+  currency: Currency!
 }
 
 input UpdatePaymentInput {
-  amount: Float
+  amount: Int
   date: String
-  groupId: ID
-  customerId: ID
+  paymentType: PaymentType
+  currency: Currency
 }
 
 #Input for time

@@ -98,12 +98,12 @@ type ComplexityRoot struct {
 	}
 
 	Payment struct {
-		Amount       func(childComplexity int) int
-		Customer     func(childComplexity int) int
-		Date         func(childComplexity int) int
-		Group        func(childComplexity int) int
-		ID           func(childComplexity int) int
-		Organization func(childComplexity int) int
+		Amount      func(childComplexity int) int
+		Currency    func(childComplexity int) int
+		Customer    func(childComplexity int) int
+		Date        func(childComplexity int) int
+		ID          func(childComplexity int) int
+		PaymentType func(childComplexity int) int
 	}
 
 	Query struct {
@@ -536,6 +536,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Payment.Amount(childComplexity), true
 
+	case "Payment.currency":
+		if e.complexity.Payment.Currency == nil {
+			break
+		}
+
+		return e.complexity.Payment.Currency(childComplexity), true
+
 	case "Payment.customer":
 		if e.complexity.Payment.Customer == nil {
 			break
@@ -550,13 +557,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Payment.Date(childComplexity), true
 
-	case "Payment.group":
-		if e.complexity.Payment.Group == nil {
-			break
-		}
-
-		return e.complexity.Payment.Group(childComplexity), true
-
 	case "Payment.id":
 		if e.complexity.Payment.ID == nil {
 			break
@@ -564,12 +564,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Payment.ID(childComplexity), true
 
-	case "Payment.organization":
-		if e.complexity.Payment.Organization == nil {
+	case "Payment.paymentType":
+		if e.complexity.Payment.PaymentType == nil {
 			break
 		}
 
-		return e.complexity.Payment.Organization(childComplexity), true
+		return e.complexity.Payment.PaymentType(childComplexity), true
 
 	case "Query.getCustomer":
 		if e.complexity.Query.GetCustomer == nil {
@@ -3236,10 +3236,10 @@ func (ec *executionContext) fieldContext_Mutation_createPayment(ctx context.Cont
 				return ec.fieldContext_Payment_date(ctx, field)
 			case "customer":
 				return ec.fieldContext_Payment_customer(ctx, field)
-			case "organization":
-				return ec.fieldContext_Payment_organization(ctx, field)
-			case "group":
-				return ec.fieldContext_Payment_group(ctx, field)
+			case "paymentType":
+				return ec.fieldContext_Payment_paymentType(ctx, field)
+			case "currency":
+				return ec.fieldContext_Payment_currency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Payment", field.Name)
 		},
@@ -3847,9 +3847,9 @@ func (ec *executionContext) _Payment_amount(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(float64)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Payment_amount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3859,7 +3859,7 @@ func (ec *executionContext) fieldContext_Payment_amount(ctx context.Context, fie
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Float does not have child fields")
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3969,8 +3969,8 @@ func (ec *executionContext) fieldContext_Payment_customer(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _Payment_organization(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Payment_organization(ctx, field)
+func (ec *executionContext) _Payment_paymentType(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Payment_paymentType(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3983,7 +3983,7 @@ func (ec *executionContext) _Payment_organization(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Organization, nil
+		return obj.PaymentType, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3995,34 +3995,26 @@ func (ec *executionContext) _Payment_organization(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Organization)
+	res := resTmp.(model.PaymentType)
 	fc.Result = res
-	return ec.marshalNOrganization2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐOrganization(ctx, field.Selections, res)
+	return ec.marshalNPaymentType2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐPaymentType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Payment_organization(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Payment_paymentType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Payment",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Organization_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Organization_name(ctx, field)
-			case "email":
-				return ec.fieldContext_Organization_email(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
+			return nil, errors.New("field of type PaymentType does not have child fields")
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Payment_group(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Payment_group(ctx, field)
+func (ec *executionContext) _Payment_currency(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Payment_currency(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4035,7 +4027,7 @@ func (ec *executionContext) _Payment_group(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Group, nil
+		return obj.Currency, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4047,29 +4039,19 @@ func (ec *executionContext) _Payment_group(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Group)
+	res := resTmp.(model.Currency)
 	fc.Result = res
-	return ec.marshalNGroup2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐGroup(ctx, field.Selections, res)
+	return ec.marshalNCurrency2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCurrency(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Payment_group(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Payment_currency(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Payment",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Group_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Group_name(ctx, field)
-			case "instructor":
-				return ec.fieldContext_Group_instructor(ctx, field)
-			case "times":
-				return ec.fieldContext_Group_times(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
+			return nil, errors.New("field of type Currency does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4906,10 +4888,10 @@ func (ec *executionContext) fieldContext_Query_getPayment(ctx context.Context, f
 				return ec.fieldContext_Payment_date(ctx, field)
 			case "customer":
 				return ec.fieldContext_Payment_customer(ctx, field)
-			case "organization":
-				return ec.fieldContext_Payment_organization(ctx, field)
-			case "group":
-				return ec.fieldContext_Payment_group(ctx, field)
+			case "paymentType":
+				return ec.fieldContext_Payment_paymentType(ctx, field)
+			case "currency":
+				return ec.fieldContext_Payment_currency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Payment", field.Name)
 		},
@@ -4995,10 +4977,10 @@ func (ec *executionContext) fieldContext_Query_listPaymentsByOrganization(ctx co
 				return ec.fieldContext_Payment_date(ctx, field)
 			case "customer":
 				return ec.fieldContext_Payment_customer(ctx, field)
-			case "organization":
-				return ec.fieldContext_Payment_organization(ctx, field)
-			case "group":
-				return ec.fieldContext_Payment_group(ctx, field)
+			case "paymentType":
+				return ec.fieldContext_Payment_paymentType(ctx, field)
+			case "currency":
+				return ec.fieldContext_Payment_currency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Payment", field.Name)
 		},
@@ -5084,10 +5066,10 @@ func (ec *executionContext) fieldContext_Query_listPaymentsByGroup(ctx context.C
 				return ec.fieldContext_Payment_date(ctx, field)
 			case "customer":
 				return ec.fieldContext_Payment_customer(ctx, field)
-			case "organization":
-				return ec.fieldContext_Payment_organization(ctx, field)
-			case "group":
-				return ec.fieldContext_Payment_group(ctx, field)
+			case "paymentType":
+				return ec.fieldContext_Payment_paymentType(ctx, field)
+			case "currency":
+				return ec.fieldContext_Payment_currency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Payment", field.Name)
 		},
@@ -5173,10 +5155,10 @@ func (ec *executionContext) fieldContext_Query_listPaymentsByCustomer(ctx contex
 				return ec.fieldContext_Payment_date(ctx, field)
 			case "customer":
 				return ec.fieldContext_Payment_customer(ctx, field)
-			case "organization":
-				return ec.fieldContext_Payment_organization(ctx, field)
-			case "group":
-				return ec.fieldContext_Payment_group(ctx, field)
+			case "paymentType":
+				return ec.fieldContext_Payment_paymentType(ctx, field)
+			case "currency":
+				return ec.fieldContext_Payment_currency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Payment", field.Name)
 		},
@@ -7556,7 +7538,7 @@ func (ec *executionContext) unmarshalInputCreatePaymentInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"amount", "date", "groupId", "customerId"}
+	fieldsInOrder := [...]string{"amount", "date", "customerId", "paymentType", "currency"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7567,7 +7549,7 @@ func (ec *executionContext) unmarshalInputCreatePaymentInput(ctx context.Context
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
-			data, err := ec.unmarshalNFloat2float64(ctx, v)
+			data, err := ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7581,15 +7563,6 @@ func (ec *executionContext) unmarshalInputCreatePaymentInput(ctx context.Context
 				return it, err
 			}
 			it.Date = data
-		case "groupId":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
-			data, err := ec.unmarshalNID2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.GroupID = data
 		case "customerId":
 			var err error
 
@@ -7599,6 +7572,24 @@ func (ec *executionContext) unmarshalInputCreatePaymentInput(ctx context.Context
 				return it, err
 			}
 			it.CustomerID = data
+		case "paymentType":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("paymentType"))
+			data, err := ec.unmarshalNPaymentType2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐPaymentType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PaymentType = data
+		case "currency":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currency"))
+			data, err := ec.unmarshalNCurrency2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCurrency(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Currency = data
 		}
 	}
 
@@ -7856,7 +7847,7 @@ func (ec *executionContext) unmarshalInputUpdatePaymentInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"amount", "date", "groupId", "customerId"}
+	fieldsInOrder := [...]string{"amount", "date", "paymentType", "currency"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7867,7 +7858,7 @@ func (ec *executionContext) unmarshalInputUpdatePaymentInput(ctx context.Context
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
-			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7881,24 +7872,24 @@ func (ec *executionContext) unmarshalInputUpdatePaymentInput(ctx context.Context
 				return it, err
 			}
 			it.Date = data
-		case "groupId":
+		case "paymentType":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("paymentType"))
+			data, err := ec.unmarshalOPaymentType2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐPaymentType(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.GroupID = data
-		case "customerId":
+			it.PaymentType = data
+		case "currency":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("customerId"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currency"))
+			data, err := ec.unmarshalOCurrency2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCurrency(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.CustomerID = data
+			it.Currency = data
 		}
 	}
 
@@ -8393,13 +8384,13 @@ func (ec *executionContext) _Payment(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "organization":
-			out.Values[i] = ec._Payment_organization(ctx, field, obj)
+		case "paymentType":
+			out.Values[i] = ec._Payment_paymentType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "group":
-			out.Values[i] = ec._Payment_group(ctx, field, obj)
+		case "currency":
+			out.Values[i] = ec._Payment_currency(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -9253,6 +9244,16 @@ func (ec *executionContext) unmarshalNCreateTimeInput2ᚖgithubᚗcomᚋyigithan
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCurrency2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCurrency(ctx context.Context, v interface{}) (model.Currency, error) {
+	var res model.Currency
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNCurrency2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCurrency(ctx context.Context, sel ast.SelectionSet, v model.Currency) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNCustomer2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCustomer(ctx context.Context, sel ast.SelectionSet, v model.Customer) graphql.Marshaler {
 	return ec._Customer(ctx, sel, &v)
 }
@@ -9309,21 +9310,6 @@ func (ec *executionContext) marshalNCustomer2ᚖgithubᚗcomᚋyigithancolakᚋc
 		return graphql.Null
 	}
 	return ec._Customer(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
-	res, err := graphql.UnmarshalFloatContext(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
-	res := graphql.MarshalFloatContext(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return graphql.WrapContextMarshaler(ctx, res)
 }
 
 func (ec *executionContext) marshalNGroup2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐGroup(ctx context.Context, sel ast.SelectionSet, v model.Group) graphql.Marshaler {
@@ -9489,6 +9475,21 @@ func (ec *executionContext) marshalNInstructor2ᚖgithubᚗcomᚋyigithancolak�
 	return ec._Instructor(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
+	res, err := graphql.UnmarshalInt(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	res := graphql.MarshalInt(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
 func (ec *executionContext) marshalNOrganization2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐOrganization(ctx context.Context, sel ast.SelectionSet, v model.Organization) graphql.Marshaler {
 	return ec._Organization(ctx, sel, &v)
 }
@@ -9559,6 +9560,16 @@ func (ec *executionContext) marshalNPayment2ᚖgithubᚗcomᚋyigithancolakᚋcu
 		return graphql.Null
 	}
 	return ec._Payment(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNPaymentType2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐPaymentType(ctx context.Context, v interface{}) (model.PaymentType, error) {
+	var res model.PaymentType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNPaymentType2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐPaymentType(ctx context.Context, sel ast.SelectionSet, v model.PaymentType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -9962,20 +9973,20 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v interface{}) (*float64, error) {
+func (ec *executionContext) unmarshalOCurrency2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCurrency(ctx context.Context, v interface{}) (*model.Currency, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := graphql.UnmarshalFloatContext(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
+	var res = new(model.Currency)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel ast.SelectionSet, v *float64) graphql.Marshaler {
+func (ec *executionContext) marshalOCurrency2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCurrency(ctx context.Context, sel ast.SelectionSet, v *model.Currency) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	res := graphql.MarshalFloatContext(*v)
-	return graphql.WrapContextMarshaler(ctx, res)
+	return v
 }
 
 func (ec *executionContext) unmarshalOID2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
@@ -10040,6 +10051,22 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	}
 	res := graphql.MarshalInt(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOPaymentType2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐPaymentType(ctx context.Context, v interface{}) (*model.PaymentType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(model.PaymentType)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOPaymentType2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐPaymentType(ctx context.Context, sel ast.SelectionSet, v *model.PaymentType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {

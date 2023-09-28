@@ -34,12 +34,12 @@ import (
 // func (r *mutationResolver) UpdateOrganization(ctx context.Context, input model.UpdateOrganizationInput) (string, error) {
 // 	org := middleware.ForContext(ctx)
 
-// 	resp, err := r.Store.Organizations.UpdateOrganization(org.ID, input)
+// 	_, err := r.Store.Organizations.UpdateOrganization(org.ID, input)
 // 	if err != nil {
-// 		return nil, err
+// 		return messageUpdateFailed, err
 // 	}
 
-// 	return resp, nil
+// 	return messageOrganizationUpdated, nil
 // }
 
 // // DeleteOrganization is the resolver for the deleteOrganization field.
@@ -74,12 +74,12 @@ import (
 
 // // UpdateGroup is the resolver for the updateGroup field.
 // func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input model.UpdateGroupInput) (string, error) {
-// 	group, err := r.Store.UpdateGroupWithTimeTx(id, input)
+// 	err := r.Store.UpdateGroupWithTimeTx(id, input)
 // 	if err != nil {
-// 		return nil, err
+// 		return messageUpdateFailed, err
 // 	}
 
-// 	return group, nil
+// 	return messageGroupUpdated, nil
 // }
 
 // // DeleteGroup is the resolver for the deleteGroup field.
@@ -102,12 +102,12 @@ import (
 
 // // UpdateInstructor is the resolver for the updateInstructor field.
 // func (r *mutationResolver) UpdateInstructor(ctx context.Context, id string, input model.UpdateInstructorInput) (string, error) {
-// 	instructor, err := r.Store.Instructors.UpdateInstructor(id, input)
+// 	_, err := r.Store.Instructors.UpdateInstructor(id, input)
 // 	if err != nil {
-// 		return nil, err
+// 		return messageUpdateFailed, err
 // 	}
 
-// 	return instructor, err
+// 	return messageInstructorUpdated, err
 // }
 
 // // DeleteInstructor is the resolver for the deleteInstructor field.
@@ -139,9 +139,14 @@ import (
 // 	return messageCustomerUpdated, nil
 // }
 
-// DeleteCustomer is the resolver for the deleteCustomer field.
+// // DeleteCustomer is the resolver for the deleteCustomer field.
 // func (r *mutationResolver) DeleteCustomer(ctx context.Context, id string) (bool, error) {
-// 	panic(fmt.Errorf("not implemented: DeleteCustomer - deleteCustomer"))
+// 	err := r.Store.Customers.DeleteCustomer(id)
+// 	if err != nil {
+// 		return false, err
+// 	}
+
+// 	return true, nil
 // }
 
 // CreatePayment is the resolver for the createPayment field.
