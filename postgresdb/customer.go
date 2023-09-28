@@ -68,6 +68,13 @@ func (s *CustomerStore) UpdateCustomer(tx *sql.Tx, customerID string, input *mod
 		args = append(args, input.NextPayment)
 		idx++
 	}
+
+	if input.Active != nil {
+		updates = append(updates, fmt.Sprintf("active = $%d", idx))
+		args = append(args, input.Active)
+		idx++
+	}
+
 	args = append(args, customerID)
 
 	query := baseQuery + strings.Join(updates, ", ") + fmt.Sprintf(" WHERE id = $%d", idx) + returnQuery

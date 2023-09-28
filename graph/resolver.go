@@ -29,6 +29,11 @@ func NewResolver(store *postgresdb.Store) *Resolver {
 	}
 }
 
+const (
+	messageUpdateFailed    = "Update failed"
+	messageCustomerUpdated = "Customer updated"
+)
+
 func (r *mutationResolver) Login(ctx context.Context, email string, password string) (*model.TokenResponse, error) {
 
 	tokenResponse, err := r.Store.Organizations.LoginOrganization(email, password)
@@ -142,8 +147,8 @@ func (r *mutationResolver) CreateCustomer(ctx context.Context, input model.Creat
 func (r *mutationResolver) UpdateCustomer(ctx context.Context, id string, input model.UpdateCustomerInput) (string, error) {
 	err := r.Store.UpdateCustomerWithTx(id, &input)
 	if err != nil {
-		return "Uptade failed", err
+		return messageUpdateFailed, err
 	}
 
-	return "Customer updated", nil
+	return messageCustomerUpdated, nil
 }
