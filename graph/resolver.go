@@ -40,7 +40,7 @@ const (
 
 func (r *mutationResolver) Login(ctx context.Context, email string, password string) (*model.TokenResponse, error) {
 
-	tokenResponse, err := r.Store.Organizations.LoginOrganization(email, password)
+	tokenResponse, err := r.Store.LoginOrganization(email, password)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (r *mutationResolver) Login(ctx context.Context, email string, password str
 
 func (r *mutationResolver) CreateOrganization(ctx context.Context, input model.CreateOrganizationInput) (*model.Organization, error) {
 
-	org, err := r.Store.Organizations.CreateOrganization(input)
+	org, err := r.Store.CreateOrganization(input)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input model.C
 func (r *mutationResolver) UpdateOrganization(ctx context.Context, input model.UpdateOrganizationInput) (string, error) {
 	org := middleware.ForContext(ctx)
 
-	_, err := r.Store.Organizations.UpdateOrganization(org.ID, input)
+	_, err := r.Store.UpdateOrganization(org.ID, input)
 	if err != nil {
 		return messageUpdateFailed, err
 	}
@@ -71,7 +71,7 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, input model.U
 func (r *mutationResolver) DeleteOrganization(ctx context.Context) (bool, error) {
 	org := middleware.ForContext(ctx)
 
-	err := r.Store.Organizations.DeleteOrganization(org.ID)
+	err := r.Store.DeleteOrganization(org.ID)
 	if err != nil {
 		return false, err
 	}
@@ -100,14 +100,14 @@ func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input mod
 }
 
 func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (bool, error) {
-	ok, err := r.Store.Groups.DeleteGroup(id)
+	ok, err := r.Store.DeleteGroup(id)
 
 	return ok, err
 }
 
 func (r *mutationResolver) CreateInstructor(ctx context.Context, input model.CreateInstructorInput) (*model.Instructor, error) {
 	org := middleware.ForContext(ctx)
-	instructor, err := r.Store.Instructors.CreateInstructor(org.ID, input)
+	instructor, err := r.Store.CreateInstructor(org.ID, input)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func (r *mutationResolver) CreateInstructor(ctx context.Context, input model.Cre
 }
 
 func (r *mutationResolver) UpdateInstructor(ctx context.Context, id string, input model.UpdateInstructorInput) (string, error) {
-	_, err := r.Store.Instructors.UpdateInstructor(id, input)
+	_, err := r.Store.UpdateInstructor(id, input)
 	if err != nil {
 		return messageUpdateFailed, err
 	}
@@ -125,7 +125,7 @@ func (r *mutationResolver) UpdateInstructor(ctx context.Context, id string, inpu
 }
 
 func (r *mutationResolver) DeleteInstructor(ctx context.Context, id string) (bool, error) {
-	ok, err := r.Store.Instructors.DeleteInstructor(id)
+	ok, err := r.Store.DeleteInstructor(id)
 
 	return ok, err
 }
@@ -151,7 +151,7 @@ func (r *mutationResolver) UpdateCustomer(ctx context.Context, id string, input 
 }
 
 func (r *mutationResolver) DeleteCustomer(ctx context.Context, id string) (bool, error) {
-	err := r.Store.Customers.DeleteCustomer(id)
+	err := r.Store.DeleteCustomer(id)
 	if err != nil {
 		return false, err
 	}
@@ -160,7 +160,7 @@ func (r *mutationResolver) DeleteCustomer(ctx context.Context, id string) (bool,
 }
 
 func (r *mutationResolver) CreatePayment(ctx context.Context, input model.CreatePaymentInput) (*model.Payment, error) {
-	payment, err := r.Store.Payments.CreatePayment(&input)
+	payment, err := r.Store.CreatePayment(&input)
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +169,7 @@ func (r *mutationResolver) CreatePayment(ctx context.Context, input model.Create
 }
 
 func (r *mutationResolver) UpdatePayment(ctx context.Context, id string, input model.UpdatePaymentInput) (string, error) {
-	err := r.Store.Payments.UpdatePayment(id, &input)
+	err := r.Store.UpdatePayment(id, &input)
 	if err != nil {
 		return messageUpdateFailed, err
 	}
@@ -178,7 +178,7 @@ func (r *mutationResolver) UpdatePayment(ctx context.Context, id string, input m
 }
 
 func (r *mutationResolver) DeletePayment(ctx context.Context, id string) (bool, error) {
-	err := r.Store.Payments.DeletePayment(id)
+	err := r.Store.DeletePayment(id)
 	if err != nil {
 		return false, err
 	}
@@ -186,7 +186,7 @@ func (r *mutationResolver) DeletePayment(ctx context.Context, id string) (bool, 
 }
 
 func (r *mutationResolver) CreateTime(ctx context.Context, groupID string, input model.CreateTimeInput) (*model.Time, error) {
-	time, err := r.Store.Time.CreateTime(r.Store.DB, groupID, &input)
+	time, err := r.Store.CreateTime(r.Store.DB, groupID, &input)
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +195,7 @@ func (r *mutationResolver) CreateTime(ctx context.Context, groupID string, input
 }
 
 func (r *mutationResolver) UpdateTime(ctx context.Context, input model.UpdateTimeInput) (string, error) {
-	_, err := r.Store.Time.UpdateTime(r.Store.DB, &input)
+	_, err := r.Store.UpdateTime(r.Store.DB, &input)
 	if err != nil {
 		return messageUpdateFailed, err
 	}
@@ -203,7 +203,7 @@ func (r *mutationResolver) UpdateTime(ctx context.Context, input model.UpdateTim
 }
 
 func (r *mutationResolver) DeleteTime(ctx context.Context, id string) (bool, error) {
-	err := r.Store.Time.DeleteTime(id)
+	err := r.Store.DeleteTime(id)
 	if err != nil {
 		return false, err
 	}
@@ -217,14 +217,14 @@ func (r *queryResolver) GetOrganization(ctx context.Context) (*model.Organizatio
 }
 
 func (r *queryResolver) GetGroup(ctx context.Context, id string) (*model.Group, error) {
-	group, err := r.Store.Groups.GetGroupByID(id)
+	group, err := r.Store.GetGroupByID(id)
 	if err != nil {
 		return nil, err
 	}
 
 	fields := graphql.CollectAllFields(ctx)
 	if util.Contains[string](fields, "times") {
-		time, err := r.Store.Time.GetTimesByGroupID(id)
+		time, err := r.Store.GetTimesByGroupID(id)
 		if err != nil {
 			return nil, err
 		}
@@ -233,3 +233,14 @@ func (r *queryResolver) GetGroup(ctx context.Context, id string) (*model.Group, 
 
 	return group, err
 }
+
+// func (r *queryResolver) ListGroupsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Group, error) {
+// 	org := middleware.ForContext(ctx)
+
+// 	groups, err := r.Store.ListGroupsByOrganization(org.ID, offset, limit)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return groups, nil
+// }

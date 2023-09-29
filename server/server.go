@@ -32,7 +32,7 @@ func NewServer(config *util.Config) (*Server, error) {
 	resolver := graph.NewResolver(store)
 
 	router := chi.NewRouter()
-	router.Use(middleware.Middleware(store.Organizations))
+	router.Use(middleware.Middleware(store))
 
 	c := graph.Config{Resolvers: resolver}
 	c.Directives.Auth = directives.Auth

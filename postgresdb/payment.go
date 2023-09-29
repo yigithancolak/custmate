@@ -5,21 +5,10 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 	"github.com/yigithancolak/custmate/graph/model"
 )
 
-type PaymentStore struct {
-	DB *sqlx.DB
-}
-
-func NewPaymentStore(db *sqlx.DB) *PaymentStore {
-	return &PaymentStore{
-		DB: db,
-	}
-}
-
-func (s *PaymentStore) CreatePayment(input *model.CreatePaymentInput) (*model.Payment, error) {
+func (s *Store) CreatePayment(input *model.CreatePaymentInput) (*model.Payment, error) {
 	query := `INSERT INTO payments (id, customer_id, amount, payment_type, currency, date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, customer_id, amount, payment_type, currency, date`
 
 	paymentID := uuid.New().String()
@@ -35,7 +24,7 @@ func (s *PaymentStore) CreatePayment(input *model.CreatePaymentInput) (*model.Pa
 	return payment, nil
 }
 
-func (s *PaymentStore) UpdatePayment(id string, input *model.UpdatePaymentInput) error {
+func (s *Store) UpdatePayment(id string, input *model.UpdatePaymentInput) error {
 	baseQuery := "UPDATE payments SET "
 	var updates []string
 	var args []interface{}
@@ -77,7 +66,7 @@ func (s *PaymentStore) UpdatePayment(id string, input *model.UpdatePaymentInput)
 	return nil
 }
 
-func (s *PaymentStore) DeletePayment(id string) error {
+func (s *Store) DeletePayment(id string) error {
 	query := "DELETE FROM payments WHERE id = $1"
 
 	_, err := s.DB.Exec(query, id)

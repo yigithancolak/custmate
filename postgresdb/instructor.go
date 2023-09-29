@@ -5,21 +5,10 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 	"github.com/yigithancolak/custmate/graph/model"
 )
 
-type InstructorStore struct {
-	DB *sqlx.DB
-}
-
-func NewInstructorStore(db *sqlx.DB) *InstructorStore {
-	return &InstructorStore{
-		DB: db,
-	}
-}
-
-func (s *InstructorStore) CreateInstructor(orgID string, input model.CreateInstructorInput) (*model.Instructor, error) {
+func (s *Store) CreateInstructor(orgID string, input model.CreateInstructorInput) (*model.Instructor, error) {
 	query := `INSERT INTO instructors (id, name, organization_id) VALUES ($1, $2, $3) RETURNING id, name, organization_id`
 
 	instructorId := uuid.New().String()
@@ -33,7 +22,7 @@ func (s *InstructorStore) CreateInstructor(orgID string, input model.CreateInstr
 	return &instructor, nil
 }
 
-func (s *InstructorStore) UpdateInstructor(id string, input model.UpdateInstructorInput) (*model.Instructor, error) {
+func (s *Store) UpdateInstructor(id string, input model.UpdateInstructorInput) (*model.Instructor, error) {
 	baseQuery := "UPDATE instructors SET "
 	returnQuery := " RETURNING id, name, organization_id"
 
@@ -59,7 +48,7 @@ func (s *InstructorStore) UpdateInstructor(id string, input model.UpdateInstruct
 	return &updatedInstructor, nil
 }
 
-func (s *InstructorStore) DeleteInstructor(id string) (bool, error) {
+func (s *Store) DeleteInstructor(id string) (bool, error) {
 	query := "DELETE FROM instructors WHERE id = $1"
 	_, err := s.DB.Exec(query, id)
 	if err != nil {

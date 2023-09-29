@@ -6,21 +6,10 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 	"github.com/yigithancolak/custmate/graph/model"
 )
 
-type GroupStore struct {
-	DB *sqlx.DB
-}
-
-func NewGroupStore(db *sqlx.DB) *GroupStore {
-	return &GroupStore{
-		DB: db,
-	}
-}
-
-func (s *GroupStore) CreateGroup(tx *sql.Tx, input *model.CreateGroupInput, organizationID string) (*model.Group, error) {
+func (s *Store) CreateGroup(tx *sql.Tx, input *model.CreateGroupInput, organizationID string) (*model.Group, error) {
 	query := `INSERT INTO org_groups (id, name, organization_id, instructor_id) VALUES ($1, $2, $3, $4) RETURNING id, name`
 
 	groupId := uuid.New().String()
@@ -37,7 +26,7 @@ func (s *GroupStore) CreateGroup(tx *sql.Tx, input *model.CreateGroupInput, orga
 	return group, nil
 }
 
-func (s *GroupStore) UpdateGroup(tx *sql.Tx, id string, input *model.UpdateGroupInput) (*model.Group, error) {
+func (s *Store) UpdateGroup(tx *sql.Tx, id string, input *model.UpdateGroupInput) (*model.Group, error) {
 	baseQuery := "UPDATE org_groups SET "
 	returnQuery := " RETURNING id,name"
 	var updates []string
@@ -74,7 +63,7 @@ func (s *GroupStore) UpdateGroup(tx *sql.Tx, id string, input *model.UpdateGroup
 
 }
 
-func (s *GroupStore) DeleteGroup(id string) (bool, error) {
+func (s *Store) DeleteGroup(id string) (bool, error) {
 	query := "DELETE FROM org_groups WHERE id = $1"
 	_, err := s.DB.Exec(query, id)
 	if err != nil {
@@ -84,7 +73,7 @@ func (s *GroupStore) DeleteGroup(id string) (bool, error) {
 	return true, nil
 }
 
-func (s *GroupStore) GetGroupByID(id string) (*model.Group, error) {
+func (s *Store) GetGroupByID(id string) (*model.Group, error) {
 	query := "SELECT id, name FROM org_groups WHERE id = $1"
 	var group model.Group
 	err := s.DB.QueryRow(query, id).Scan(&group.ID, &group.Name)

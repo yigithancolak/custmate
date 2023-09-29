@@ -8,14 +8,8 @@ import (
 )
 
 type Store struct {
-	DB            *sqlx.DB
-	Organizations *OrganizationStore
-	Groups        *GroupStore
-	Time          *TimeStore
-	Instructors   *InstructorStore
-	Customers     *CustomerStore
-	Payments      *PaymentStore
-	JWTMaker      *token.JWTMaker
+	DB       *sqlx.DB
+	JWTMaker *token.JWTMaker
 }
 
 type queryer interface {
@@ -24,12 +18,7 @@ type queryer interface {
 
 func NewStore(db *sqlx.DB, jwtMaker *token.JWTMaker) *Store {
 	return &Store{
-		DB:            db,
-		Organizations: NewOrganizationStore(db, jwtMaker),
-		Groups:        NewGroupStore(db),
-		Time:          NewTimeStore(db),
-		Instructors:   NewInstructorStore(db),
-		Customers:     NewCustomerStore(db),
-		Payments:      NewPaymentStore(db),
+		DB:       db,
+		JWTMaker: jwtMaker,
 	}
 }

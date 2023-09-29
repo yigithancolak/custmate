@@ -208,7 +208,7 @@ import (
 // 	panic(fmt.Errorf("not implemented: GetGroup - getGroup"))
 // }
 
-// ListGroupsByOrganization is the resolver for the listGroupsByOrganization field.
+// // ListGroupsByOrganization is the resolver for the listGroupsByOrganization field.
 func (r *queryResolver) ListGroupsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Group, error) {
 	panic(fmt.Errorf("not implemented: ListGroupsByOrganization - listGroupsByOrganization"))
 }

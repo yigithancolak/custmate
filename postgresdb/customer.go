@@ -6,21 +6,10 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 	"github.com/yigithancolak/custmate/graph/model"
 )
 
-type CustomerStore struct {
-	DB *sqlx.DB
-}
-
-func NewCustomerStore(db *sqlx.DB) *CustomerStore {
-	return &CustomerStore{
-		DB: db,
-	}
-}
-
-func (s *CustomerStore) CreateCustomer(tx *sql.Tx, organizationID string, input *model.CreateCustomerInput) (*model.Customer, error) {
+func (s *Store) CreateCustomer(tx *sql.Tx, organizationID string, input *model.CreateCustomerInput) (*model.Customer, error) {
 	query := "INSERT INTO customers (id, name, phone_number, next_payment, organization_id) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, phone_number, next_payment, organization_id"
 	customerId := uuid.New().String()
 
@@ -38,7 +27,7 @@ func (s *CustomerStore) CreateCustomer(tx *sql.Tx, organizationID string, input 
 	return &customer, nil
 }
 
-func (s *CustomerStore) UpdateCustomer(tx *sql.Tx, customerID string, input *model.UpdateCustomerInput) (*model.Customer, error) {
+func (s *Store) UpdateCustomer(tx *sql.Tx, customerID string, input *model.UpdateCustomerInput) (*model.Customer, error) {
 	baseQuery := "UPDATE customers SET "
 	returnQuery := " RETURNING name, phone_number, last_payment, next_payment"
 	var updates []string
@@ -92,7 +81,7 @@ func (s *CustomerStore) UpdateCustomer(tx *sql.Tx, customerID string, input *mod
 
 }
 
-func (s *CustomerStore) UpdateCustomerGroupsAssociations(tx *sql.Tx, customerID string, groups []*string) error {
+func (s *Store) UpdateCustomerGroupsAssociations(tx *sql.Tx, customerID string, groups []*string) error {
 	_, err := tx.Exec("DELETE FROM customer_groups WHERE customer_id = $1", customerID)
 	if err != nil {
 		return err
@@ -115,7 +104,7 @@ func (s *CustomerStore) UpdateCustomerGroupsAssociations(tx *sql.Tx, customerID 
 	return nil
 }
 
-func (s *CustomerStore) DeleteCustomer(id string) error {
+func (s *Store) DeleteCustomer(id string) error {
 	query := "DELETE FROM customers WHERE id = $1"
 	_, err := s.DB.Exec(query, id)
 	return err

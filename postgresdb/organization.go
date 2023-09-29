@@ -6,25 +6,11 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 	"github.com/yigithancolak/custmate/graph/model"
-	"github.com/yigithancolak/custmate/token"
 	"github.com/yigithancolak/custmate/util"
 )
 
-type OrganizationStore struct {
-	DB       *sqlx.DB
-	JWTMaker *token.JWTMaker
-}
-
-func NewOrganizationStore(db *sqlx.DB, jwtMaker *token.JWTMaker) *OrganizationStore {
-	return &OrganizationStore{
-		DB:       db,
-		JWTMaker: jwtMaker,
-	}
-}
-
-func (s *OrganizationStore) GetOrganizationById(id string) (*model.Organization, error) {
+func (s *Store) GetOrganizationById(id string) (*model.Organization, error) {
 	query := "SELECT id,name,email FROM organizations"
 
 	var organization model.Organization
@@ -37,7 +23,7 @@ func (s *OrganizationStore) GetOrganizationById(id string) (*model.Organization,
 
 }
 
-func (s *OrganizationStore) LoginOrganization(email, password string) (*model.TokenResponse, error) {
+func (s *Store) LoginOrganization(email, password string) (*model.TokenResponse, error) {
 	query := "SELECT id,password FROM organizations WHERE email = $1"
 
 	var orgID string
@@ -59,7 +45,7 @@ func (s *OrganizationStore) LoginOrganization(email, password string) (*model.To
 	return &model.TokenResponse{AccessToken: accessToken}, nil
 }
 
-func (s *OrganizationStore) CreateOrganization(input model.CreateOrganizationInput) (*model.Organization, error) {
+func (s *Store) CreateOrganization(input model.CreateOrganizationInput) (*model.Organization, error) {
 	query := `INSERT INTO organizations (id, name, email, password) VALUES ($1, $2, $3, $4) RETURNING id, name, email`
 	hashedPassword, err := util.HashPassword(input.Password)
 	if err != nil {
@@ -75,7 +61,7 @@ func (s *OrganizationStore) CreateOrganization(input model.CreateOrganizationInp
 	return &org, nil
 }
 
-func (s *OrganizationStore) UpdateOrganization(orgID string, input model.UpdateOrganizationInput) (*model.Organization, error) {
+func (s *Store) UpdateOrganization(orgID string, input model.UpdateOrganizationInput) (*model.Organization, error) {
 	baseQuery := "UPDATE organizations SET "
 	returnQuery := " RETURNING id, name, email"
 
@@ -114,7 +100,7 @@ func (s *OrganizationStore) UpdateOrganization(orgID string, input model.UpdateO
 	return &org, nil
 }
 
-func (s *OrganizationStore) DeleteOrganization(id string) error {
+func (s *Store) DeleteOrganization(id string) error {
 	query := `DELETE FROM organizations WHERE id = $1`
 	_, err := s.DB.Exec(query, id)
 	return err

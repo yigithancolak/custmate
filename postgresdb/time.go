@@ -5,21 +5,10 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 	"github.com/yigithancolak/custmate/graph/model"
 )
 
-type TimeStore struct {
-	DB *sqlx.DB
-}
-
-func NewTimeStore(db *sqlx.DB) *TimeStore {
-	return &TimeStore{
-		DB: db,
-	}
-}
-
-func (s *TimeStore) CreateTime(q queryer, groupId string, input *model.CreateTimeInput) (*model.Time, error) {
+func (s *Store) CreateTime(q queryer, groupId string, input *model.CreateTimeInput) (*model.Time, error) {
 	query := `INSERT INTO times (id, org_group_id, day, start_hour, finish_hour) VALUES ($1, $2, $3, $4, $5) RETURNING *`
 
 	timeId := uuid.New().String() // Assuming you use UUID for your 'id' column
@@ -34,7 +23,7 @@ func (s *TimeStore) CreateTime(q queryer, groupId string, input *model.CreateTim
 	return time, nil
 }
 
-func (s *TimeStore) UpdateTime(q queryer, time *model.UpdateTimeInput) (*model.Time, error) {
+func (s *Store) UpdateTime(q queryer, time *model.UpdateTimeInput) (*model.Time, error) {
 	baseQuery := "UPDATE times SET "
 	returnQuery := " RETURNING *"
 	var updates []string
@@ -71,13 +60,13 @@ func (s *TimeStore) UpdateTime(q queryer, time *model.UpdateTimeInput) (*model.T
 	return &updatedTime, nil
 }
 
-func (s *TimeStore) DeleteTime(id string) error {
+func (s *Store) DeleteTime(id string) error {
 	query := "DELETE FROM times WHERE id = $1"
 	_, err := s.DB.Exec(query, id)
 	return err
 }
 
-func (s *TimeStore) GetTimesByGroupID(id string) ([]*model.Time, error) {
+func (s *Store) GetTimesByGroupID(id string) ([]*model.Time, error) {
 	query := "SELECT id, org_group_id, day, start_hour, finish_hour FROM times WHERE org_group_id = $1"
 
 	// Execute the query

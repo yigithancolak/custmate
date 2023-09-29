@@ -13,7 +13,7 @@ func (s *Store) CreateCustomerWithTx(input *model.CreateCustomerInput, organizat
 		return nil, ErrBeginTransaction
 	}
 
-	customer, err := s.Customers.CreateCustomer(tx, organizationID, input)
+	customer, err := s.CreateCustomer(tx, organizationID, input)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (s *Store) UpdateCustomerWithTx(customerID string, input *model.UpdateCusto
 		return ErrBeginTransaction
 	}
 
-	_, err = s.Customers.UpdateCustomer(tx, customerID, input)
+	_, err = s.UpdateCustomer(tx, customerID, input)
 	if err != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {
 			return ErrRollbackTransaction
@@ -53,7 +53,7 @@ func (s *Store) UpdateCustomerWithTx(customerID string, input *model.UpdateCusto
 	}
 
 	if input.Groups != nil {
-		err = s.Customers.UpdateCustomerGroupsAssociations(tx, customerID, input.Groups)
+		err = s.UpdateCustomerGroupsAssociations(tx, customerID, input.Groups)
 		if err != nil {
 			if rbErr := tx.Rollback(); rbErr != nil {
 				return ErrRollbackTransaction

@@ -10,7 +10,7 @@ func (s *Store) CreateGroupWithTimeTx(input model.CreateGroupInput, organization
 	if err != nil {
 		return nil, ErrBeginTransaction
 	}
-	createdGroup, err := s.Groups.CreateGroup(tx, &input, organizationID)
+	createdGroup, err := s.CreateGroup(tx, &input, organizationID)
 	if err != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {
 			return nil, ErrRollbackTransaction
@@ -19,7 +19,7 @@ func (s *Store) CreateGroupWithTimeTx(input model.CreateGroupInput, organization
 	}
 
 	for _, t := range input.Times {
-		createdTime, err := s.Time.CreateTime(tx, createdGroup.ID, t)
+		createdTime, err := s.CreateTime(tx, createdGroup.ID, t)
 		if err != nil {
 			if rbErr := tx.Rollback(); rbErr != nil {
 				return nil, ErrRollbackTransaction
@@ -46,7 +46,7 @@ func (s *Store) UpdateGroupWithTimeTx(id string, groupInput model.UpdateGroupInp
 		return err
 	}
 
-	_, err = s.Groups.UpdateGroup(tx, id, &groupInput)
+	_, err = s.UpdateGroup(tx, id, &groupInput)
 	if err != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {
 			return rbErr
@@ -55,7 +55,7 @@ func (s *Store) UpdateGroupWithTimeTx(id string, groupInput model.UpdateGroupInp
 	}
 
 	for _, t := range groupInput.Times {
-		_, err := s.Time.UpdateTime(tx, t)
+		_, err := s.UpdateTime(tx, t)
 		if err != nil {
 			tx.Rollback()
 			return err
