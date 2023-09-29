@@ -83,3 +83,13 @@ func (s *GroupStore) DeleteGroup(id string) (bool, error) {
 
 	return true, nil
 }
+
+func (s *GroupStore) GetGroupByID(id string) (*model.Group, error) {
+	query := "SELECT id, name FROM org_groups WHERE id = $1"
+	var group model.Group
+	err := s.DB.QueryRow(query, id).Scan(&group.ID, &group.Name)
+	if err != nil {
+		return nil, err
+	}
+	return &group, nil
+}

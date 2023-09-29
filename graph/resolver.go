@@ -4,7 +4,6 @@ package graph
 
 import (
 	"context"
-	"log"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/yigithancolak/custmate/graph/model"
@@ -86,13 +85,6 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input model.CreateGr
 	group, err := r.Store.CreateGroupWithTimeTx(input, org.ID)
 	if err != nil {
 		return nil, err
-	}
-
-	fields := graphql.CollectAllFields(ctx)
-
-	if util.Contains[string](fields, "instructor") {
-		//TODO: ADD INSTRUCTOR TO RETURN OBJECT
-		log.Println("instructor wanted")
 	}
 
 	return group, nil
@@ -222,4 +214,22 @@ func (r *queryResolver) GetOrganization(ctx context.Context) (*model.Organizatio
 	org := middleware.ForContext(ctx)
 
 	return org, nil
+}
+
+func (r *queryResolver) GetGroup(ctx context.Context, id string) (*model.Group, error) {
+	group, err := r.Store.Groups.GetGroupByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	fields := graphql.CollectAllFields(ctx)
+	if util.Contains[string](fields, "times") {
+		time, err := r.Store.Time.GetTimesByGroupID(id)
+		if err != nil {
+			return nil, err
+		}
+		group.Times = time
+	}
+
+	return group, err
 }

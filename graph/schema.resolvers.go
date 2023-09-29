@@ -203,10 +203,10 @@ import (
 // 	panic(fmt.Errorf("not implemented: GetOrganization - getOrganization"))
 // }
 
-// GetGroup is the resolver for the getGroup field.
-func (r *queryResolver) GetGroup(ctx context.Context, id string) (*model.Group, error) {
-	panic(fmt.Errorf("not implemented: GetGroup - getGroup"))
-}
+// // GetGroup is the resolver for the getGroup field.
+// func (r *queryResolver) GetGroup(ctx context.Context, id string) (*model.Group, error) {
+// 	panic(fmt.Errorf("not implemented: GetGroup - getGroup"))
+// }
 
 // ListGroupsByOrganization is the resolver for the listGroupsByOrganization field.
 func (r *queryResolver) ListGroupsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Group, error) {

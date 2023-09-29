@@ -76,3 +76,32 @@ func (s *TimeStore) DeleteTime(id string) error {
 	_, err := s.DB.Exec(query, id)
 	return err
 }
+
+func (s *TimeStore) GetTimesByGroupID(id string) ([]*model.Time, error) {
+	query := "SELECT id, org_group_id, day, start_hour, finish_hour FROM times WHERE org_group_id = $1"
+
+	// Execute the query
+	rows, err := s.DB.Query(query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var times []*model.Time
+
+	for rows.Next() {
+		var t model.Time
+		err := rows.Scan(&t.ID, &t.GroupID, &t.Day, &t.StartHour, &t.FinishHour)
+		if err != nil {
+			return nil, err
+		}
+		times = append(times, &t)
+	}
+
+	// Check for errors from iterating over rows
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return times, nil
+}
