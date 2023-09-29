@@ -57,6 +57,7 @@ type ComplexityRoot struct {
 	}
 
 	Group struct {
+		Customers  func(childComplexity int) int
 		ID         func(childComplexity int) int
 		Instructor func(childComplexity int) int
 		Name       func(childComplexity int) int
@@ -235,6 +236,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Customer.PhoneNumber(childComplexity), true
+
+	case "Group.customers":
+		if e.complexity.Group.Customers == nil {
+			break
+		}
+
+		return e.complexity.Group.Customers(childComplexity), true
 
 	case "Group.id":
 		if e.complexity.Group.ID == nil {
@@ -1735,6 +1743,8 @@ func (ec *executionContext) fieldContext_Customer_groups(ctx context.Context, fi
 				return ec.fieldContext_Group_instructor(ctx, field)
 			case "times":
 				return ec.fieldContext_Group_times(ctx, field)
+			case "customers":
+				return ec.fieldContext_Group_customers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
 		},
@@ -1980,14 +1990,11 @@ func (ec *executionContext) _Group_instructor(ctx context.Context, field graphql
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.Instructor)
 	fc.Result = res
-	return ec.marshalNInstructor2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐInstructor(ctx, field.Selections, res)
+	return ec.marshalOInstructor2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐInstructor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Group_instructor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2032,14 +2039,11 @@ func (ec *executionContext) _Group_times(ctx context.Context, field graphql.Coll
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.([]*model.Time)
 	fc.Result = res
-	return ec.marshalNTime2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeᚄ(ctx, field.Selections, res)
+	return ec.marshalOTime2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Group_times(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2062,6 +2066,63 @@ func (ec *executionContext) fieldContext_Group_times(ctx context.Context, field 
 				return ec.fieldContext_Time_finish_hour(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Time", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Group_customers(ctx context.Context, field graphql.CollectedField, obj *model.Group) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Group_customers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Customers, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Customer)
+	fc.Result = res
+	return ec.marshalOCustomer2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCustomerᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Group_customers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Group",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Customer_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Customer_name(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_Customer_phoneNumber(ctx, field)
+			case "groups":
+				return ec.fieldContext_Customer_groups(ctx, field)
+			case "lastPayment":
+				return ec.fieldContext_Customer_lastPayment(ctx, field)
+			case "nextPayment":
+				return ec.fieldContext_Customer_nextPayment(ctx, field)
+			case "active":
+				return ec.fieldContext_Customer_active(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Customer", field.Name)
 		},
 	}
 	return fc, nil
@@ -2527,6 +2588,8 @@ func (ec *executionContext) fieldContext_Mutation_createGroup(ctx context.Contex
 				return ec.fieldContext_Group_instructor(ctx, field)
 			case "times":
 				return ec.fieldContext_Group_times(ctx, field)
+			case "customers":
+				return ec.fieldContext_Group_customers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
 		},
@@ -4196,6 +4259,8 @@ func (ec *executionContext) fieldContext_Query_getGroup(ctx context.Context, fie
 				return ec.fieldContext_Group_instructor(ctx, field)
 			case "times":
 				return ec.fieldContext_Group_times(ctx, field)
+			case "customers":
+				return ec.fieldContext_Group_customers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
 		},
@@ -4281,6 +4346,8 @@ func (ec *executionContext) fieldContext_Query_listGroupsByOrganization(ctx cont
 				return ec.fieldContext_Group_instructor(ctx, field)
 			case "times":
 				return ec.fieldContext_Group_times(ctx, field)
+			case "customers":
+				return ec.fieldContext_Group_customers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
 		},
@@ -8049,14 +8116,10 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "instructor":
 			out.Values[i] = ec._Group_instructor(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "times":
 			out.Values[i] = ec._Group_times(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
+		case "customers":
+			out.Values[i] = ec._Group_customers(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -9591,50 +9654,6 @@ func (ec *executionContext) marshalNTime2githubᚗcomᚋyigithancolakᚋcustmate
 	return ec._Time(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTime2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Time) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNTime2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTime(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) marshalNTime2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTime(ctx context.Context, sel ast.SelectionSet, v *model.Time) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -9989,6 +10008,53 @@ func (ec *executionContext) marshalOCurrency2ᚖgithubᚗcomᚋyigithancolakᚋc
 	return v
 }
 
+func (ec *executionContext) marshalOCustomer2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCustomerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Customer) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCustomer2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCustomer(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) unmarshalOID2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
 	if v == nil {
 		return nil, nil
@@ -10037,6 +10103,13 @@ func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) marshalOInstructor2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐInstructor(ctx context.Context, sel ast.SelectionSet, v *model.Instructor) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Instructor(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
 	if v == nil {
 		return nil, nil
@@ -10083,6 +10156,53 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOTime2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTimeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Time) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTime2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐTime(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOUpdateTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdateTimeInputᚄ(ctx context.Context, v interface{}) ([]*model.UpdateTimeInput, error) {

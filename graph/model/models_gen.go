@@ -59,8 +59,9 @@ type Customer struct {
 type Group struct {
 	ID         string      `json:"id"`
 	Name       string      `json:"name"`
-	Instructor *Instructor `json:"instructor"`
-	Times      []*Time     `json:"times"`
+	Instructor *Instructor `json:"instructor,omitempty"`
+	Times      []*Time     `json:"times,omitempty"`
+	Customers  []*Customer `json:"customers,omitempty"`
 }
 
 type Instructor struct {

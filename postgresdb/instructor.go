@@ -57,3 +57,14 @@ func (s *Store) DeleteInstructor(id string) (bool, error) {
 
 	return true, nil
 }
+
+func (s *Store) GetInstructorByID(id string) (*model.Instructor, error) {
+	query := "SELECT id,name, organization_id FROM instructors WHERE id = $1"
+	var instructor model.Instructor
+	err := s.DB.QueryRow(query, id).Scan(&instructor.ID, &instructor.Name, &instructor.OrganizationID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &instructor, nil
+}

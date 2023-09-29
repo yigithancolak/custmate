@@ -30,8 +30,9 @@ type Time {
 type Group {
   id: ID!
   name: String!
-  instructor: Instructor!
-  times: [Time!]!
+  instructor: Instructor
+  times: [Time!]
+  customers: [Customer!]
 }
 
 type Customer {

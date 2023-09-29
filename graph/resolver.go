@@ -234,13 +234,27 @@ func (r *queryResolver) GetGroup(ctx context.Context, id string) (*model.Group, 
 	return group, err
 }
 
-// func (r *queryResolver) ListGroupsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Group, error) {
-// 	org := middleware.ForContext(ctx)
+func (r *queryResolver) ListGroupsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Group, error) {
+	org := middleware.ForContext(ctx)
+	includeTimes := false
+	includeInstructor := false
+	includeCustomers := false
 
-// 	groups, err := r.Store.ListGroupsByOrganization(org.ID, offset, limit)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	fields := graphql.CollectAllFields(ctx)
+	if util.Contains[string](fields, "times") {
+		includeTimes = true
+	}
+	if util.Contains[string](fields, "instructor") {
+		includeInstructor = true
+	}
+	if util.Contains[string](fields, "customers") {
+		includeCustomers = true
+	}
 
-// 	return groups, nil
-// }
+	groups, err := r.Store.ListGroupsByOrganization(org.ID, offset, limit, includeTimes, includeInstructor, includeCustomers)
+	if err != nil {
+		return nil, err
+	}
+
+	return groups, nil
+}

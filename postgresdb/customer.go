@@ -10,13 +10,13 @@ import (
 )
 
 func (s *Store) CreateCustomer(tx *sql.Tx, organizationID string, input *model.CreateCustomerInput) (*model.Customer, error) {
-	query := "INSERT INTO customers (id, name, phone_number, next_payment, organization_id) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, phone_number, next_payment, organization_id"
+	query := "INSERT INTO customers (id, name, phone_number, last_payment, next_payment, organization_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, phone_number, last_payment, next_payment, organization_id"
 	customerId := uuid.New().String()
 
 	var customer model.Customer
 	var orgID string
 
-	err := tx.QueryRow(query, customerId, input.Name, input.PhoneNumber, input.NextPayment, organizationID).Scan(&customer.ID, &customer.Name, &customer.PhoneNumber, &customer.NextPayment, &orgID)
+	err := tx.QueryRow(query, customerId, input.Name, input.PhoneNumber, input.LastPayment, input.NextPayment, organizationID).Scan(&customer.ID, &customer.Name, &customer.PhoneNumber, &customer.LastPayment, &customer.NextPayment, &orgID)
 	if err != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {
 			return nil, fmt.Errorf("%w: %v", ErrRollbackTransaction, rbErr)
@@ -108,4 +108,28 @@ func (s *Store) DeleteCustomer(id string) error {
 	query := "DELETE FROM customers WHERE id = $1"
 	_, err := s.DB.Exec(query, id)
 	return err
+}
+
+func (s *Store) GetCustomersByGroupID(id string) ([]*model.Customer, error) {
+	query := `SELECT id, name, phone_number, last_payment, next_payment, active FROM customers c
+	JOIN customer_groups cg ON c.id = cg.customer_id
+	WHERE cg.org_group_id = $1`
+
+	rows, err := s.DB.Query(query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var customers []*model.Customer
+	for rows.Next() {
+		var customer model.Customer
+		err = rows.Scan(&customer.ID, &customer.Name, &customer.PhoneNumber, &customer.LastPayment, &customer.NextPayment, &customer.Active)
+		if err != nil {
+			return nil, err
+		}
+		customers = append(customers, &customer)
+	}
+
+	return customers, nil
 }
