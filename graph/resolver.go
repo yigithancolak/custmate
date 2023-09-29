@@ -209,3 +209,17 @@ func (r *mutationResolver) UpdateTime(ctx context.Context, input model.UpdateTim
 	}
 	return messageTimeUpdated, err
 }
+
+func (r *mutationResolver) DeleteTime(ctx context.Context, id string) (bool, error) {
+	err := r.Store.Time.DeleteTime(id)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (r *queryResolver) GetOrganization(ctx context.Context) (*model.Organization, error) {
+	org := middleware.ForContext(ctx)
+
+	return org, nil
+}

@@ -193,15 +193,15 @@ import (
 // 	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
 // }
 
-// DeleteTime is the resolver for the deleteTime field.
-func (r *mutationResolver) DeleteTime(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteTime - deleteTime"))
-}
+// // DeleteTime is the resolver for the deleteTime field.
+// func (r *mutationResolver) DeleteTime(ctx context.Context, id string) (bool, error) {
+// 	panic(fmt.Errorf("not implemented: DeleteTime - deleteTime"))
+// }
 
-// GetOrganization is the resolver for the getOrganization field.
-func (r *queryResolver) GetOrganization(ctx context.Context) (*model.Organization, error) {
-	panic(fmt.Errorf("not implemented: GetOrganization - getOrganization"))
-}
+// // GetOrganization is the resolver for the getOrganization field.
+// func (r *queryResolver) GetOrganization(ctx context.Context) (*model.Organization, error) {
+// 	panic(fmt.Errorf("not implemented: GetOrganization - getOrganization"))
+// }
 
 // GetGroup is the resolver for the getGroup field.
 func (r *queryResolver) GetGroup(ctx context.Context, id string) (*model.Group, error) {
