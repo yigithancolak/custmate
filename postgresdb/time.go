@@ -1,7 +1,6 @@
 package postgresdb
 
 import (
-	"database/sql"
 	"fmt"
 	"strings"
 
@@ -12,9 +11,6 @@ import (
 
 type TimeStore struct {
 	DB *sqlx.DB
-}
-type queryer interface {
-	QueryRow(query string, args ...interface{}) *sql.Row
 }
 
 func NewTimeStore(db *sqlx.DB) *TimeStore {
@@ -38,7 +34,7 @@ func (s *TimeStore) CreateTime(q queryer, groupId string, input *model.CreateTim
 	return time, nil
 }
 
-func (s *TimeStore) UpdateTime(tx *sql.Tx, time *model.UpdateTimeInput) (*model.Time, error) {
+func (s *TimeStore) UpdateTime(q queryer, time *model.UpdateTimeInput) (*model.Time, error) {
 	baseQuery := "UPDATE times SET "
 	returnQuery := " RETURNING *"
 	var updates []string
@@ -68,7 +64,7 @@ func (s *TimeStore) UpdateTime(tx *sql.Tx, time *model.UpdateTimeInput) (*model.
 	query := baseQuery + strings.Join(updates, ", ") + fmt.Sprintf(" WHERE id = $%d", idx) + returnQuery
 
 	var updatedTime model.Time
-	if err := tx.QueryRow(query, args...).Scan(&updatedTime.ID, &updatedTime.GroupID, &updatedTime.Day, &updatedTime.StartHour, &updatedTime.FinishHour); err != nil {
+	if err := q.QueryRow(query, args...).Scan(&updatedTime.ID, &updatedTime.GroupID, &updatedTime.Day, &updatedTime.StartHour, &updatedTime.FinishHour); err != nil {
 		return nil, err
 	}
 

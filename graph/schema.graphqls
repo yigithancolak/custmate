@@ -142,7 +142,7 @@ type Mutation {
 
   # Time
   createTime(groupId: String!, input: CreateTimeInput!): Time! @auth
-  updateTime(id: ID!, input: UpdateTimeInput!): String! @auth
+  updateTime(input: UpdateTimeInput!): String! @auth
   deleteTime(id: ID!): Boolean! @auth
 }
 

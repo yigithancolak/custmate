@@ -201,3 +201,11 @@ func (r *mutationResolver) CreateTime(ctx context.Context, groupID string, input
 
 	return time, nil
 }
+
+func (r *mutationResolver) UpdateTime(ctx context.Context, input model.UpdateTimeInput) (string, error) {
+	_, err := r.Store.Time.UpdateTime(r.Store.DB, &input)
+	if err != nil {
+		return messageUpdateFailed, err
+	}
+	return messageTimeUpdated, err
+}

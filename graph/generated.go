@@ -88,7 +88,7 @@ type ComplexityRoot struct {
 		UpdateInstructor   func(childComplexity int, id string, input model.UpdateInstructorInput) int
 		UpdateOrganization func(childComplexity int, input model.UpdateOrganizationInput) int
 		UpdatePayment      func(childComplexity int, id string, input model.UpdatePaymentInput) int
-		UpdateTime         func(childComplexity int, id string, input model.UpdateTimeInput) int
+		UpdateTime         func(childComplexity int, input model.UpdateTimeInput) int
 	}
 
 	Organization struct {
@@ -153,7 +153,7 @@ type MutationResolver interface {
 	UpdatePayment(ctx context.Context, id string, input model.UpdatePaymentInput) (string, error)
 	DeletePayment(ctx context.Context, id string) (bool, error)
 	CreateTime(ctx context.Context, groupID string, input model.CreateTimeInput) (*model.Time, error)
-	UpdateTime(ctx context.Context, id string, input model.UpdateTimeInput) (string, error)
+	UpdateTime(ctx context.Context, input model.UpdateTimeInput) (string, error)
 	DeleteTime(ctx context.Context, id string) (bool, error)
 }
 type QueryResolver interface {
@@ -506,7 +506,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateTime(childComplexity, args["id"].(string), args["input"].(model.UpdateTimeInput)), true
+		return e.complexity.Mutation.UpdateTime(childComplexity, args["input"].(model.UpdateTimeInput)), true
 
 	case "Organization.email":
 		if e.complexity.Organization.Email == nil {
@@ -1212,24 +1212,15 @@ func (ec *executionContext) field_Mutation_updatePayment_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_updateTime_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	var arg1 model.UpdateTimeInput
+	var arg0 model.UpdateTimeInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdateTimeInput2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdateTimeInput(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateTimeInput2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdateTimeInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg1
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -3519,7 +3510,7 @@ func (ec *executionContext) _Mutation_updateTime(ctx context.Context, field grap
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateTime(rctx, fc.Args["id"].(string), fc.Args["input"].(model.UpdateTimeInput))
+			return ec.resolvers.Mutation().UpdateTime(rctx, fc.Args["input"].(model.UpdateTimeInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Auth == nil {

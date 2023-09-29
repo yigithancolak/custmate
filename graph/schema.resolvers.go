@@ -180,13 +180,18 @@ import (
 
 // // CreateTime is the resolver for the createTime field.
 // func (r *mutationResolver) CreateTime(ctx context.Context, groupID string, input model.CreateTimeInput) (*model.Time, error) {
-// 	panic(fmt.Errorf("not implemented: CreateTime - createTime"))
+// 	time, err := r.Store.Time.CreateTime(r.Store.DB, groupID, &input)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return time, nil
 // }
 
-// UpdateTime is the resolver for the updateTime field.
-func (r *mutationResolver) UpdateTime(ctx context.Context, id string, input model.UpdateTimeInput) (string, error) {
-	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
-}
+// // UpdateTime is the resolver for the updateTime field.
+// func (r *mutationResolver) UpdateTime(ctx context.Context, input model.UpdateTimeInput) (string, error) {
+// 	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
+// }
 
 // DeleteTime is the resolver for the deleteTime field.
 func (r *mutationResolver) DeleteTime(ctx context.Context, id string) (bool, error) {
