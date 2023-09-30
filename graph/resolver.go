@@ -279,8 +279,14 @@ func (r *queryResolver) GetInstructor(ctx context.Context, id string) (*model.In
 
 func (r *queryResolver) ListInstructors(ctx context.Context, offset *int, limit *int) ([]*model.Instructor, error) {
 	org := middleware.ForContext(ctx)
+	includeGroups := false
 
-	instructors, err := r.Store.ListInstructorsByOrganizationID(org.ID, offset, limit)
+	fields := graphql.CollectAllFields(ctx)
+	if util.Contains[string](fields, "groups") {
+		includeGroups = true
+	}
+
+	instructors, err := r.Store.ListInstructorsByOrganizationID(org.ID, offset, limit, includeGroups)
 	if err != nil {
 		return nil, err
 	}

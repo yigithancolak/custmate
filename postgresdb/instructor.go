@@ -69,7 +69,7 @@ func (s *Store) GetInstructorByID(id string) (*model.Instructor, error) {
 	return &instructor, nil
 }
 
-func (s *Store) ListInstructorsByOrganizationID(orgID string, offset *int, limit *int) ([]*model.Instructor, error) {
+func (s *Store) ListInstructorsByOrganizationID(orgID string, offset *int, limit *int, includeGroups bool) ([]*model.Instructor, error) {
 	query := "SELECT id, name FROM instructors WHERE organization_id = $1 LIMIT $2 OFFSET $3"
 	rows, err := s.DB.Query(query, orgID, limit, offset)
 	if err != nil {
@@ -84,6 +84,14 @@ func (s *Store) ListInstructorsByOrganizationID(orgID string, offset *int, limit
 		if err != nil {
 			return nil, err
 		}
+
+		if includeGroups {
+			instructor.Groups, err = s.ListGroupsByInstructorID(instructor.ID)
+			if err != nil {
+				return nil, err
+			}
+		}
+
 		instructors = append(instructors, &instructor)
 	}
 
