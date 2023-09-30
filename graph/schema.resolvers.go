@@ -230,6 +230,7 @@ import (
 // 	org := middleware.ForContext(ctx)
 // 	includeTimes := false
 // 	includeInstructor := false
+// 	includeCustomers := false
 
 // 	fields := graphql.CollectAllFields(ctx)
 // 	if util.Contains[string](fields, "times") {
@@ -238,8 +239,11 @@ import (
 // 	if util.Contains[string](fields, "instructor") {
 // 		includeInstructor = true
 // 	}
+// 	if util.Contains[string](fields, "customers") {
+// 		includeCustomers = true
+// 	}
 
-// 	groups, err := r.Store.ListGroupsByOrganization(org.ID, offset, limit, includeTimes, includeInstructor)
+// 	groups, err := r.Store.ListGroupsByOrganization(org.ID, offset, limit, includeTimes, includeInstructor, includeCustomers)
 // 	if err != nil {
 // 		return nil, err
 // 	}
@@ -247,15 +251,15 @@ import (
 // 	return groups, nil
 // }
 
-// GetInstructor is the resolver for the getInstructor field.
-func (r *queryResolver) GetInstructor(ctx context.Context, id string) (*model.Instructor, error) {
-	panic(fmt.Errorf("not implemented: GetInstructor - getInstructor"))
-}
+// // GetInstructor is the resolver for the getInstructor field.
+// func (r *queryResolver) GetInstructor(ctx context.Context, id string) (*model.Instructor, error) {
+// 	panic(fmt.Errorf("not implemented: GetInstructor - getInstructor"))
+// }
 
-// ListInstructors is the resolver for the listInstructors field.
-func (r *queryResolver) ListInstructors(ctx context.Context, offset *int, limit *int) ([]*model.Instructor, error) {
-	panic(fmt.Errorf("not implemented: ListInstructors - listInstructors"))
-}
+// // ListInstructors is the resolver for the listInstructors field.
+// func (r *queryResolver) ListInstructors(ctx context.Context, offset *int, limit *int) ([]*model.Instructor, error) {
+// 	panic(fmt.Errorf("not implemented: ListInstructors - listInstructors"))
+// }
 
 // ListInstructorsByOrganization is the resolver for the listInstructorsByOrganization field.
 func (r *queryResolver) ListInstructorsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Instructor, error) {

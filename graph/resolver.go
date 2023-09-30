@@ -258,3 +258,34 @@ func (r *queryResolver) ListGroupsByOrganization(ctx context.Context, offset *in
 
 	return groups, nil
 }
+
+func (r *queryResolver) GetInstructor(ctx context.Context, id string) (*model.Instructor, error) {
+
+	fields := graphql.CollectAllFields(ctx)
+
+	instructor, err := r.Store.GetInstructorByID(id)
+	if err != nil {
+		return nil, err
+	}
+	if util.Contains[string](fields, "groups") {
+		instructor.Groups, err = r.Store.ListGroupsByInstructorID(id)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return instructor, err
+}
+
+func (r *queryResolver) ListInstructors(ctx context.Context, offset *int, limit *int) ([]*model.Instructor, error) {
+	org := middleware.ForContext(ctx)
+
+	instructors, err := r.Store.ListInstructorsByOrganizationID(org.ID, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	//TODO: ADD GROUPS
+
+	return instructors, nil
+}

@@ -17,6 +17,7 @@ type Instructor {
   id: ID!
   name: String!
   organizationId: String!
+  groups: [Group!]
 }
 
 type Time {

@@ -68,3 +68,24 @@ func (s *Store) GetInstructorByID(id string) (*model.Instructor, error) {
 
 	return &instructor, nil
 }
+
+func (s *Store) ListInstructorsByOrganizationID(orgID string, offset *int, limit *int) ([]*model.Instructor, error) {
+	query := "SELECT id, name FROM instructors WHERE organization_id = $1 LIMIT $2 OFFSET $3"
+	rows, err := s.DB.Query(query, orgID, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var instructors []*model.Instructor
+	for rows.Next() {
+		var instructor model.Instructor
+		err = rows.Scan(&instructor.ID, &instructor.Name)
+		if err != nil {
+			return nil, err
+		}
+		instructors = append(instructors, &instructor)
+	}
+
+	return instructors, nil
+}

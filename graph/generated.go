@@ -65,6 +65,7 @@ type ComplexityRoot struct {
 	}
 
 	Instructor struct {
+		Groups         func(childComplexity int) int
 		ID             func(childComplexity int) int
 		Name           func(childComplexity int) int
 		OrganizationID func(childComplexity int) int
@@ -271,6 +272,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Group.Times(childComplexity), true
+
+	case "Instructor.groups":
+		if e.complexity.Instructor.Groups == nil {
+			break
+		}
+
+		return e.complexity.Instructor.Groups(childComplexity), true
 
 	case "Instructor.id":
 		if e.complexity.Instructor.ID == nil {
@@ -2011,6 +2019,8 @@ func (ec *executionContext) fieldContext_Group_instructor(ctx context.Context, f
 				return ec.fieldContext_Instructor_name(ctx, field)
 			case "organizationId":
 				return ec.fieldContext_Instructor_organizationId(ctx, field)
+			case "groups":
+				return ec.fieldContext_Instructor_groups(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -2255,6 +2265,59 @@ func (ec *executionContext) fieldContext_Instructor_organizationId(ctx context.C
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Instructor_groups(ctx context.Context, field graphql.CollectedField, obj *model.Instructor) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Instructor_groups(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Groups, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Group)
+	fc.Result = res
+	return ec.marshalOGroup2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐGroupᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Instructor_groups(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Instructor",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Group_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Group_name(ctx, field)
+			case "instructor":
+				return ec.fieldContext_Group_instructor(ctx, field)
+			case "times":
+				return ec.fieldContext_Group_times(ctx, field)
+			case "customers":
+				return ec.fieldContext_Group_customers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
 		},
 	}
 	return fc, nil
@@ -2823,6 +2886,8 @@ func (ec *executionContext) fieldContext_Mutation_createInstructor(ctx context.C
 				return ec.fieldContext_Instructor_name(ctx, field)
 			case "organizationId":
 				return ec.fieldContext_Instructor_organizationId(ctx, field)
+			case "groups":
+				return ec.fieldContext_Instructor_groups(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -4431,6 +4496,8 @@ func (ec *executionContext) fieldContext_Query_getInstructor(ctx context.Context
 				return ec.fieldContext_Instructor_name(ctx, field)
 			case "organizationId":
 				return ec.fieldContext_Instructor_organizationId(ctx, field)
+			case "groups":
+				return ec.fieldContext_Instructor_groups(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -4514,6 +4581,8 @@ func (ec *executionContext) fieldContext_Query_listInstructors(ctx context.Conte
 				return ec.fieldContext_Instructor_name(ctx, field)
 			case "organizationId":
 				return ec.fieldContext_Instructor_organizationId(ctx, field)
+			case "groups":
+				return ec.fieldContext_Instructor_groups(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -4597,6 +4666,8 @@ func (ec *executionContext) fieldContext_Query_listInstructorsByOrganization(ctx
 				return ec.fieldContext_Instructor_name(ctx, field)
 			case "organizationId":
 				return ec.fieldContext_Instructor_organizationId(ctx, field)
+			case "groups":
+				return ec.fieldContext_Instructor_groups(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
 		},
@@ -8169,6 +8240,8 @@ func (ec *executionContext) _Instructor(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "groups":
+			out.Values[i] = ec._Instructor_groups(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -10036,6 +10109,53 @@ func (ec *executionContext) marshalOCustomer2ᚕᚖgithubᚗcomᚋyigithancolak�
 				defer wg.Done()
 			}
 			ret[i] = ec.marshalNCustomer2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCustomer(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOGroup2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐGroupᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Group) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNGroup2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐGroup(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)

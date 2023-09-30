@@ -65,9 +65,10 @@ type Group struct {
 }
 
 type Instructor struct {
-	ID             string `json:"id"`
-	Name           string `json:"name"`
-	OrganizationID string `json:"organizationId"`
+	ID             string   `json:"id"`
+	Name           string   `json:"name"`
+	OrganizationID string   `json:"organizationId"`
+	Groups         []*Group `json:"groups,omitempty"`
 }
 
 type Organization struct {

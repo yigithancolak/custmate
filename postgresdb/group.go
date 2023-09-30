@@ -131,3 +131,26 @@ func (s *Store) ListGroupsByOrganization(organizationID string, offset *int, lim
 
 	return groups, nil
 }
+
+func (s *Store) ListGroupsByInstructorID(instructorID string) ([]*model.Group, error) {
+	query := "SELECT id, name FROM org_groups WHERE instructor_id = $1"
+
+	rows, err := s.DB.Query(query, instructorID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var groups []*model.Group
+	for rows.Next() {
+		var group model.Group
+		err = rows.Scan(&group.ID, &group.Name)
+		if err != nil {
+			return nil, err
+		}
+		//TODO: INCLUDE TIMES
+		groups = append(groups, &group)
+	}
+
+	return groups, nil
+}
