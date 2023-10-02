@@ -291,7 +291,28 @@ func (r *queryResolver) ListInstructors(ctx context.Context, offset *int, limit 
 		return nil, err
 	}
 
-	//TODO: ADD GROUPS
-
 	return instructors, nil
+}
+
+func (r *queryResolver) GetCustomer(ctx context.Context, id string) (*model.Customer, error) {
+	includeGroups := false
+	fields := graphql.CollectAllFields(ctx)
+	if util.Contains[string](fields, "groups") {
+		includeGroups = true
+	}
+	customer, err := r.Store.GetCustomerByID(id, includeGroups)
+	if err != nil {
+		return nil, err
+	}
+
+	return customer, nil
+}
+
+func (r *queryResolver) ListCustomersByGroup(ctx context.Context, groupID string, offset *int, limit *int) ([]*model.Customer, error) {
+	customers, err := r.Store.ListCustomersByGroupID(groupID, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	return customers, nil
 }

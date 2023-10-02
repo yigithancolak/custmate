@@ -109,19 +109,18 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		GetCustomer                   func(childComplexity int, id string) int
-		GetGroup                      func(childComplexity int, id string) int
-		GetInstructor                 func(childComplexity int, id string) int
-		GetOrganization               func(childComplexity int) int
-		GetPayment                    func(childComplexity int, id string) int
-		ListCustomersByGroup          func(childComplexity int, groupID string, offset *int, limit *int) int
-		ListCustomersByOrganization   func(childComplexity int, offset *int, limit *int) int
-		ListGroupsByOrganization      func(childComplexity int, offset *int, limit *int) int
-		ListInstructors               func(childComplexity int, offset *int, limit *int) int
-		ListInstructorsByOrganization func(childComplexity int, offset *int, limit *int) int
-		ListPaymentsByCustomer        func(childComplexity int, customerID string, offset *int, limit *int) int
-		ListPaymentsByGroup           func(childComplexity int, groupID string, offset *int, limit *int) int
-		ListPaymentsByOrganization    func(childComplexity int, offset *int, limit *int) int
+		GetCustomer                 func(childComplexity int, id string) int
+		GetGroup                    func(childComplexity int, id string) int
+		GetInstructor               func(childComplexity int, id string) int
+		GetOrganization             func(childComplexity int) int
+		GetPayment                  func(childComplexity int, id string) int
+		ListCustomersByGroup        func(childComplexity int, groupID string, offset *int, limit *int) int
+		ListCustomersByOrganization func(childComplexity int, offset *int, limit *int) int
+		ListGroupsByOrganization    func(childComplexity int, offset *int, limit *int) int
+		ListInstructors             func(childComplexity int, offset *int, limit *int) int
+		ListPaymentsByCustomer      func(childComplexity int, customerID string, offset *int, limit *int) int
+		ListPaymentsByGroup         func(childComplexity int, groupID string, offset *int, limit *int) int
+		ListPaymentsByOrganization  func(childComplexity int, offset *int, limit *int) int
 	}
 
 	Time struct {
@@ -164,7 +163,6 @@ type QueryResolver interface {
 	ListGroupsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Group, error)
 	GetInstructor(ctx context.Context, id string) (*model.Instructor, error)
 	ListInstructors(ctx context.Context, offset *int, limit *int) ([]*model.Instructor, error)
-	ListInstructorsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Instructor, error)
 	GetCustomer(ctx context.Context, id string) (*model.Customer, error)
 	ListCustomersByGroup(ctx context.Context, groupID string, offset *int, limit *int) ([]*model.Customer, error)
 	ListCustomersByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Customer, error)
@@ -689,18 +687,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.ListInstructors(childComplexity, args["offset"].(*int), args["limit"].(*int)), true
-
-	case "Query.listInstructorsByOrganization":
-		if e.complexity.Query.ListInstructorsByOrganization == nil {
-			break
-		}
-
-		args, err := ec.field_Query_listInstructorsByOrganization_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.ListInstructorsByOrganization(childComplexity, args["offset"].(*int), args["limit"].(*int)), true
 
 	case "Query.listPaymentsByCustomer":
 		if e.complexity.Query.ListPaymentsByCustomer == nil {
@@ -1373,30 +1359,6 @@ func (ec *executionContext) field_Query_listCustomersByOrganization_args(ctx con
 }
 
 func (ec *executionContext) field_Query_listGroupsByOrganization_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["offset"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
-		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["offset"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["limit"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_listInstructorsByOrganization_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *int
@@ -4595,91 +4557,6 @@ func (ec *executionContext) fieldContext_Query_listInstructors(ctx context.Conte
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_listInstructors_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_listInstructorsByOrganization(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_listInstructorsByOrganization(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().ListInstructorsByOrganization(rctx, fc.Args["offset"].(*int), fc.Args["limit"].(*int))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Auth == nil {
-				return nil, errors.New("directive auth is not implemented")
-			}
-			return ec.directives.Auth(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.([]*model.Instructor); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/yigithancolak/custmate/graph/model.Instructor`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Instructor)
-	fc.Result = res
-	return ec.marshalNInstructor2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐInstructorᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_listInstructorsByOrganization(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Instructor_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Instructor_name(ctx, field)
-			case "organizationId":
-				return ec.fieldContext_Instructor_organizationId(ctx, field)
-			case "groups":
-				return ec.fieldContext_Instructor_groups(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_listInstructorsByOrganization_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -8670,28 +8547,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_listInstructors(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "listInstructorsByOrganization":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_listInstructorsByOrganization(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

@@ -82,10 +82,6 @@ type Query {
   # Instructor
   getInstructor(id: ID!): Instructor! @auth
   listInstructors(offset: Int = 0, limit: Int = 10): [Instructor!]! @auth
-  listInstructorsByOrganization(
-    offset: Int = 0
-    limit: Int = 10
-  ): [Instructor!]! @auth
 
   # Customer
   getCustomer(id: ID!): Customer! @auth

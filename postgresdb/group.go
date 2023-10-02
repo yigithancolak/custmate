@@ -77,7 +77,6 @@ func (s *Store) GetGroupByID(id string) (*model.Group, error) {
 	query := "SELECT id, name FROM org_groups WHERE id = $1"
 	var group model.Group
 	err := s.DB.QueryRow(query, id).Scan(&group.ID, &group.Name)
-	//TODO: ADD CUSTOMERS AND INSTRUCTOR
 	if err != nil {
 		return nil, err
 	}
@@ -149,6 +148,37 @@ func (s *Store) ListGroupsByInstructorID(instructorID string) ([]*model.Group, e
 			return nil, err
 		}
 		//TODO: INCLUDE TIMES
+		groups = append(groups, &group)
+	}
+
+	return groups, nil
+}
+
+func (s *Store) ListGroupsByCustomerID(customerID string) ([]*model.Group, error) {
+	query := ` SELECT og.id, og.name FROM customers c
+	JOIN customer_groups cg ON c.id = cg.customer_id
+	JOIN org_groups og ON cg.org_group_id = og.id
+	WHERE cg.customer_id = $1`
+
+	rows, err := s.DB.Query(query, customerID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var groups []*model.Group
+
+	for rows.Next() {
+		var group model.Group
+		err := rows.Scan(&group.ID, &group.Name)
+		if err != nil {
+			return nil, err
+		}
+		group.Times, err = s.GetTimesByGroupID(group.ID)
+		if err != nil {
+			return nil, err
+		}
+
 		groups = append(groups, &group)
 	}
 

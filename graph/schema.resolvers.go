@@ -253,28 +253,49 @@ import (
 
 // // GetInstructor is the resolver for the getInstructor field.
 // func (r *queryResolver) GetInstructor(ctx context.Context, id string) (*model.Instructor, error) {
-// 	panic(fmt.Errorf("not implemented: GetInstructor - getInstructor"))
+// 	fields := graphql.CollectAllFields(ctx)
+
+// 	instructor, err := r.Store.GetInstructorByID(id)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	if util.Contains[string](fields, "groups") {
+// 		instructor.Groups, err = r.Store.ListGroupsByInstructorID(id)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 	}
+
+// 	return instructor, err
 // }
 
 // // ListInstructors is the resolver for the listInstructors field.
 // func (r *queryResolver) ListInstructors(ctx context.Context, offset *int, limit *int) ([]*model.Instructor, error) {
-// 	panic(fmt.Errorf("not implemented: ListInstructors - listInstructors"))
+// 	org := middleware.ForContext(ctx)
+// 	includeGroups := false
+
+// 	fields := graphql.CollectAllFields(ctx)
+// 	if util.Contains[string](fields, "groups") {
+// 		includeGroups = true
+// 	}
+
+// 	instructors, err := r.Store.ListInstructorsByOrganizationID(org.ID, offset, limit, includeGroups)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return instructors, nil
 // }
 
-// ListInstructorsByOrganization is the resolver for the listInstructorsByOrganization field.
-func (r *queryResolver) ListInstructorsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Instructor, error) {
-	panic(fmt.Errorf("not implemented: ListInstructorsByOrganization - listInstructorsByOrganization"))
-}
+// // GetCustomer is the resolver for the getCustomer field.
+// func (r *queryResolver) GetCustomer(ctx context.Context, id string) (*model.Customer, error) {
+// 	panic(fmt.Errorf("not implemented: GetCustomer - getCustomer"))
+// }
 
-// GetCustomer is the resolver for the getCustomer field.
-func (r *queryResolver) GetCustomer(ctx context.Context, id string) (*model.Customer, error) {
-	panic(fmt.Errorf("not implemented: GetCustomer - getCustomer"))
-}
-
-// ListCustomersByGroup is the resolver for the listCustomersByGroup field.
-func (r *queryResolver) ListCustomersByGroup(ctx context.Context, groupID string, offset *int, limit *int) ([]*model.Customer, error) {
-	panic(fmt.Errorf("not implemented: ListCustomersByGroup - listCustomersByGroup"))
-}
+// // ListCustomersByGroup is the resolver for the listCustomersByGroup field.
+// func (r *queryResolver) ListCustomersByGroup(ctx context.Context, groupID string, offset *int, limit *int) ([]*model.Customer, error) {
+// 	panic(fmt.Errorf("not implemented: ListCustomersByGroup - listCustomersByGroup"))
+// }
 
 // ListCustomersByOrganization is the resolver for the listCustomersByOrganization field.
 func (r *queryResolver) ListCustomersByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Customer, error) {
@@ -309,3 +330,13 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *queryResolver) ListInstructorsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Instructor, error) {
+	panic(fmt.Errorf("not implemented: ListInstructorsByOrganization - listInstructorsByOrganization"))
+}

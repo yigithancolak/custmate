@@ -133,3 +133,55 @@ func (s *Store) GetCustomersByGroupID(id string) ([]*model.Customer, error) {
 
 	return customers, nil
 }
+
+func (s *Store) GetCustomerByID(id string, includeGroups bool) (*model.Customer, error) {
+	query := "SELECT id, name, phone_number, last_payment, next_payment, active FROM customers WHERE id = $1"
+
+	var customer model.Customer
+	err := s.DB.QueryRow(query, id).Scan(&customer.ID, &customer.Name, &customer.PhoneNumber, &customer.LastPayment, &customer.NextPayment, &customer.Active)
+	if err != nil {
+		return nil, err
+	}
+	if includeGroups {
+		customer.Groups, err = s.ListGroupsByCustomerID(id)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &customer, nil
+}
+
+func (s *Store) ListCustomersByGroupID(groupID string, offset *int, limit *int) ([]*model.Customer, error) {
+	query := `
+	SELECT id, name, phone_number, last_payment, next_payment, active FROM customers c
+	JOIN customer_groups cg ON c.id = cg.customer_id
+	WHERE cg.org_group_id = $1
+	LIMIT $2
+	OFFSET $3
+	`
+
+	rows, err := s.DB.Query(query, groupID, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	var customers []*model.Customer
+	for rows.Next() {
+		var customer model.Customer
+		err := rows.Scan(&customer.ID, &customer.Name, &customer.PhoneNumber, &customer.LastPayment, &customer.NextPayment, &customer.Active)
+		if err != nil {
+			return nil, err
+		}
+
+		// NO NEEDED BECAUSE THEY ALL IN SAME GROUP !!!
+		// customer.Groups, err = s.ListGroupsByCustomerID(customer.ID)
+		// if err != nil {
+		// 	return nil, err
+		// }
+
+		customers = append(customers, &customer)
+	}
+
+	return customers, nil
+}
