@@ -302,10 +302,10 @@ func (r *queryResolver) ListCustomersByOrganization(ctx context.Context, offset 
 	panic(fmt.Errorf("not implemented: ListCustomersByOrganization - listCustomersByOrganization"))
 }
 
-// GetPayment is the resolver for the getPayment field.
-func (r *queryResolver) GetPayment(ctx context.Context, id string) (*model.Payment, error) {
-	panic(fmt.Errorf("not implemented: GetPayment - getPayment"))
-}
+// // GetPayment is the resolver for the getPayment field.
+// func (r *queryResolver) GetPayment(ctx context.Context, id string) (*model.Payment, error) {
+// 	panic(fmt.Errorf("not implemented: GetPayment - getPayment"))
+// }
 
 // ListPaymentsByOrganization is the resolver for the listPaymentsByOrganization field.
 func (r *queryResolver) ListPaymentsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Payment, error) {

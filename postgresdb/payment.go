@@ -76,3 +76,19 @@ func (s *Store) DeletePayment(id string) error {
 
 	return nil
 }
+
+func (s *Store) GetPaymentByID(id string, includeCustomer bool) (*model.Payment, error) {
+	query := "SELECT id, customer_id, amount, payment_type, currency, date FROM payments WHERE id = $1"
+	var payment model.Payment
+	var customerID string
+	err := s.DB.QueryRow(query, id).Scan(&payment.ID, &customerID, &payment.Amount, &payment.PaymentType, &payment.Currency, &payment.Date)
+	if err != nil {
+		return nil, err
+	}
+
+	if includeCustomer {
+		payment.Customer, err = s.GetCustomerByID(customerID, false)
+	}
+
+	return &payment, err
+}

@@ -316,3 +316,17 @@ func (r *queryResolver) ListCustomersByGroup(ctx context.Context, groupID string
 
 	return customers, nil
 }
+
+func (r *queryResolver) GetPayment(ctx context.Context, id string) (*model.Payment, error) {
+	includeCustomer := false
+	fields := graphql.CollectAllFields(ctx)
+	if util.Contains[string](fields, "customer") {
+		includeCustomer = true
+	}
+	payment, err := r.Store.GetPaymentByID(id, includeCustomer)
+	if err != nil {
+		return nil, err
+	}
+
+	return payment, nil
+}
