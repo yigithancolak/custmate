@@ -118,9 +118,9 @@ type ComplexityRoot struct {
 		ListCustomersByOrganization func(childComplexity int, offset *int, limit *int) int
 		ListGroupsByOrganization    func(childComplexity int, offset *int, limit *int) int
 		ListInstructors             func(childComplexity int, offset *int, limit *int) int
-		ListPaymentsByCustomer      func(childComplexity int, customerID string, offset *int, limit *int) int
-		ListPaymentsByGroup         func(childComplexity int, groupID string, offset *int, limit *int) int
-		ListPaymentsByOrganization  func(childComplexity int, offset *int, limit *int) int
+		ListPaymentsByCustomer      func(childComplexity int, customerID string, offset *int, limit *int, startDate string, endDate string) int
+		ListPaymentsByGroup         func(childComplexity int, groupID string, offset *int, limit *int, startDate string, endDate string) int
+		ListPaymentsByOrganization  func(childComplexity int, offset *int, limit *int, startDate string, endDate string) int
 	}
 
 	Time struct {
@@ -167,9 +167,9 @@ type QueryResolver interface {
 	ListCustomersByGroup(ctx context.Context, groupID string, offset *int, limit *int) ([]*model.Customer, error)
 	ListCustomersByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Customer, error)
 	GetPayment(ctx context.Context, id string) (*model.Payment, error)
-	ListPaymentsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Payment, error)
-	ListPaymentsByGroup(ctx context.Context, groupID string, offset *int, limit *int) ([]*model.Payment, error)
-	ListPaymentsByCustomer(ctx context.Context, customerID string, offset *int, limit *int) ([]*model.Payment, error)
+	ListPaymentsByOrganization(ctx context.Context, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error)
+	ListPaymentsByGroup(ctx context.Context, groupID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error)
+	ListPaymentsByCustomer(ctx context.Context, customerID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error)
 }
 
 type executableSchema struct {
@@ -698,7 +698,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.ListPaymentsByCustomer(childComplexity, args["customerId"].(string), args["offset"].(*int), args["limit"].(*int)), true
+		return e.complexity.Query.ListPaymentsByCustomer(childComplexity, args["customerId"].(string), args["offset"].(*int), args["limit"].(*int), args["startDate"].(string), args["endDate"].(string)), true
 
 	case "Query.listPaymentsByGroup":
 		if e.complexity.Query.ListPaymentsByGroup == nil {
@@ -710,7 +710,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.ListPaymentsByGroup(childComplexity, args["groupId"].(string), args["offset"].(*int), args["limit"].(*int)), true
+		return e.complexity.Query.ListPaymentsByGroup(childComplexity, args["groupId"].(string), args["offset"].(*int), args["limit"].(*int), args["startDate"].(string), args["endDate"].(string)), true
 
 	case "Query.listPaymentsByOrganization":
 		if e.complexity.Query.ListPaymentsByOrganization == nil {
@@ -722,7 +722,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.ListPaymentsByOrganization(childComplexity, args["offset"].(*int), args["limit"].(*int)), true
+		return e.complexity.Query.ListPaymentsByOrganization(childComplexity, args["offset"].(*int), args["limit"].(*int), args["startDate"].(string), args["endDate"].(string)), true
 
 	case "Time.day":
 		if e.complexity.Time.Day == nil {
@@ -1436,6 +1436,24 @@ func (ec *executionContext) field_Query_listPaymentsByCustomer_args(ctx context.
 		}
 	}
 	args["limit"] = arg2
+	var arg3 string
+	if tmp, ok := rawArgs["startDate"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDate"))
+		arg3, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["startDate"] = arg3
+	var arg4 string
+	if tmp, ok := rawArgs["endDate"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endDate"))
+		arg4, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["endDate"] = arg4
 	return args, nil
 }
 
@@ -1469,6 +1487,24 @@ func (ec *executionContext) field_Query_listPaymentsByGroup_args(ctx context.Con
 		}
 	}
 	args["limit"] = arg2
+	var arg3 string
+	if tmp, ok := rawArgs["startDate"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDate"))
+		arg3, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["startDate"] = arg3
+	var arg4 string
+	if tmp, ok := rawArgs["endDate"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endDate"))
+		arg4, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["endDate"] = arg4
 	return args, nil
 }
 
@@ -1493,6 +1529,24 @@ func (ec *executionContext) field_Query_listPaymentsByOrganization_args(ctx cont
 		}
 	}
 	args["limit"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["startDate"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDate"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["startDate"] = arg2
+	var arg3 string
+	if tmp, ok := rawArgs["endDate"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endDate"))
+		arg3, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["endDate"] = arg3
 	return args, nil
 }
 
@@ -4940,7 +4994,7 @@ func (ec *executionContext) _Query_listPaymentsByOrganization(ctx context.Contex
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().ListPaymentsByOrganization(rctx, fc.Args["offset"].(*int), fc.Args["limit"].(*int))
+			return ec.resolvers.Query().ListPaymentsByOrganization(rctx, fc.Args["offset"].(*int), fc.Args["limit"].(*int), fc.Args["startDate"].(string), fc.Args["endDate"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Auth == nil {
@@ -5029,7 +5083,7 @@ func (ec *executionContext) _Query_listPaymentsByGroup(ctx context.Context, fiel
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().ListPaymentsByGroup(rctx, fc.Args["groupId"].(string), fc.Args["offset"].(*int), fc.Args["limit"].(*int))
+			return ec.resolvers.Query().ListPaymentsByGroup(rctx, fc.Args["groupId"].(string), fc.Args["offset"].(*int), fc.Args["limit"].(*int), fc.Args["startDate"].(string), fc.Args["endDate"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Auth == nil {
@@ -5118,7 +5172,7 @@ func (ec *executionContext) _Query_listPaymentsByCustomer(ctx context.Context, f
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().ListPaymentsByCustomer(rctx, fc.Args["customerId"].(string), fc.Args["offset"].(*int), fc.Args["limit"].(*int))
+			return ec.resolvers.Query().ListPaymentsByCustomer(rctx, fc.Args["customerId"].(string), fc.Args["offset"].(*int), fc.Args["limit"].(*int), fc.Args["startDate"].(string), fc.Args["endDate"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Auth == nil {

@@ -95,17 +95,27 @@ type Query {
 
   #Payment
   getPayment(id: ID!): Payment! @auth
-  listPaymentsByOrganization(offset: Int = 0, limit: Int = 10): [Payment!]!
-    @auth
+  listPaymentsByOrganization(
+    offset: Int = 0
+    limit: Int = 10
+    startDate: String!
+    endDate: String!
+  ): [Payment!]! @auth
+
   listPaymentsByGroup(
     groupId: ID!
     offset: Int = 0
     limit: Int = 10
+    startDate: String!
+    endDate: String!
   ): [Payment!]! @auth
+
   listPaymentsByCustomer(
     customerId: ID!
     offset: Int = 0
     limit: Int = 10
+    startDate: String!
+    endDate: String!
   ): [Payment!]! @auth
 }
 

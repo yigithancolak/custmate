@@ -317,6 +317,17 @@ func (r *queryResolver) ListCustomersByGroup(ctx context.Context, groupID string
 	return customers, nil
 }
 
+func (r *queryResolver) ListCustomersByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Customer, error) {
+	org := middleware.ForContext(ctx)
+
+	customers, err := r.Store.ListCustomersByOrganizationID(org.ID, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	return customers, nil
+}
+
 func (r *queryResolver) GetPayment(ctx context.Context, id string) (*model.Payment, error) {
 	includeCustomer := false
 	fields := graphql.CollectAllFields(ctx)

@@ -165,6 +165,7 @@ func (s *Store) ListCustomersByGroupID(groupID string, offset *int, limit *int) 
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	var customers []*model.Customer
 	for rows.Next() {
@@ -174,14 +175,33 @@ func (s *Store) ListCustomersByGroupID(groupID string, offset *int, limit *int) 
 			return nil, err
 		}
 
-		// NO NEEDED BECAUSE THEY ALL IN SAME GROUP !!!
-		// customer.Groups, err = s.ListGroupsByCustomerID(customer.ID)
-		// if err != nil {
-		// 	return nil, err
-		// }
+		// GROUPS ARE NO NEEDED BECAUSE THEY ALL IN SAME GROUP
 
 		customers = append(customers, &customer)
 	}
 
 	return customers, nil
+}
+
+func (s *Store) ListCustomersByOrganizationID(orgID string, offset *int, limit *int) ([]*model.Customer, error) {
+	query := "SELECT id, name, phone_number, last_payment, next_payment, active FROM customers WHERE organization_id = $1 LIMIT $2 OFFSET $3"
+	rows, err := s.DB.Query(query, orgID, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var customers []*model.Customer
+	for rows.Next() {
+		var customer model.Customer
+		err := rows.Scan(&customer.ID, &customer.Name, &customer.PhoneNumber, &customer.LastPayment, &customer.NextPayment, &customer.Active)
+		if err != nil {
+			return nil, err
+		}
+
+		customers = append(customers, &customer)
+	}
+
+	return customers, nil
+
 }
