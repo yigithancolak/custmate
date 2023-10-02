@@ -91,3 +91,29 @@ func (s *Store) GetPaymentByID(id string, includeCustomer bool) (*model.Payment,
 
 	return &payment, err
 }
+
+func (s *Store) ListPaymentsByOrganizationID(orgID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
+	query := `SELECT id, amount, payment_type, currency, date 
+	FROM payments 
+	WHERE organization_id = $1 
+	AND date BETWEEN $2 AND $3 
+	LIMIT $4 OFFSET $5`
+
+	rows, err := s.DB.Query(query, orgID, startDate, endDate, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var payments []*model.Payment
+	if rows.Next() {
+		var payment model.Payment
+		err := rows.Scan(&payment.ID, &payment.Amount, &payment.PaymentType, &payment.Currency, &payment.Date)
+		if err != nil {
+			return nil, err
+		}
+		payments = append(payments, &payment)
+	}
+
+	return payments, nil
+}

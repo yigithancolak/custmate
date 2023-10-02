@@ -4,7 +4,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/yigithancolak/custmate/graph/model"
@@ -345,5 +344,11 @@ func (r *queryResolver) GetPayment(ctx context.Context, id string) (*model.Payme
 }
 
 func (r *queryResolver) ListPaymentsByOrganization(ctx context.Context, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
-	panic(fmt.Errorf("not implemented: ListPaymentsByOrganization - listPaymentsByOrganization"))
+	org := middleware.ForContext(ctx)
+	payments, err := r.Store.ListPaymentsByOrganizationID(org.ID, offset, limit, startDate, endDate)
+	if err != nil {
+		return nil, err
+	}
+
+	return payments, nil
 }
