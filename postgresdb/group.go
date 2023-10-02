@@ -14,16 +14,13 @@ func (s *Store) CreateGroup(tx *sql.Tx, input *model.CreateGroupInput, organizat
 
 	groupId := uuid.New().String()
 
-	group := &model.Group{}
+	var group model.Group
 	err := tx.QueryRow(query, groupId, input.Name, organizationID, input.Instructor).Scan(&group.ID, &group.Name)
 	if err != nil {
-		if rbErr := tx.Rollback(); rbErr != nil {
-			return nil, ErrRollbackTransaction
-		}
-		return nil, ErrInsertScanGroup
+		return nil, fmt.Errorf("failed to insert and scan group: %w", err)
 	}
 
-	return group, nil
+	return &group, nil
 }
 
 func (s *Store) UpdateGroup(tx *sql.Tx, id string, input *model.UpdateGroupInput) (*model.Group, error) {

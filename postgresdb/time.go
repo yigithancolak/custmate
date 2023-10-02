@@ -9,7 +9,8 @@ import (
 )
 
 func (s *Store) CreateTime(q queryer, groupId string, input *model.CreateTimeInput) (*model.Time, error) {
-	query := `INSERT INTO times (id, org_group_id, day, start_hour, finish_hour) VALUES ($1, $2, $3, $4, $5) RETURNING *`
+	query := `INSERT INTO times (id, org_group_id, day, start_hour, finish_hour) VALUES ($1, $2, $3, $4, $5) 
+	RETURNING id, org_group_id, day, start_hour, finish_hour`
 
 	timeId := uuid.New().String() // Assuming you use UUID for your 'id' column
 

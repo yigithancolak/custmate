@@ -8,20 +8,19 @@ import (
 	"github.com/yigithancolak/custmate/graph/model"
 )
 
-func (s *Store) CreatePayment(input *model.CreatePaymentInput) (*model.Payment, error) {
-	query := `INSERT INTO payments (id, customer_id, amount, payment_type, currency, date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, customer_id, amount, payment_type, currency, date`
+func (s *Store) CreatePayment(orgID string, input *model.CreatePaymentInput) (*model.Payment, error) {
+	query := `INSERT INTO payments (id, amount, payment_type, currency, date, customer_id, org_group_id, organization_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, amount, payment_type, currency, date`
 
 	paymentID := uuid.New().String()
-	payment := &model.Payment{
-		Customer: &model.Customer{},
-	}
 
-	err := s.DB.QueryRow(query, paymentID, input.CustomerID, input.Amount, input.PaymentType, input.Currency, input.Date).Scan(&payment.ID, &payment.Customer.ID, &payment.Amount, &payment.PaymentType, &payment.Currency, &payment.Date)
+	var payment model.Payment
+
+	err := s.DB.QueryRow(query, paymentID, input.Amount, input.PaymentType, input.Currency, input.Date, input.CustomerID, input.GroupID, orgID).Scan(&payment.ID, &payment.Amount, &payment.PaymentType, &payment.Currency, &payment.Date)
 	if err != nil {
 		return nil, err
 	}
 
-	return payment, nil
+	return &payment, nil
 }
 
 func (s *Store) UpdatePayment(id string, input *model.UpdatePaymentInput) error {

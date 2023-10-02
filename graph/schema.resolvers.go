@@ -314,7 +314,14 @@ import (
 
 // // ListCustomersByOrganization is the resolver for the listCustomersByOrganization field.
 // func (r *queryResolver) ListCustomersByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Customer, error) {
-// 	panic(fmt.Errorf("not implemented: ListCustomersByOrganization - listCustomersByOrganization"))
+// 	org := middleware.ForContext(ctx)
+
+// 	customers, err := r.Store.ListCustomersByOrganizationID(org.ID, offset, limit)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return customers, nil
 // }
 
 // // GetPayment is the resolver for the getPayment field.
@@ -332,10 +339,10 @@ import (
 // 	return payment, nil
 // }
 
-// ListPaymentsByOrganization is the resolver for the listPaymentsByOrganization field.
-func (r *queryResolver) ListPaymentsByOrganization(ctx context.Context, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
-	panic(fmt.Errorf("not implemented: ListPaymentsByOrganization - listPaymentsByOrganization"))
-}
+// // ListPaymentsByOrganization is the resolver for the listPaymentsByOrganization field.
+// func (r *queryResolver) ListPaymentsByOrganization(ctx context.Context, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
+// 	panic(fmt.Errorf("not implemented: ListPaymentsByOrganization - listPaymentsByOrganization"))
+// }
 
 // ListPaymentsByGroup is the resolver for the listPaymentsByGroup field.
 func (r *queryResolver) ListPaymentsByGroup(ctx context.Context, groupID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {

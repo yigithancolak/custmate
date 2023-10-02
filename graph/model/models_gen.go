@@ -35,9 +35,10 @@ type CreateOrganizationInput struct {
 type CreatePaymentInput struct {
 	Amount      int         `json:"amount"`
 	Date        string      `json:"date"`
-	CustomerID  string      `json:"customerId"`
 	PaymentType PaymentType `json:"paymentType"`
 	Currency    Currency    `json:"currency"`
+	CustomerID  string      `json:"customerId"`
+	GroupID     string      `json:"groupId"`
 }
 
 type CreateTimeInput struct {

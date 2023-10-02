@@ -212,9 +212,10 @@ input UpdateCustomerInput {
 input CreatePaymentInput {
   amount: Int!
   date: String!
-  customerId: ID!
   paymentType: PaymentType!
   currency: Currency!
+  customerId: ID!
+  groupId: ID!
 }
 
 input UpdatePaymentInput {

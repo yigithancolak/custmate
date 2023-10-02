@@ -4,6 +4,7 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/yigithancolak/custmate/graph/model"
@@ -160,7 +161,8 @@ func (r *mutationResolver) DeleteCustomer(ctx context.Context, id string) (bool,
 }
 
 func (r *mutationResolver) CreatePayment(ctx context.Context, input model.CreatePaymentInput) (*model.Payment, error) {
-	payment, err := r.Store.CreatePayment(&input)
+	org := middleware.ForContext(ctx)
+	payment, err := r.Store.CreatePayment(org.ID, &input)
 	if err != nil {
 		return nil, err
 	}
@@ -340,4 +342,8 @@ func (r *queryResolver) GetPayment(ctx context.Context, id string) (*model.Payme
 	}
 
 	return payment, nil
+}
+
+func (r *queryResolver) ListPaymentsByOrganization(ctx context.Context, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
+	panic(fmt.Errorf("not implemented: ListPaymentsByOrganization - listPaymentsByOrganization"))
 }

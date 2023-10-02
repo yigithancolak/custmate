@@ -12,27 +12,21 @@ func (s *Store) CreateGroupWithTimeTx(input model.CreateGroupInput, organization
 	}
 	createdGroup, err := s.CreateGroup(tx, &input, organizationID)
 	if err != nil {
-		if rbErr := tx.Rollback(); rbErr != nil {
-			return nil, ErrRollbackTransaction
-		}
+		tx.Rollback()
 		return nil, err
 	}
 
 	for _, t := range input.Times {
 		createdTime, err := s.CreateTime(tx, createdGroup.ID, t)
 		if err != nil {
-			if rbErr := tx.Rollback(); rbErr != nil {
-				return nil, ErrRollbackTransaction
-			}
+			tx.Rollback()
 			return nil, err
 		}
 		createdGroup.Times = append(createdGroup.Times, createdTime)
 	}
 
 	if err = tx.Commit(); err != nil {
-		if rbErr := tx.Rollback(); rbErr != nil {
-			return nil, ErrRollbackTransaction
-		}
+		tx.Rollback()
 		return nil, err
 	}
 
