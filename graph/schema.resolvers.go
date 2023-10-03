@@ -344,15 +344,15 @@ import (
 // 	panic(fmt.Errorf("not implemented: ListPaymentsByOrganization - listPaymentsByOrganization"))
 // }
 
-// ListPaymentsByGroup is the resolver for the listPaymentsByGroup field.
-func (r *queryResolver) ListPaymentsByGroup(ctx context.Context, groupID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
-	panic(fmt.Errorf("not implemented: ListPaymentsByGroup - listPaymentsByGroup"))
-}
+// // ListPaymentsByGroup is the resolver for the listPaymentsByGroup field.
+// func (r *queryResolver) ListPaymentsByGroup(ctx context.Context, groupID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
+// 	panic(fmt.Errorf("not implemented: ListPaymentsByGroup - listPaymentsByGroup"))
+// }
 
-// ListPaymentsByCustomer is the resolver for the listPaymentsByCustomer field.
-func (r *queryResolver) ListPaymentsByCustomer(ctx context.Context, customerID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
-	panic(fmt.Errorf("not implemented: ListPaymentsByCustomer - listPaymentsByCustomer"))
-}
+// // ListPaymentsByCustomer is the resolver for the listPaymentsByCustomer field.
+// func (r *queryResolver) ListPaymentsByCustomer(ctx context.Context, customerID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
+// 	panic(fmt.Errorf("not implemented: ListPaymentsByCustomer - listPaymentsByCustomer"))
+// }
 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }

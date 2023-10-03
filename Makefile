@@ -29,8 +29,10 @@ migratedown:
 migratezero:
 	migrate -path ${MIGRATION_PATH} -database "${DB_URL}" force 0
 
-
 create-migration:
 	@migrate create -ext sql -dir $(MIGRATION_PATH) -seq $(name)
 
-.PHONY: graphql-generate network-test postgres-test pgadmin-test migrateup migratedown create-migration
+test:
+	go test -v -cover -short ./...
+
+.PHONY: graphql-generate network-test postgres-test pgadmin-test migrateup migratedown create-migration test

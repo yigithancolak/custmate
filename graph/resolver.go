@@ -345,7 +345,25 @@ func (r *queryResolver) GetPayment(ctx context.Context, id string) (*model.Payme
 
 func (r *queryResolver) ListPaymentsByOrganization(ctx context.Context, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
 	org := middleware.ForContext(ctx)
-	payments, err := r.Store.ListPaymentsByOrganizationID(org.ID, offset, limit, startDate, endDate)
+	payments, err := r.Store.ListPaymentsByFieldID("organization_id", org.ID, offset, limit, startDate, endDate)
+	if err != nil {
+		return nil, err
+	}
+
+	return payments, nil
+}
+
+func (r *queryResolver) ListPaymentsByGroup(ctx context.Context, groupID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
+	payments, err := r.Store.ListPaymentsByFieldID("org_group_id", groupID, offset, limit, startDate, endDate)
+	if err != nil {
+		return nil, err
+	}
+
+	return payments, nil
+}
+
+func (r *queryResolver) ListPaymentsByCustomer(ctx context.Context, customerID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
+	payments, err := r.Store.ListPaymentsByFieldID("customer_id", customerID, offset, limit, startDate, endDate)
 	if err != nil {
 		return nil, err
 	}
