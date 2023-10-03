@@ -11,10 +11,10 @@ import (
 )
 
 func (s *Store) GetOrganizationById(id string) (*model.Organization, error) {
-	query := "SELECT id,name,email FROM organizations"
+	query := "SELECT id,name,email FROM organizations WHERE id = $1"
 
 	var organization model.Organization
-	err := s.DB.QueryRow(query).Scan(&organization.ID, &organization.Name, &organization.Email)
+	err := s.DB.QueryRow(query, id).Scan(&organization.ID, &organization.Name, &organization.Email)
 	if err != nil {
 		return nil, err
 	}

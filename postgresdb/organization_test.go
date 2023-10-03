@@ -52,3 +52,15 @@ func TestUpdateOrganization(t *testing.T) {
 	asserts.Equal(email, updatedOrg.Email)
 	asserts.Equal(organization.ID, updatedOrg.ID)
 }
+
+func TestDeleteOrganization(t *testing.T) {
+	asserts := assert.New(t)
+	organization := createRandomOrganization(t)
+
+	err := testStore.DeleteOrganization(organization.ID)
+	asserts.NoError(err)
+
+	deletedOrg, err := testStore.GetOrganizationById(organization.ID)
+	asserts.Nil(deletedOrg)
+	asserts.Error(err)
+}
