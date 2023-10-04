@@ -21,7 +21,7 @@ pgadmin-test: network-test
 	@docker run --rm --name $(DB_NAME)-test-pgadmin --network=$(DB_NAME)-test-net -p 5050:80 -e "PGADMIN_DEFAULT_EMAIL=admin@$(DB_NAME).com" -e "PGADMIN_DEFAULT_PASSWORD=secret" -d dpage/pgadmin4
 
 migrateup:
-	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose up
+	migrate -path $(MIGRATION_PATH) -database $(DB_URL) -verbose up
 
 migratedown:
 	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose down
