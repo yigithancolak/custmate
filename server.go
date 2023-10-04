@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/99designs/gqlgen/graphql/playground"
 	_ "github.com/jackc/pgx/stdlib"
@@ -11,7 +12,12 @@ import (
 )
 
 func main() {
-	config, err := util.LoadConfig(".", "development", "env")
+	appEnv := os.Getenv("APP_ENV")
+	if appEnv == "" {
+		appEnv = "development"
+	}
+
+	config, err := util.LoadConfig(".", appEnv, "env")
 	if err != nil {
 		log.Fatalf("error while loading config: %v", err)
 	}

@@ -41,7 +41,7 @@ func Middleware(s *postgresdb.Store) func(http.Handler) http.Handler {
 			}
 
 			// get the user from the database
-			organization, err := s.GetOrganizationById(payload.Id)
+			organization, err := s.GetOrganizationById(payload.OrganizationID)
 			if err != nil {
 				http.Error(w, "organization not exists", http.StatusForbidden)
 				return

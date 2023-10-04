@@ -15,7 +15,6 @@ type Config struct {
 	MigrationURL         string        `mapstructure:"MIGRATION_URL"`
 	MaxConns             int           `mapstructure:"MAX_CONNS"`
 	LogLevel             string        `mapstructure:"LOG_LEVEL"`
-	Environment          string        `mapstructure:"ENVIRONMENT"`
 }
 
 func LoadConfig(path, fileName, configType string) (*Config, error) {

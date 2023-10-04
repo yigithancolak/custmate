@@ -24,10 +24,10 @@ migrateup:
 	migrate -path $(MIGRATION_PATH) -database $(DB_URL) -verbose up
 
 migratedown:
-	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose down
+	migrate -path $(MIGRATION_PATH) -database $(DB_URL) -verbose down
 
 migratezero:
-	migrate -path ${MIGRATION_PATH} -database "${DB_URL}" force 0
+	migrate -path ${MIGRATION_PATH} -database ${DB_URL} force 0
 
 create-migration:
 	@migrate create -ext sql -dir $(MIGRATION_PATH) -seq $(name)
@@ -35,4 +35,7 @@ create-migration:
 test:
 	go test -v -cover -short ./...
 
-.PHONY: graphql-generate network-test postgres-test pgadmin-test migrateup migratedown create-migration test
+go-build:
+	go build -o bin/custmate server.go
+
+.PHONY: graphql-generate network-test postgres-test pgadmin-test migrateup migratedown create-migration test go-build
