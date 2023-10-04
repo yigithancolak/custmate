@@ -3,13 +3,13 @@ package postgresdb
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/yigithancolak/custmate/graph/model"
 	"github.com/yigithancolak/custmate/util"
 )
 
 func createRandomOrganization(t *testing.T) *model.Organization {
-	asserts := assert.New(t)
+	requires := require.New(t)
 
 	args := model.CreateOrganizationInput{
 		Name:     util.RandomName(),
@@ -18,11 +18,11 @@ func createRandomOrganization(t *testing.T) *model.Organization {
 	}
 
 	account, err := testStore.CreateOrganization(args)
-	asserts.NoError(err)
-	asserts.NotEmpty(account)
+	requires.NoError(err)
+	requires.NotEmpty(account)
 
-	asserts.Equal(args.Name, account.Name)
-	asserts.Equal(args.Email, account.Email)
+	requires.Equal(args.Name, account.Name)
+	requires.Equal(args.Email, account.Email)
 
 	return account
 }
@@ -32,7 +32,7 @@ func TestCreateOrganization(t *testing.T) {
 }
 
 func TestUpdateOrganization(t *testing.T) {
-	asserts := assert.New(t)
+	requires := require.New(t)
 	organization := createRandomOrganization(t)
 	name := util.RandomName()
 	email := util.RandomMail()
@@ -45,22 +45,22 @@ func TestUpdateOrganization(t *testing.T) {
 	}
 
 	updatedOrg, err := testStore.UpdateOrganization(organization.ID, args)
-	asserts.NoError(err)
-	asserts.NotEmpty(updatedOrg)
+	requires.NoError(err)
+	requires.NotEmpty(updatedOrg)
 
-	asserts.Equal(name, updatedOrg.Name)
-	asserts.Equal(email, updatedOrg.Email)
-	asserts.Equal(organization.ID, updatedOrg.ID)
+	requires.Equal(name, updatedOrg.Name)
+	requires.Equal(email, updatedOrg.Email)
+	requires.Equal(organization.ID, updatedOrg.ID)
 }
 
 func TestDeleteOrganization(t *testing.T) {
-	asserts := assert.New(t)
+	requires := require.New(t)
 	organization := createRandomOrganization(t)
 
 	err := testStore.DeleteOrganization(organization.ID)
-	asserts.NoError(err)
+	requires.NoError(err)
 
 	deletedOrg, err := testStore.GetOrganizationById(organization.ID)
-	asserts.Nil(deletedOrg)
-	asserts.Error(err)
+	requires.Nil(deletedOrg)
+	requires.Error(err)
 }

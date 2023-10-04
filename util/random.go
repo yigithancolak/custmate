@@ -3,13 +3,15 @@ package util
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 	"strings"
 )
 
 const alphabet = "abcdefghijklmnopqrstuvwxyz"
+const numbers = "0123456789"
 
-func RandomIntBetween(min, max int64) int64 {
-	return min + rand.Int63n(max-min+1)
+func RandomIntBetween(min, max int64) int {
+	return int(min + rand.Int63n(max-min+1))
 }
 
 func RandomString(n int) string {
@@ -33,4 +35,40 @@ func RandomName() string {
 
 func RandomPassword() string {
 	return RandomString(8)
+}
+
+func RandomPhoneNumber(n int) string {
+	var sb strings.Builder
+
+	for i := 0; i < n; i++ {
+		numb := numbers[rand.Intn(len(numbers))]
+		sb.WriteByte(numb)
+
+	}
+
+	return "+" + sb.String()
+}
+
+func RandomDate() string {
+
+	d := RandomIntBetween(1, 30)
+	m := RandomIntBetween(1, 12)
+	y := RandomIntBetween(2020, 2024)
+
+	day := strconv.Itoa(d)
+	month := strconv.Itoa(m)
+	year := strconv.Itoa(y)
+
+	if d < 10 {
+		day = "0" + day
+	}
+
+	if m < 10 {
+		month = "0" + month
+	}
+
+	dateArray := []string{year, month, day}
+
+	return strings.Join(dateArray, "-")
+
 }
