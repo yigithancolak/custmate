@@ -87,5 +87,5 @@ func (s *StoreTestSuite) TearDownSuite() {
 }
 
 func TestRunSuite(t *testing.T) {
-	suite.Run(t, &StoreTestSuite{})
+	suite.Run(t, new(StoreTestSuite))
 }

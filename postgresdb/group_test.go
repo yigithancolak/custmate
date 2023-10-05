@@ -5,11 +5,25 @@ import (
 	"github.com/yigithancolak/custmate/util"
 )
 
-func (s *StoreTestSuite) createRandomGroup() *model.Group {
-	instructor := s.createRandomInstructor()
+type GroupTestSuite struct {
+	StoreTestSuite
+	Organization *model.Organization
+	Instructor   *model.Instructor
+	Group        *model.Group
+}
+
+func (s *GroupTestSuite) SetupTest() {
+	s.Organization = s.createRandomOrganization()
+	s.Instructor = s.createRandomInstructor(s.Organization.ID)
+	s.Group = s.createRandomGroup(s.Instructor.ID, s.Organization.ID)
+
+}
+
+func (s *StoreTestSuite) createRandomGroup(instructorID, organizationID string) *model.Group {
+
 	args := model.CreateGroupInput{
 		Name:       util.RandomName(),
-		Instructor: instructor.ID,
+		Instructor: instructorID,
 		Times: []*model.CreateTimeInput{
 			{
 				Day:        util.RandomDay(),
@@ -24,7 +38,7 @@ func (s *StoreTestSuite) createRandomGroup() *model.Group {
 		},
 	}
 
-	group, err := s.store.CreateGroupWithTimeTx(args, instructor.OrganizationID)
+	group, err := s.store.CreateGroupWithTimeTx(args, organizationID)
 	s.NoError(err)
 	s.NotNil(group)
 
@@ -41,14 +55,13 @@ func (s *StoreTestSuite) createRandomGroup() *model.Group {
 	return group
 }
 
-func (s *StoreTestSuite) TestCreateGroup() {
-	s.createRandomGroup()
+func (s *GroupTestSuite) TestCreateGroup() {
+	s.NotEmpty(s.Group)
+	s.NotNil(s.Group)
 }
 
-func (s *StoreTestSuite) TestUpdateGroup() {
-
-	group := s.createRandomGroup()
-	instructor := s.createRandomInstructor() //created for changing the instructor
+func (s *GroupTestSuite) TestUpdateGroup() {
+	group := s.Group
 
 	name := util.RandomName()
 	var times []*model.UpdateTimeInput
@@ -68,9 +81,11 @@ func (s *StoreTestSuite) TestUpdateGroup() {
 		times = append(times, &timeArgs)
 	}
 
+	newInstructor := s.createRandomInstructor(s.Organization.ID)
+
 	args := model.UpdateGroupInput{
 		Name:       &name,
-		Instructor: &instructor.ID,
+		Instructor: &newInstructor.ID,
 		Times:      times,
 	}
 
@@ -79,8 +94,8 @@ func (s *StoreTestSuite) TestUpdateGroup() {
 	//TODO: MAKE UPDATEGROUPWITHTIMETX TESTABLE WITH RETURNING GROUP
 }
 
-func (s *StoreTestSuite) TestDeleteGroup() {
-	group := s.createRandomGroup()
+func (s *GroupTestSuite) TestDeleteGroup() {
+	group := s.Group
 
 	ok, err := s.store.DeleteGroup(group.ID)
 	s.NoError(err)

@@ -5,6 +5,15 @@ import (
 	"github.com/yigithancolak/custmate/util"
 )
 
+type OrganizationTestSuite struct {
+	StoreTestSuite
+	organization *model.Organization
+}
+
+func (s *OrganizationTestSuite) SetupTest() {
+	s.organization = s.createRandomOrganization()
+}
+
 func (s *StoreTestSuite) createRandomOrganization() *model.Organization {
 	args := model.CreateOrganizationInput{
 		Name:     util.RandomName(),
@@ -22,12 +31,13 @@ func (s *StoreTestSuite) createRandomOrganization() *model.Organization {
 	return account
 }
 
-func (s *StoreTestSuite) TestCreateOrganization() {
-	s.createRandomOrganization()
+func (s *OrganizationTestSuite) TestCreateOrganization() {
+	s.NotNil(s.organization)
+	s.NotEmpty(s.organization)
 }
 
-func (s *StoreTestSuite) TestUpdateOrganization() {
-	organization := s.createRandomOrganization()
+func (s *OrganizationTestSuite) TestUpdateOrganization() {
+	organization := s.organization
 	name := util.RandomName()
 	email := util.RandomMail()
 	password := util.RandomPassword()
@@ -47,8 +57,8 @@ func (s *StoreTestSuite) TestUpdateOrganization() {
 	s.Equal(organization.ID, updatedOrg.ID)
 }
 
-func (s *StoreTestSuite) TestDeleteOrganization() {
-	organization := s.createRandomOrganization()
+func (s *OrganizationTestSuite) TestDeleteOrganization() {
+	organization := s.organization
 
 	err := s.store.DeleteOrganization(organization.ID)
 	s.NoError(err)
@@ -56,4 +66,17 @@ func (s *StoreTestSuite) TestDeleteOrganization() {
 	deletedOrg, err := s.store.GetOrganizationById(organization.ID)
 	s.Nil(deletedOrg)
 	s.Error(err)
+}
+
+func (s *OrganizationTestSuite) TestGetOrganizationByID() {
+	organization := s.organization
+
+	foundOrganization, err := s.store.GetOrganizationById(organization.ID)
+	s.NoError(err)
+	s.NotNil(foundOrganization)
+	s.NotEmpty(foundOrganization)
+
+	s.Equal(organization.ID, foundOrganization.ID)
+	s.Equal(organization.Email, foundOrganization.Email)
+	s.Equal(organization.Name, foundOrganization.Name)
 }
