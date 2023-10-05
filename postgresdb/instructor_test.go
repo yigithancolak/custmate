@@ -2,36 +2,32 @@ package postgresdb
 
 import (
 	"log"
-	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/yigithancolak/custmate/graph/model"
 	"github.com/yigithancolak/custmate/util"
 )
 
-func createRandomInstructor(t *testing.T) *model.Instructor {
-	requires := require.New(t)
-	organization := createRandomOrganization(t)
+func (s *StoreTestSuite) createRandomInstructor() *model.Instructor {
+	organization := s.createRandomOrganization()
 	args := model.CreateInstructorInput{
 		Name: util.RandomName(),
 	}
 
-	instructor, err := testStore.CreateInstructor(organization.ID, args)
-	requires.NoError(err)
-	requires.NotEmpty(instructor)
-	requires.NotNil(instructor)
-	requires.Equal(args.Name, instructor.Name)
+	instructor, err := s.store.CreateInstructor(organization.ID, args)
+	s.NoError(err)
+	s.NotEmpty(instructor)
+	s.NotNil(instructor)
+	s.Equal(args.Name, instructor.Name)
 
 	return instructor
 }
 
-func TestCreateInstructor(t *testing.T) {
-	createRandomInstructor(t)
+func (s *StoreTestSuite) TestCreateInstructor() {
+	s.createRandomInstructor()
 }
 
-func TestUpdateInstructor(t *testing.T) {
-	requires := require.New(t)
-	instructor := createRandomInstructor(t)
+func (s *StoreTestSuite) TestUpdateInstructor() {
+	instructor := s.createRandomInstructor()
 	name := util.RandomName()
 	nextPayment := util.RandomDate()
 
@@ -39,24 +35,23 @@ func TestUpdateInstructor(t *testing.T) {
 		Name: &name,
 	}
 
-	updatedInstructor, err := testStore.UpdateInstructor(instructor.ID, args)
-	requires.NoError(err)
-	requires.NotNil(updatedInstructor)
-	requires.NotEmpty(updatedInstructor)
-	requires.Equal(name, updatedInstructor.Name)
+	updatedInstructor, err := s.store.UpdateInstructor(instructor.ID, args)
+	s.NoError(err)
+	s.NotNil(updatedInstructor)
+	s.NotEmpty(updatedInstructor)
+	s.Equal(name, updatedInstructor.Name)
 
 	log.Println(nextPayment)
 }
 
-func TestDeleteInstructor(t *testing.T) {
-	requires := require.New(t)
-	instructor := createRandomInstructor(t)
+func (s *StoreTestSuite) TestDeleteInstructor() {
+	instructor := s.createRandomInstructor()
 
-	ok, err := testStore.DeleteInstructor(instructor.ID)
-	requires.NoError(err)
-	requires.True(ok)
+	ok, err := s.store.DeleteInstructor(instructor.ID)
+	s.NoError(err)
+	s.True(ok)
 
-	deletedInstructor, err := testStore.GetInstructorByID(instructor.ID)
-	requires.Nil(deletedInstructor)
-	requires.Error(err)
+	deletedInstructor, err := s.store.GetInstructorByID(instructor.ID)
+	s.Nil(deletedInstructor)
+	s.Error(err)
 }

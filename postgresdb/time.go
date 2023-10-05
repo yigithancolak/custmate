@@ -14,14 +14,14 @@ func (s *Store) CreateTime(q queryer, groupId string, input *model.CreateTimeInp
 
 	timeId := uuid.New().String() // Assuming you use UUID for your 'id' column
 
-	time := &model.Time{}
+	var time model.Time
 
 	err := q.QueryRow(query, timeId, groupId, input.Day, input.StartHour, input.FinishHour).Scan(&time.ID, &time.GroupID, &time.Day, &time.StartHour, &time.FinishHour)
 
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrCreateTime, err)
 	}
-	return time, nil
+	return &time, nil
 }
 
 func (s *Store) UpdateTime(q queryer, time *model.UpdateTimeInput) (*model.Time, error) {

@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/99designs/gqlgen/graphql/playground"
-	_ "github.com/jackc/pgx/stdlib"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/yigithancolak/custmate/server"
 	"github.com/yigithancolak/custmate/util"
 )

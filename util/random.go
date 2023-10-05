@@ -10,6 +10,16 @@ import (
 const alphabet = "abcdefghijklmnopqrstuvwxyz"
 const numbers = "0123456789"
 
+var daysOfWeek = []string{
+	"monday",
+	"tuesday",
+	"wednesday",
+	"thursday",
+	"friday",
+	"saturday",
+	"sunday",
+}
+
 func RandomIntBetween(min, max int64) int {
 	return int(min + rand.Int63n(max-min+1))
 }
@@ -50,7 +60,6 @@ func RandomPhoneNumber(n int) string {
 }
 
 func RandomDate() string {
-
 	d := RandomIntBetween(1, 30)
 	m := RandomIntBetween(1, 12)
 	y := RandomIntBetween(2020, 2024)
@@ -70,5 +79,24 @@ func RandomDate() string {
 	dateArray := []string{year, month, day}
 
 	return strings.Join(dateArray, "-")
+}
 
+func RandomDay() string {
+	return daysOfWeek[RandomIntBetween(0, int64(len(daysOfWeek)-1))]
+}
+
+func RandomTime() string {
+	h := RandomIntBetween(0, 23)
+	m := RandomIntBetween(0, 59)
+
+	hour := strconv.Itoa(h)
+	if h < 10 {
+		hour = "0" + hour
+	}
+	minute := strconv.Itoa(m)
+	if m < 10 {
+		minute = "0" + minute
+	}
+
+	return hour + ":" + minute
 }

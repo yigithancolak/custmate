@@ -13,6 +13,7 @@ type Config struct {
 	RefreshTokenDuration time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`
 	PostgresURL          string        `mapstructure:"POSTGRES_URL"`
 	MigrationURL         string        `mapstructure:"MIGRATION_URL"`
+	ConnectionURL        string        `mapstructure:"CONNECTION_URL"`
 	MaxConns             int           `mapstructure:"MAX_CONNS"`
 	LogLevel             string        `mapstructure:"LOG_LEVEL"`
 }

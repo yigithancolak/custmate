@@ -1,39 +1,33 @@
 package postgresdb
 
 import (
-	"testing"
-
-	"github.com/stretchr/testify/require"
 	"github.com/yigithancolak/custmate/graph/model"
 	"github.com/yigithancolak/custmate/util"
 )
 
-func createRandomOrganization(t *testing.T) *model.Organization {
-	requires := require.New(t)
-
+func (s *StoreTestSuite) createRandomOrganization() *model.Organization {
 	args := model.CreateOrganizationInput{
 		Name:     util.RandomName(),
 		Email:    util.RandomMail(),
 		Password: util.RandomPassword(),
 	}
 
-	account, err := testStore.CreateOrganization(args)
-	requires.NoError(err)
-	requires.NotEmpty(account)
+	account, err := s.store.CreateOrganization(args)
+	s.NoError(err)
+	s.NotEmpty(account)
 
-	requires.Equal(args.Name, account.Name)
-	requires.Equal(args.Email, account.Email)
+	s.Equal(args.Name, account.Name)
+	s.Equal(args.Email, account.Email)
 
 	return account
 }
 
-func TestCreateOrganization(t *testing.T) {
-	createRandomOrganization(t)
+func (s *StoreTestSuite) TestCreateOrganization() {
+	s.createRandomOrganization()
 }
 
-func TestUpdateOrganization(t *testing.T) {
-	requires := require.New(t)
-	organization := createRandomOrganization(t)
+func (s *StoreTestSuite) TestUpdateOrganization() {
+	organization := s.createRandomOrganization()
 	name := util.RandomName()
 	email := util.RandomMail()
 	password := util.RandomPassword()
@@ -44,23 +38,22 @@ func TestUpdateOrganization(t *testing.T) {
 		Password: &password,
 	}
 
-	updatedOrg, err := testStore.UpdateOrganization(organization.ID, args)
-	requires.NoError(err)
-	requires.NotEmpty(updatedOrg)
+	updatedOrg, err := s.store.UpdateOrganization(organization.ID, args)
+	s.NoError(err)
+	s.NotEmpty(updatedOrg)
 
-	requires.Equal(name, updatedOrg.Name)
-	requires.Equal(email, updatedOrg.Email)
-	requires.Equal(organization.ID, updatedOrg.ID)
+	s.Equal(name, updatedOrg.Name)
+	s.Equal(email, updatedOrg.Email)
+	s.Equal(organization.ID, updatedOrg.ID)
 }
 
-func TestDeleteOrganization(t *testing.T) {
-	requires := require.New(t)
-	organization := createRandomOrganization(t)
+func (s *StoreTestSuite) TestDeleteOrganization() {
+	organization := s.createRandomOrganization()
 
-	err := testStore.DeleteOrganization(organization.ID)
-	requires.NoError(err)
+	err := s.store.DeleteOrganization(organization.ID)
+	s.NoError(err)
 
-	deletedOrg, err := testStore.GetOrganizationById(organization.ID)
-	requires.Nil(deletedOrg)
-	requires.Error(err)
+	deletedOrg, err := s.store.GetOrganizationById(organization.ID)
+	s.Nil(deletedOrg)
+	s.Error(err)
 }
