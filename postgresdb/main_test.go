@@ -45,7 +45,6 @@ func (s *StoreTestSuite) SetupSuite() {
 		s.T().Fail()
 		return
 	}
-	defer testDB.Close()
 
 	jwtMaker, err := token.NewJWTMaker(config)
 	if err != nil {
