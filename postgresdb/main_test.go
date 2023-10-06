@@ -1,7 +1,6 @@
 package postgresdb
 
 import (
-	"log"
 	"testing"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -22,26 +21,37 @@ type StoreTestSuite struct {
 func (s *StoreTestSuite) SetupSuite() {
 	config, err := util.LoadConfig("..", "test", "env")
 	if err != nil {
-		log.Fatal("cannot load config:", err)
+		s.T().Logf("cannot load config: %v", err)
+		s.T().Fail()
+		return
 	}
 	db, err := sqlx.Connect("pgx", config.ConnectionURL)
 	if err != nil {
-		s.T().Log(err.Error())
+		s.T().Logf("error connecting to database: %v", err)
+		s.T().Fail()
+		return
 	}
 	_, err = db.Exec("CREATE DATABASE test_custmate")
 	if err != nil {
-		log.Fatal("cannot create test db:", err)
+		s.T().Logf("cannot create test db: %v", err)
+		s.T().Fail()
+		return
 	}
 	db.Close()
 
 	testDB, err := NewDB(config)
 	if err != nil {
-		log.Fatal("cannot create test db instance:", err)
+		s.T().Logf("cannot create test db instance: %v", err)
+		s.T().Fail()
+		return
 	}
+	defer testDB.Close()
 
 	jwtMaker, err := token.NewJWTMaker(config)
 	if err != nil {
-		log.Fatal("cannot creating jwt maker:", err)
+		s.T().Logf("cannot create jwt maker: %v", err)
+		s.T().Fail()
+		return
 	}
 
 	m, err := migrate.New(
@@ -49,18 +59,25 @@ func (s *StoreTestSuite) SetupSuite() {
 		config.MigrationURL,
 	)
 	if err != nil {
-		log.Fatal(err)
+		s.T().Logf("migration error: %v", err)
+		s.T().Fail()
+		return
 	}
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		log.Fatal(err)
+		s.T().Logf("migration up error: %v", err)
+		s.T().Fail()
+		return
 	}
 
 	s.store = NewStore(testDB, jwtMaker)
 }
+
 func (s *StoreTestSuite) TearDownSuite() {
 	config, err := util.LoadConfig("..", "test", "env")
 	if err != nil {
-		log.Fatal("cannot load config:", err)
+		s.T().Logf("cannot load config: %v", err)
+		s.T().Fail()
+		return
 	}
 
 	s.store.DB.Close() // Close the testDB connection
@@ -68,7 +85,8 @@ func (s *StoreTestSuite) TearDownSuite() {
 	// Connect to the default database (or any other database that's not the one you're trying to drop)
 	db, err := sqlx.Connect("pgx", config.ConnectionURL)
 	if err != nil {
-		s.T().Log(err.Error())
+		s.T().Logf("error connecting to database: %v", err)
+		s.T().Fail()
 		return
 	}
 	defer db.Close()
@@ -77,12 +95,15 @@ func (s *StoreTestSuite) TearDownSuite() {
 	_, err = db.Exec("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'test_custmate';")
 	if err != nil {
 		s.T().Logf("Error terminating connections to test database: %v", err)
+		s.T().Fail()
+		return
 	}
 
 	// Drop the test_custmate database
 	_, err = db.Exec("DROP DATABASE IF EXISTS test_custmate")
 	if err != nil {
 		s.T().Logf("Error dropping test database: %v", err)
+		s.T().Fail()
 	}
 }
 
