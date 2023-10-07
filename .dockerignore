@@ -1,0 +1,23 @@
+# Version control
+.git/
+
+# CI/CD
+.github/
+
+# # Configuration files
+# *.env
+
+# # Go related
+# go.sum
+# go.mod
+
+# Test files
+*_test.go
+
+# Migration files (if you handle migrations outside of the Docker image)
+postgresdb/migration/
+
+# Miscellaneous
+Makefile
+
+volumes/

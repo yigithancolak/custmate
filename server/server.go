@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/go-chi/chi"
+	"github.com/go-chi/cors"
 	"github.com/yigithancolak/custmate/directives"
 	"github.com/yigithancolak/custmate/graph"
 	"github.com/yigithancolak/custmate/middleware"
@@ -32,6 +33,16 @@ func NewServer(config *util.Config) (*Server, error) {
 	resolver := graph.NewResolver(store)
 
 	router := chi.NewRouter()
+
+	corsMiddleware := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"},
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	})
+
+	router.Use(corsMiddleware.Handler)
 	router.Use(middleware.Middleware(store))
 
 	c := graph.Config{Resolvers: resolver}
