@@ -71,6 +71,12 @@ type TokenResponse {
   # refreshToken: String!
 }
 
+#List types
+type ListCustomersResponse {
+  items: [Customer!]!
+  totalCount: Int!
+}
+
 type Query {
   # Organization
   getOrganization: Organization! @auth
@@ -92,6 +98,11 @@ type Query {
   ): [Customer!]! @auth
   listCustomersByOrganization(offset: Int = 0, limit: Int = 10): [Customer!]!
     @auth
+  searchCustomers(
+    filter: SearchCustomerFilter!
+    offset: Int = 0
+    limit: Int = 10
+  ): ListCustomersResponse! @auth
 
   #Payment
   getPayment(id: ID!): Payment! @auth
@@ -207,11 +218,20 @@ input UpdateCustomerInput {
   active: Boolean
 }
 
+input SearchCustomerFilter {
+  name: String
+  phoneNumber: String
+  active: Boolean
+  latePayment: Boolean
+  upcomingPayment: Boolean
+}
+
 # Input for Payment
 
 input CreatePaymentInput {
   amount: Int!
   date: String!
+  nextPaymentDate: String!
   paymentType: PaymentType!
   currency: Currency!
   customerId: ID!

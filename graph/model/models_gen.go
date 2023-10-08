@@ -33,12 +33,13 @@ type CreateOrganizationInput struct {
 }
 
 type CreatePaymentInput struct {
-	Amount      int         `json:"amount"`
-	Date        string      `json:"date"`
-	PaymentType PaymentType `json:"paymentType"`
-	Currency    Currency    `json:"currency"`
-	CustomerID  string      `json:"customerId"`
-	GroupID     string      `json:"groupId"`
+	Amount          int         `json:"amount"`
+	Date            string      `json:"date"`
+	NextPaymentDate string      `json:"nextPaymentDate"`
+	PaymentType     PaymentType `json:"paymentType"`
+	Currency        Currency    `json:"currency"`
+	CustomerID      string      `json:"customerId"`
+	GroupID         string      `json:"groupId"`
 }
 
 type CreateTimeInput struct {
@@ -72,6 +73,11 @@ type Instructor struct {
 	Groups         []*Group `json:"groups,omitempty"`
 }
 
+type ListCustomersResponse struct {
+	Items      []*Customer `json:"items"`
+	TotalCount int         `json:"totalCount"`
+}
+
 type Organization struct {
 	ID    string `json:"id"`
 	Name  string `json:"name"`
@@ -85,6 +91,14 @@ type Payment struct {
 	Customer    *Customer   `json:"customer"`
 	PaymentType PaymentType `json:"paymentType"`
 	Currency    Currency    `json:"currency"`
+}
+
+type SearchCustomerFilter struct {
+	Name            *string `json:"name,omitempty"`
+	PhoneNumber     *string `json:"phoneNumber,omitempty"`
+	Active          *bool   `json:"active,omitempty"`
+	LatePayment     *bool   `json:"latePayment,omitempty"`
+	UpcomingPayment *bool   `json:"upcomingPayment,omitempty"`
 }
 
 type Time struct {

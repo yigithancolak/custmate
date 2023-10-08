@@ -8,7 +8,7 @@ import (
 	"github.com/yigithancolak/custmate/graph/model"
 )
 
-func (s *Store) CreatePayment(orgID string, input *model.CreatePaymentInput) (*model.Payment, error) {
+func (s *Store) CreatePayment(q queryer, orgID string, input *model.CreatePaymentInput) (*model.Payment, error) {
 	query := `INSERT INTO payments (id, amount, payment_type, currency, date, customer_id, org_group_id, organization_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, amount, payment_type, currency, date`
 
 	paymentID := uuid.New().String()

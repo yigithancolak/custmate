@@ -185,6 +185,7 @@ func (s *Store) ListCustomersByGroupID(groupID string, offset *int, limit *int) 
 
 func (s *Store) ListCustomersByOrganizationID(orgID string, offset *int, limit *int) ([]*model.Customer, error) {
 	query := "SELECT id, name, phone_number, last_payment, next_payment, active FROM customers WHERE organization_id = $1 LIMIT $2 OFFSET $3"
+
 	rows, err := s.DB.Query(query, orgID, limit, offset)
 	if err != nil {
 		return nil, err
@@ -204,4 +205,65 @@ func (s *Store) ListCustomersByOrganizationID(orgID string, offset *int, limit *
 
 	return customers, nil
 
+}
+
+func (s *Store) ListCustomersWithSearchFilter(filter model.SearchCustomerFilter, orgID string, offset *int, limit *int) ([]*model.Customer, int, error) {
+	query := `
+		SELECT id, name, phone_number, last_payment, next_payment, active, COUNT(*) OVER() AS total_count 
+		FROM customers 
+		WHERE organization_id = $1
+	`
+
+	args := []interface{}{orgID}
+	argCount := 2
+
+	if filter.Name != nil {
+		query += fmt.Sprintf(" AND name ILIKE $%d", argCount)
+		args = append(args, "%"+*filter.Name+"%")
+		argCount++
+	}
+
+	if filter.PhoneNumber != nil {
+		query += fmt.Sprintf(" AND phone_number = $%d", argCount)
+		args = append(args, *filter.PhoneNumber)
+		argCount++
+	}
+
+	if filter.Active != nil {
+		query += fmt.Sprintf(" AND active = $%d", argCount)
+		args = append(args, *filter.Active)
+		argCount++
+	}
+
+	if filter.LatePayment != nil && *filter.LatePayment {
+		query += " AND next_payment <= CURRENT_DATE"
+	}
+
+	if filter.UpcomingPayment != nil && *filter.UpcomingPayment {
+		query += " AND next_payment > CURRENT_DATE AND next_payment <= CURRENT_DATE + INTERVAL '7 days'"
+	}
+
+	if offset != nil && limit != nil {
+		query += fmt.Sprintf(" OFFSET $%d LIMIT $%d", argCount, argCount+1)
+		args = append(args, *offset, *limit)
+	}
+
+	rows, err := s.DB.Query(query, args...)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	var customers []*model.Customer
+	var totalCount int
+
+	for rows.Next() {
+		var customer model.Customer
+		if err := rows.Scan(&customer.ID, &customer.Name, &customer.PhoneNumber, &customer.LastPayment, &customer.NextPayment, &customer.Active, &totalCount); err != nil {
+			return nil, 0, err
+		}
+		customers = append(customers, &customer)
+	}
+
+	return customers, totalCount, nil
 }

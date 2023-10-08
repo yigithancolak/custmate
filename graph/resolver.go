@@ -161,7 +161,8 @@ func (r *mutationResolver) DeleteCustomer(ctx context.Context, id string) (bool,
 
 func (r *mutationResolver) CreatePayment(ctx context.Context, input model.CreatePaymentInput) (*model.Payment, error) {
 	org := middleware.ForContext(ctx)
-	payment, err := r.Store.CreatePayment(org.ID, &input)
+
+	payment, err := r.Store.CreatePaymentTx(org.ID, &input)
 	if err != nil {
 		return nil, err
 	}
@@ -327,6 +328,21 @@ func (r *queryResolver) ListCustomersByOrganization(ctx context.Context, offset 
 	}
 
 	return customers, nil
+}
+
+func (r *queryResolver) SearchCustomers(ctx context.Context, filter model.SearchCustomerFilter, offset *int, limit *int) (*model.ListCustomersResponse, error) {
+	org := middleware.ForContext(ctx)
+
+	customers, totalCount, err := r.Store.ListCustomersWithSearchFilter(filter, org.ID, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.ListCustomersResponse{
+		TotalCount: totalCount,
+		Items:      customers,
+	}, nil
+
 }
 
 func (r *queryResolver) GetPayment(ctx context.Context, id string) (*model.Payment, error) {

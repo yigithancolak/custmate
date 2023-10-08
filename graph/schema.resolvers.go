@@ -144,7 +144,13 @@ import (
 
 // // CreatePayment is the resolver for the createPayment field.
 // func (r *mutationResolver) CreatePayment(ctx context.Context, input model.CreatePaymentInput) (*model.Payment, error) {
-// 	payment, err := r.Store.CreatePayment(&input)
+// 	org := middleware.ForContext(ctx)
+// 	// payment, err := r.Store.CreatePayment(org.ID, &input)
+// 	// if err != nil {
+// 	// 	return nil, err
+// 	// }
+
+// 	payment, err := r.Store.CreatePaymentTx(org.ID, &input)
 // 	if err != nil {
 // 		return nil, err
 // 	}
@@ -324,6 +330,21 @@ import (
 // 	return customers, nil
 // }
 
+// // SearchCustomers is the resolver for the searchCustomers field.
+// func (r *queryResolver) SearchCustomers(ctx context.Context, filter model.SearchCustomerFilter, offset *int, limit *int) (*model.ListCustomersResponse, error) {
+// 	org := middleware.ForContext(ctx)
+
+// 	customers, totalCount, err := r.Store.ListCustomersWithSearchFilter(filter, org.ID, offset, limit)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return &model.ListCustomersResponse{
+// 		TotalCount: totalCount,
+// 		Items:      customers,
+// 	}, nil
+// }
+
 // // GetPayment is the resolver for the getPayment field.
 // func (r *queryResolver) GetPayment(ctx context.Context, id string) (*model.Payment, error) {
 // 	includeCustomer := false
@@ -341,17 +362,33 @@ import (
 
 // // ListPaymentsByOrganization is the resolver for the listPaymentsByOrganization field.
 // func (r *queryResolver) ListPaymentsByOrganization(ctx context.Context, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
-// 	panic(fmt.Errorf("not implemented: ListPaymentsByOrganization - listPaymentsByOrganization"))
+// 	org := middleware.ForContext(ctx)
+// 	payments, err := r.Store.ListPaymentsByFieldID("organization_id", org.ID, offset, limit, startDate, endDate)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return payments, nil
 // }
 
 // // ListPaymentsByGroup is the resolver for the listPaymentsByGroup field.
 // func (r *queryResolver) ListPaymentsByGroup(ctx context.Context, groupID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
-// 	panic(fmt.Errorf("not implemented: ListPaymentsByGroup - listPaymentsByGroup"))
+// 	payments, err := r.Store.ListPaymentsByFieldID("org_group_id", groupID, offset, limit, startDate, endDate)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return payments, nil
 // }
 
 // // ListPaymentsByCustomer is the resolver for the listPaymentsByCustomer field.
 // func (r *queryResolver) ListPaymentsByCustomer(ctx context.Context, customerID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
-// 	panic(fmt.Errorf("not implemented: ListPaymentsByCustomer - listPaymentsByCustomer"))
+// 	payments, err := r.Store.ListPaymentsByFieldID("customer_id", customerID, offset, limit, startDate, endDate)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return payments, nil
 // }
 
 // Mutation returns MutationResolver implementation.

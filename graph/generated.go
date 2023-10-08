@@ -71,6 +71,11 @@ type ComplexityRoot struct {
 		OrganizationID func(childComplexity int) int
 	}
 
+	ListCustomersResponse struct {
+		Items      func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
 	Mutation struct {
 		CreateCustomer     func(childComplexity int, input model.CreateCustomerInput) int
 		CreateGroup        func(childComplexity int, input model.CreateGroupInput) int
@@ -121,6 +126,7 @@ type ComplexityRoot struct {
 		ListPaymentsByCustomer      func(childComplexity int, customerID string, offset *int, limit *int, startDate string, endDate string) int
 		ListPaymentsByGroup         func(childComplexity int, groupID string, offset *int, limit *int, startDate string, endDate string) int
 		ListPaymentsByOrganization  func(childComplexity int, offset *int, limit *int, startDate string, endDate string) int
+		SearchCustomers             func(childComplexity int, filter model.SearchCustomerFilter, offset *int, limit *int) int
 	}
 
 	Time struct {
@@ -166,6 +172,7 @@ type QueryResolver interface {
 	GetCustomer(ctx context.Context, id string) (*model.Customer, error)
 	ListCustomersByGroup(ctx context.Context, groupID string, offset *int, limit *int) ([]*model.Customer, error)
 	ListCustomersByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Customer, error)
+	SearchCustomers(ctx context.Context, filter model.SearchCustomerFilter, offset *int, limit *int) (*model.ListCustomersResponse, error)
 	GetPayment(ctx context.Context, id string) (*model.Payment, error)
 	ListPaymentsByOrganization(ctx context.Context, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error)
 	ListPaymentsByGroup(ctx context.Context, groupID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error)
@@ -298,6 +305,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Instructor.OrganizationID(childComplexity), true
+
+	case "ListCustomersResponse.items":
+		if e.complexity.ListCustomersResponse.Items == nil {
+			break
+		}
+
+		return e.complexity.ListCustomersResponse.Items(childComplexity), true
+
+	case "ListCustomersResponse.totalCount":
+		if e.complexity.ListCustomersResponse.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.ListCustomersResponse.TotalCount(childComplexity), true
 
 	case "Mutation.createCustomer":
 		if e.complexity.Mutation.CreateCustomer == nil {
@@ -724,6 +745,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ListPaymentsByOrganization(childComplexity, args["offset"].(*int), args["limit"].(*int), args["startDate"].(string), args["endDate"].(string)), true
 
+	case "Query.searchCustomers":
+		if e.complexity.Query.SearchCustomers == nil {
+			break
+		}
+
+		args, err := ec.field_Query_searchCustomers_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.SearchCustomers(childComplexity, args["filter"].(model.SearchCustomerFilter), args["offset"].(*int), args["limit"].(*int)), true
+
 	case "Time.day":
 		if e.complexity.Time.Day == nil {
 			break
@@ -780,6 +813,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateOrganizationInput,
 		ec.unmarshalInputCreatePaymentInput,
 		ec.unmarshalInputCreateTimeInput,
+		ec.unmarshalInputSearchCustomerFilter,
 		ec.unmarshalInputUpdateCustomerInput,
 		ec.unmarshalInputUpdateGroupInput,
 		ec.unmarshalInputUpdateInstructorInput,
@@ -1547,6 +1581,39 @@ func (ec *executionContext) field_Query_listPaymentsByOrganization_args(ctx cont
 		}
 	}
 	args["endDate"] = arg3
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_searchCustomers_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.SearchCustomerFilter
+	if tmp, ok := rawArgs["filter"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
+		arg0, err = ec.unmarshalNSearchCustomerFilter2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐSearchCustomerFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["offset"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["offset"] = arg1
+	var arg2 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+		arg2, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg2
 	return args, nil
 }
 
@@ -2334,6 +2401,110 @@ func (ec *executionContext) fieldContext_Instructor_groups(ctx context.Context, 
 				return ec.fieldContext_Group_customers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ListCustomersResponse_items(ctx context.Context, field graphql.CollectedField, obj *model.ListCustomersResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ListCustomersResponse_items(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Items, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Customer)
+	fc.Result = res
+	return ec.marshalNCustomer2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCustomerᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ListCustomersResponse_items(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ListCustomersResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Customer_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Customer_name(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_Customer_phoneNumber(ctx, field)
+			case "groups":
+				return ec.fieldContext_Customer_groups(ctx, field)
+			case "lastPayment":
+				return ec.fieldContext_Customer_lastPayment(ctx, field)
+			case "nextPayment":
+				return ec.fieldContext_Customer_nextPayment(ctx, field)
+			case "active":
+				return ec.fieldContext_Customer_active(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Customer", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ListCustomersResponse_totalCount(ctx context.Context, field graphql.CollectedField, obj *model.ListCustomersResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ListCustomersResponse_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ListCustomersResponse_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ListCustomersResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4884,6 +5055,87 @@ func (ec *executionContext) fieldContext_Query_listCustomersByOrganization(ctx c
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_listCustomersByOrganization_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_searchCustomers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_searchCustomers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().SearchCustomers(rctx, fc.Args["filter"].(model.SearchCustomerFilter), fc.Args["offset"].(*int), fc.Args["limit"].(*int))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Auth == nil {
+				return nil, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.ListCustomersResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yigithancolak/custmate/graph/model.ListCustomersResponse`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ListCustomersResponse)
+	fc.Result = res
+	return ec.marshalNListCustomersResponse2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐListCustomersResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_searchCustomers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "items":
+				return ec.fieldContext_ListCustomersResponse_items(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_ListCustomersResponse_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ListCustomersResponse", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_searchCustomers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -7607,7 +7859,7 @@ func (ec *executionContext) unmarshalInputCreatePaymentInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"amount", "date", "paymentType", "currency", "customerId", "groupId"}
+	fieldsInOrder := [...]string{"amount", "date", "nextPaymentDate", "paymentType", "currency", "customerId", "groupId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7632,6 +7884,15 @@ func (ec *executionContext) unmarshalInputCreatePaymentInput(ctx context.Context
 				return it, err
 			}
 			it.Date = data
+		case "nextPaymentDate":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nextPaymentDate"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NextPaymentDate = data
 		case "paymentType":
 			var err error
 
@@ -7715,6 +7976,71 @@ func (ec *executionContext) unmarshalInputCreateTimeInput(ctx context.Context, o
 				return it, err
 			}
 			it.FinishHour = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputSearchCustomerFilter(ctx context.Context, obj interface{}) (model.SearchCustomerFilter, error) {
+	var it model.SearchCustomerFilter
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name", "phoneNumber", "active", "latePayment", "upcomingPayment"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "phoneNumber":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumber"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumber = data
+		case "active":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Active = data
+		case "latePayment":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("latePayment"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LatePayment = data
+		case "upcomingPayment":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upcomingPayment"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpcomingPayment = data
 		}
 	}
 
@@ -8182,6 +8508,50 @@ func (ec *executionContext) _Instructor(ctx context.Context, sel ast.SelectionSe
 			}
 		case "groups":
 			out.Values[i] = ec._Instructor_groups(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var listCustomersResponseImplementors = []string{"ListCustomersResponse"}
+
+func (ec *executionContext) _ListCustomersResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ListCustomersResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, listCustomersResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ListCustomersResponse")
+		case "items":
+			out.Values[i] = ec._ListCustomersResponse_items(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._ListCustomersResponse_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -8676,6 +9046,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_listCustomersByOrganization(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "searchCustomers":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_searchCustomers(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -9544,6 +9936,20 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
+func (ec *executionContext) marshalNListCustomersResponse2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐListCustomersResponse(ctx context.Context, sel ast.SelectionSet, v model.ListCustomersResponse) graphql.Marshaler {
+	return ec._ListCustomersResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNListCustomersResponse2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐListCustomersResponse(ctx context.Context, sel ast.SelectionSet, v *model.ListCustomersResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ListCustomersResponse(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNOrganization2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐOrganization(ctx context.Context, sel ast.SelectionSet, v model.Organization) graphql.Marshaler {
 	return ec._Organization(ctx, sel, &v)
 }
@@ -9624,6 +10030,11 @@ func (ec *executionContext) unmarshalNPaymentType2githubᚗcomᚋyigithancolak�
 
 func (ec *executionContext) marshalNPaymentType2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐPaymentType(ctx context.Context, sel ast.SelectionSet, v model.PaymentType) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) unmarshalNSearchCustomerFilter2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐSearchCustomerFilter(ctx context.Context, v interface{}) (model.SearchCustomerFilter, error) {
+	res, err := ec.unmarshalInputSearchCustomerFilter(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
