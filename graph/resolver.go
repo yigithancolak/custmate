@@ -171,7 +171,7 @@ func (r *mutationResolver) CreatePayment(ctx context.Context, input model.Create
 }
 
 func (r *mutationResolver) UpdatePayment(ctx context.Context, id string, input model.UpdatePaymentInput) (string, error) {
-	err := r.Store.UpdatePayment(id, &input)
+	_, err := r.Store.UpdatePayment(id, &input)
 	if err != nil {
 		return messageUpdateFailed, err
 	}

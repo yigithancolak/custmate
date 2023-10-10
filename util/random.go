@@ -5,6 +5,8 @@ import (
 	"math/rand"
 	"strconv"
 	"strings"
+
+	"github.com/yigithancolak/custmate/graph/model"
 )
 
 const alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -106,4 +108,17 @@ func RandomTime() string {
 	}
 
 	return hour + ":" + minute
+}
+
+func RandomPaymentType() model.PaymentType {
+	rand := RandomIntBetween(0, int64(len(model.AllPaymentType)-1))
+
+	return model.AllPaymentType[rand]
+}
+
+func RandomCurrency() model.Currency {
+	rand := RandomIntBetween(0, int64(len(model.AllCurrency)-1))
+
+	return model.AllCurrency[rand]
+
 }

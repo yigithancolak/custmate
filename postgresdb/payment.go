@@ -23,7 +23,7 @@ func (s *Store) CreatePayment(q queryer, orgID string, input *model.CreatePaymen
 	return &payment, nil
 }
 
-func (s *Store) UpdatePayment(id string, input *model.UpdatePaymentInput) error {
+func (s *Store) UpdatePayment(id string, input *model.UpdatePaymentInput) (*model.Payment, error) {
 	baseQuery := "UPDATE payments SET "
 	var updates []string
 	var args []interface{}
@@ -55,14 +55,15 @@ func (s *Store) UpdatePayment(id string, input *model.UpdatePaymentInput) error 
 
 	args = append(args, id)
 
-	query := baseQuery + strings.Join(updates, ", ") + fmt.Sprintf(" WHERE id = $%d", idx)
+	query := baseQuery + strings.Join(updates, ", ") + fmt.Sprintf(" WHERE id = $%d RETURNING id, amount, currency, payment_type, date", idx)
 
-	_, err := s.DB.Exec(query, args...)
+	var payment model.Payment
+	err := s.DB.QueryRow(query, args...).Scan(&payment.ID, &payment.Amount, &payment.Currency, &payment.PaymentType, &payment.Date) // Add other fields as needed
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return &payment, nil
 }
 
 func (s *Store) DeletePayment(id string) error {
