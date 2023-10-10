@@ -1,7 +1,6 @@
 package postgresdb
 
 import (
-	"strings"
 	"testing"
 	"time"
 
@@ -49,14 +48,14 @@ func (s *PaymentTestSuite) createRandomPayment(orgID, customerID, groupID string
 	s.NotNil(payment)
 
 	s.Equal(args.Amount, payment.Amount)
-	s.Equal(args.Date, strings.Split(payment.Date, "T")[0])
+	s.Equal(args.Date, convertDateFormat(payment.Date))
 	s.Equal(args.PaymentType, payment.PaymentType)
 	s.Equal(args.Currency, payment.Currency)
 
 	customer, err := s.store.GetCustomerByID(customerID, false)
 	s.NoError(err)
 	s.NotNil(customer)
-	s.Equal(args.NextPaymentDate, strings.Split(customer.NextPayment, "T")[0])
+	s.Equal(args.NextPaymentDate, convertDateFormat(customer.NextPayment))
 
 	return payment
 
@@ -85,7 +84,7 @@ func (s *PaymentTestSuite) TestUpdatePayment() {
 
 	s.Equal(amount, updatedPayment.Amount)
 	s.Equal(currency, updatedPayment.Currency)
-	s.Equal(date, strings.Split(updatedPayment.Date, "T")[0])
+	s.Equal(date, convertDateFormat(updatedPayment.Date))
 	s.Equal(paymentType, updatedPayment.PaymentType)
 }
 
@@ -130,7 +129,7 @@ func (s *PaymentTestSuite) TestListPaymentsByFieldID() {
 	offset := 0
 	limit := 10
 	payments, orgID, groupID, customerID := s.createRandomPayments(limit)
-	date, err := time.Parse(dateFormat, strings.Split(payments[0].Date, "T")[0])
+	date, err := time.Parse(dateFormat, convertDateFormat(payments[0].Date))
 	s.NoError(err)
 	s.T().Log()
 	startDate := date.AddDate(0, -1, 0).Format(dateFormat)

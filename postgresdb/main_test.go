@@ -1,6 +1,7 @@
 package postgresdb
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -111,3 +112,7 @@ func TestRunSuite(t *testing.T) {
 }
 
 const dateFormat = "2006-01-02"
+
+func convertDateFormat(date string) string {
+	return strings.Split(date, "T")[0]
+}

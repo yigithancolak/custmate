@@ -1,7 +1,6 @@
 package postgresdb
 
 import (
-	"strings"
 	"testing"
 	"time"
 
@@ -56,8 +55,8 @@ func (s *StoreTestSuite) createRandomCustomer(orgId string, groupIDs []string) *
 
 	s.Equal(args.Name, customer.Name)
 	s.Equal(args.PhoneNumber, customer.PhoneNumber)
-	s.Equal(args.LastPayment, strings.Split(customer.LastPayment, "T")[0])
-	s.Equal(args.NextPayment, strings.Split(customer.NextPayment, "T")[0])
+	s.Equal(args.LastPayment, convertDateFormat(customer.LastPayment))
+	s.Equal(args.NextPayment, convertDateFormat(customer.NextPayment))
 
 	return customer
 }
@@ -104,8 +103,8 @@ func (s *CustomerTestSuite) TestUpdateCustomer() {
 
 	s.Equal(name, customer.Name)
 	s.Equal(phoneNumber, customer.PhoneNumber)
-	s.Equal(lastPayment, strings.Split(customer.LastPayment, "T")[0])
-	s.Equal(nextPayment, strings.Split(customer.NextPayment, "T")[0])
+	s.Equal(lastPayment, convertDateFormat(customer.LastPayment))
+	s.Equal(nextPayment, convertDateFormat(customer.NextPayment))
 	s.Equal(active, *customer.Active) // Assuming customer.Active is also a *bool
 
 	var groupIDs []*string
@@ -271,7 +270,7 @@ func (s *CustomerTestSuite) TestListCustomersWithSearchFilter() {
 		s.True(existing)
 		s.NotNil(expectedCustomer)
 
-		parsedNextPayment, err := time.Parse(dateFormat, strings.Split(expectedCustomer.NextPayment, "T")[0])
+		parsedNextPayment, err := time.Parse(dateFormat, convertDateFormat(expectedCustomer.LastPayment))
 		s.NoError(err)
 
 		s.True(time.Now().After(parsedNextPayment))
@@ -294,7 +293,7 @@ func (s *CustomerTestSuite) TestListCustomersWithSearchFilter() {
 		s.True(existing)
 		s.NotNil(expectedCustomer)
 
-		parsedNextPayment, err := time.Parse(dateFormat, strings.Split(expectedCustomer.NextPayment, "T")[0])
+		parsedNextPayment, err := time.Parse(dateFormat, convertDateFormat(expectedCustomer.NextPayment))
 		s.NoError(err)
 
 		now := time.Now()
