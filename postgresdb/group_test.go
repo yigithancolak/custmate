@@ -31,6 +31,11 @@ func (s *GroupTestSuite) SetupTest() {
 
 }
 
+func (s *GroupTestSuite) VerifySameGroups(expected, actual *model.Group) {
+	s.Equal(expected.ID, actual.ID)
+	s.Equal(expected.Name, actual.Name)
+}
+
 func (s *StoreTestSuite) createRandomGroup(instructorID, organizationID string) *model.Group {
 
 	args := model.CreateGroupInput{
@@ -134,8 +139,7 @@ func (s *GroupTestSuite) TestGetGroupByID() {
 	s.NoError(err)
 	s.NotNil(foundGroup)
 
-	s.Equal(group.ID, foundGroup.ID)
-	s.Equal(group.Name, foundGroup.Name)
+	s.VerifySameGroups(group, foundGroup)
 
 	// timesMap := make(map[string]*model.Time, len(group.Times))
 
@@ -172,7 +176,7 @@ func (s *GroupTestSuite) TestListGroupsByOrganizationID() {
 	offset := 0
 	limit := n
 
-	foundGroups, err := s.store.ListGroupsByOrganization(s.Organization.ID, &offset, &limit, false, false, false)
+	foundGroups, err := s.store.ListGroupsByFieldID("organization_id", s.Organization.ID, &offset, &limit, false, false, false)
 	s.NoError(err)
 	s.NotNil(foundGroups)
 	s.NotEmpty(foundGroups)
@@ -185,8 +189,7 @@ func (s *GroupTestSuite) TestListGroupsByOrganizationID() {
 			continue
 		}
 
-		s.Equal(expectedGroup.ID, foundGroup.ID)
-		s.Equal(expectedGroup.Name, foundGroup.Name)
+		s.VerifySameGroups(expectedGroup, foundGroup)
 	}
 
 }
@@ -213,9 +216,12 @@ func (s *GroupTestSuite) TestListGroupsByInstructorID() {
 		expectedGroup, existing := groupsMap[foundGroup.ID]
 		s.True(existing)
 
-		s.Equal(expectedGroup.ID, foundGroup.ID)
-		s.Equal(expectedGroup.Name, foundGroup.Name)
+		s.VerifySameGroups(expectedGroup, foundGroup)
 
 	}
 
 }
+
+// func (s *GroupTestSuite) TestListGroupsByCustomerID() {
+// TODO:
+// }

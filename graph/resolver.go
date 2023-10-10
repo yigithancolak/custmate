@@ -142,7 +142,7 @@ func (r *mutationResolver) CreateCustomer(ctx context.Context, input model.Creat
 }
 
 func (r *mutationResolver) UpdateCustomer(ctx context.Context, id string, input model.UpdateCustomerInput) (string, error) {
-	err := r.Store.UpdateCustomerWithTx(id, &input)
+	_, err := r.Store.UpdateCustomerWithTx(id, &input)
 	if err != nil {
 		return messageUpdateFailed, err
 	}
@@ -253,7 +253,7 @@ func (r *queryResolver) ListGroupsByOrganization(ctx context.Context, offset *in
 		includeCustomers = true
 	}
 
-	groups, err := r.Store.ListGroupsByOrganization(org.ID, offset, limit, includeTimes, includeInstructor, includeCustomers)
+	groups, err := r.Store.ListGroupsByFieldID("organization_id", org.ID, offset, limit, includeTimes, includeInstructor, includeCustomers)
 	if err != nil {
 		return nil, err
 	}

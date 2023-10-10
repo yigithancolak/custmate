@@ -64,6 +64,13 @@ func RandomDate() string {
 	m := RandomIntBetween(1, 12)
 	y := RandomIntBetween(2020, 2024)
 
+	if m == 2 {
+		if d > 28 {
+			d = RandomIntBetween(1, 28)
+			//for february
+		}
+	}
+
 	day := strconv.Itoa(d)
 	month := strconv.Itoa(m)
 	year := strconv.Itoa(y)

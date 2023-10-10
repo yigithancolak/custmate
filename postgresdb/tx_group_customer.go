@@ -1,6 +1,7 @@
 package postgresdb
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/yigithancolak/custmate/graph/model"
@@ -38,37 +39,71 @@ func (s *Store) CreateCustomerWithTx(input *model.CreateCustomerInput, organizat
 	return customer, nil
 }
 
-func (s *Store) UpdateCustomerWithTx(customerID string, input *model.UpdateCustomerInput) error {
+func (s *Store) UpdateCustomerWithTx(customerID string, input *model.UpdateCustomerInput) (*model.Customer, error) {
 	tx, err := s.DB.Begin()
 	if err != nil {
-		return ErrBeginTransaction
+		return nil, ErrBeginTransaction
 	}
 
-	_, err = s.UpdateCustomer(tx, customerID, input)
+	customer, err := s.UpdateCustomer(tx, customerID, input)
 	if err != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {
-			return ErrRollbackTransaction
+			return nil, ErrRollbackTransaction
 		}
-		return err
+		return nil, err
 	}
 
 	if input.Groups != nil {
-		err = s.UpdateCustomerGroupsAssociations(tx, customerID, input.Groups)
+		groups, err := s.UpdateCustomerGroupsAssociations(tx, customerID, input.Groups)
 		if err != nil {
 			if rbErr := tx.Rollback(); rbErr != nil {
-				return ErrRollbackTransaction
+				return nil, ErrRollbackTransaction
 			}
-			return err
+			return nil, err
 		}
-		//TODO: ADD GROUPS TO RETURN OBJECT
+
+		customer.Groups = groups
 	}
 
 	if err = tx.Commit(); err != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {
-			return ErrRollbackTransaction
+			return nil, ErrRollbackTransaction
 		}
-		return err
+		return nil, err
 	}
 
-	return nil
+	return customer, nil
+}
+
+func (s *Store) UpdateCustomerGroupsAssociations(tx *sql.Tx, customerID string, groupsIDs []*string) ([]*model.Group, error) {
+	_, err := tx.Exec("DELETE FROM customer_groups WHERE customer_id = $1", customerID)
+	if err != nil {
+		return nil, err
+	}
+
+	stmt, err := tx.Prepare("INSERT INTO customer_groups (customer_id, org_group_id) VALUES ($1, $2)")
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	// Insert new associations
+	for _, groupID := range groupsIDs {
+		_, err := stmt.Exec(customerID, groupID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// Fetch the groups
+	var groups []*model.Group
+	for _, groupID := range groupsIDs {
+		group, err := s.GetGroupByID(*groupID)
+		if err != nil {
+			return nil, err
+		}
+		groups = append(groups, group)
+	}
+
+	return groups, nil
 }

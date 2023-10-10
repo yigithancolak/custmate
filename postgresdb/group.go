@@ -80,10 +80,12 @@ func (s *Store) GetGroupByID(id string) (*model.Group, error) {
 	return &group, nil
 }
 
-func (s *Store) ListGroupsByOrganization(organizationID string, offset *int, limit *int, includeTimes bool, includeInstructor bool, includeCustomers bool) ([]*model.Group, error) {
-	query := "SELECT id, name, instructor_id FROM org_groups WHERE organization_id = $1 LIMIT $2 OFFSET $3"
+//
 
-	rows, err := s.DB.Query(query, organizationID, limit, offset)
+func (s *Store) ListGroupsByFieldID(field string, ID string, offset *int, limit *int, includeTimes bool, includeInstructor bool, includeCustomers bool) ([]*model.Group, error) {
+	query := fmt.Sprintf("SELECT id, name, instructor_id FROM org_groups WHERE %s = $1 LIMIT $2 OFFSET $3", field)
+
+	rows, err := s.DB.Query(query, ID, limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -127,6 +129,56 @@ func (s *Store) ListGroupsByOrganization(organizationID string, offset *int, lim
 
 	return groups, nil
 }
+
+//
+
+// func (s *Store) ListGroupsByOrganization(organizationID string, offset *int, limit *int, includeTimes bool, includeInstructor bool, includeCustomers bool) ([]*model.Group, error) {
+// 	query := "SELECT id, name, instructor_id FROM org_groups WHERE organization_id = $1 LIMIT $2 OFFSET $3"
+
+// 	rows, err := s.DB.Query(query, organizationID, limit, offset)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer rows.Close()
+
+// 	var groups []*model.Group
+// 	for rows.Next() {
+// 		var group model.Group
+// 		var insID string
+// 		if err := rows.Scan(&group.ID, &group.Name, &insID); err != nil {
+// 			return nil, err
+// 		}
+
+// 		if includeTimes {
+// 			group.Times, err = s.GetTimesByGroupID(group.ID)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 		}
+
+// 		if includeInstructor {
+// 			group.Instructor, err = s.GetInstructorByID(insID)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 		}
+
+// 		if includeCustomers {
+// 			group.Customers, err = s.GetCustomersByGroupID(group.ID)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 		}
+
+// 		groups = append(groups, &group)
+
+// 	}
+// 	if err := rows.Err(); err != nil {
+// 		return nil, err
+// 	}
+
+// 	return groups, nil
+// }
 
 func (s *Store) ListGroupsByInstructorID(instructorID string) ([]*model.Group, error) {
 	query := "SELECT id, name FROM org_groups WHERE instructor_id = $1"

@@ -52,9 +52,9 @@ func (s *OrganizationTestSuite) TestUpdateOrganization() {
 	s.NoError(err)
 	s.NotEmpty(updatedOrg)
 
+	s.Equal(organization.ID, updatedOrg.ID)
 	s.Equal(name, updatedOrg.Name)
 	s.Equal(email, updatedOrg.Email)
-	s.Equal(organization.ID, updatedOrg.ID)
 }
 
 func (s *OrganizationTestSuite) TestDeleteOrganization() {
