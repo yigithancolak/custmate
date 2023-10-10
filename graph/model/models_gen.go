@@ -78,6 +78,16 @@ type ListCustomersResponse struct {
 	TotalCount int         `json:"totalCount"`
 }
 
+type ListGroupsResponse struct {
+	Items      []*Group `json:"items"`
+	TotalCount int      `json:"totalCount"`
+}
+
+type ListPaymentsResponse struct {
+	Items      []*Payment `json:"items"`
+	TotalCount int        `json:"totalCount"`
+}
+
 type Organization struct {
 	ID    string `json:"id"`
 	Name  string `json:"name"`

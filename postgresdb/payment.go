@@ -171,28 +171,29 @@ func (s *Store) GetPaymentByID(id string, includeCustomer bool) (*model.Payment,
 // 	return payments, nil
 // }
 
-func (s *Store) ListPaymentsByFieldID(fieldName string, ID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
+func (s *Store) ListPaymentsByFieldID(fieldName string, ID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, int, error) {
 	query := fmt.Sprintf(`
-	SELECT id, amount, payment_type, currency, date FROM payments
+	SELECT id, amount, payment_type, currency, date, COUNT(*) OVER() FROM payments
 	WHERE %s = $1
 	AND date BETWEEN $2 AND $3 
 	LIMIT $4 OFFSET $5
 	`, fieldName)
 	rows, err := s.DB.Query(query, ID, startDate, endDate, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
 	var payments []*model.Payment
+	var totalCount int
 	for rows.Next() {
 		var payment model.Payment
-		err := rows.Scan(&payment.ID, &payment.Amount, &payment.PaymentType, &payment.Currency, &payment.Date)
+		err := rows.Scan(&payment.ID, &payment.Amount, &payment.PaymentType, &payment.Currency, &payment.Date, &totalCount)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		payments = append(payments, &payment)
 	}
 
-	return payments, nil
+	return payments, totalCount, nil
 }

@@ -77,13 +77,26 @@ type ListCustomersResponse {
   totalCount: Int!
 }
 
+type ListPaymentsResponse {
+  items: [Payment!]!
+  totalCount: Int!
+}
+
+type ListGroupsResponse {
+  items: [Group!]!
+  totalCount: Int!
+}
+
 type Query {
   # Organization
   getOrganization: Organization! @auth
 
   # Group
   getGroup(id: ID!): Group! @auth
-  listGroupsByOrganization(offset: Int = 0, limit: Int = 10): [Group!]! @auth
+  listGroupsByOrganization(
+    offset: Int = 0
+    limit: Int = 10
+  ): ListGroupsResponse! @auth
 
   # Instructor
   getInstructor(id: ID!): Instructor! @auth
@@ -111,7 +124,7 @@ type Query {
     limit: Int = 10
     startDate: String!
     endDate: String!
-  ): [Payment!]! @auth
+  ): ListPaymentsResponse! @auth
 
   listPaymentsByGroup(
     groupId: ID!
@@ -119,7 +132,7 @@ type Query {
     limit: Int = 10
     startDate: String!
     endDate: String!
-  ): [Payment!]! @auth
+  ): ListPaymentsResponse! @auth
 
   listPaymentsByCustomer(
     customerId: ID!
@@ -127,7 +140,7 @@ type Query {
     limit: Int = 10
     startDate: String!
     endDate: String!
-  ): [Payment!]! @auth
+  ): ListPaymentsResponse! @auth
 }
 
 type Mutation {

@@ -4,6 +4,7 @@ package graph
 
 import (
 	"context"
+	"log"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/yigithancolak/custmate/graph/model"
@@ -236,29 +237,33 @@ func (r *queryResolver) GetGroup(ctx context.Context, id string) (*model.Group, 
 	return group, err
 }
 
-func (r *queryResolver) ListGroupsByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Group, error) {
+func (r *queryResolver) ListGroupsByOrganization(ctx context.Context, offset *int, limit *int) (*model.ListGroupsResponse, error) {
 	org := middleware.ForContext(ctx)
 	includeTimes := false
 	includeInstructor := false
 	includeCustomers := false
 
-	fields := graphql.CollectAllFields(ctx)
-	if util.Contains[string](fields, "times") {
+	fields := GetPreloads(ctx)
+	log.Printf("%+v", fields)
+	if util.Contains[string](fields, "items.times") {
 		includeTimes = true
 	}
-	if util.Contains[string](fields, "instructor") {
+	if util.Contains[string](fields, "items.instructor") {
 		includeInstructor = true
 	}
-	if util.Contains[string](fields, "customers") {
+	if util.Contains[string](fields, "items.customers") {
 		includeCustomers = true
 	}
 
-	groups, err := r.Store.ListGroupsByFieldID("organization_id", org.ID, offset, limit, includeTimes, includeInstructor, includeCustomers)
+	groups, count, err := r.Store.ListGroupsByFieldID("organization_id", org.ID, offset, limit, includeTimes, includeInstructor, includeCustomers)
 	if err != nil {
 		return nil, err
 	}
 
-	return groups, nil
+	return &model.ListGroupsResponse{
+		Items:      groups,
+		TotalCount: count,
+	}, nil
 }
 
 func (r *queryResolver) GetInstructor(ctx context.Context, id string) (*model.Instructor, error) {
@@ -359,30 +364,39 @@ func (r *queryResolver) GetPayment(ctx context.Context, id string) (*model.Payme
 	return payment, nil
 }
 
-func (r *queryResolver) ListPaymentsByOrganization(ctx context.Context, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
+func (r *queryResolver) ListPaymentsByOrganization(ctx context.Context, offset *int, limit *int, startDate string, endDate string) (*model.ListPaymentsResponse, error) {
 	org := middleware.ForContext(ctx)
-	payments, err := r.Store.ListPaymentsByFieldID("organization_id", org.ID, offset, limit, startDate, endDate)
+	payments, count, err := r.Store.ListPaymentsByFieldID("organization_id", org.ID, offset, limit, startDate, endDate)
 	if err != nil {
 		return nil, err
 	}
 
-	return payments, nil
+	return &model.ListPaymentsResponse{
+		Items:      payments,
+		TotalCount: count,
+	}, nil
 }
 
-func (r *queryResolver) ListPaymentsByGroup(ctx context.Context, groupID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
-	payments, err := r.Store.ListPaymentsByFieldID("org_group_id", groupID, offset, limit, startDate, endDate)
+func (r *queryResolver) ListPaymentsByGroup(ctx context.Context, groupID string, offset *int, limit *int, startDate string, endDate string) (*model.ListPaymentsResponse, error) {
+	payments, count, err := r.Store.ListPaymentsByFieldID("org_group_id", groupID, offset, limit, startDate, endDate)
 	if err != nil {
 		return nil, err
 	}
 
-	return payments, nil
+	return &model.ListPaymentsResponse{
+		Items:      payments,
+		TotalCount: count,
+	}, nil
 }
 
-func (r *queryResolver) ListPaymentsByCustomer(ctx context.Context, customerID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, error) {
-	payments, err := r.Store.ListPaymentsByFieldID("customer_id", customerID, offset, limit, startDate, endDate)
+func (r *queryResolver) ListPaymentsByCustomer(ctx context.Context, customerID string, offset *int, limit *int, startDate string, endDate string) (*model.ListPaymentsResponse, error) {
+	payments, count, err := r.Store.ListPaymentsByFieldID("customer_id", customerID, offset, limit, startDate, endDate)
 	if err != nil {
 		return nil, err
 	}
 
-	return payments, nil
+	return &model.ListPaymentsResponse{
+		Items:      payments,
+		TotalCount: count,
+	}, nil
 }

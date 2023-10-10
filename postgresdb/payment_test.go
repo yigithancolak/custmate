@@ -136,7 +136,7 @@ func (s *PaymentTestSuite) TestListPaymentsByFieldID() {
 	startDate := date.AddDate(0, -1, 0).Format("2006-01-02")
 	endDate := date.AddDate(0, 1, 0).Format("2006-01-02")
 
-	foundPayments, err := s.store.ListPaymentsByFieldID("organization_id", orgID, &offset, &limit, startDate, endDate)
+	foundPayments, _, err := s.store.ListPaymentsByFieldID("organization_id", orgID, &offset, &limit, startDate, endDate)
 	s.NoError(err)
 	s.NotNil(foundPayments)
 	s.NotEmpty(foundPayments)
@@ -157,7 +157,7 @@ func (s *PaymentTestSuite) TestListPaymentsByFieldID() {
 	}
 
 	//FOR GROUP
-	foundPayments, err = s.store.ListPaymentsByFieldID("org_group_id", groupID, &offset, &limit, startDate, endDate)
+	foundPayments, _, err = s.store.ListPaymentsByFieldID("org_group_id", groupID, &offset, &limit, startDate, endDate)
 	s.NoError(err)
 	s.NotNil(foundPayments)
 	s.NotEmpty(foundPayments)
@@ -171,7 +171,7 @@ func (s *PaymentTestSuite) TestListPaymentsByFieldID() {
 	}
 
 	//FOR CUSTOMER
-	foundPayments, err = s.store.ListPaymentsByFieldID("customer_id", customerID, &offset, &limit, startDate, endDate)
+	foundPayments, _, err = s.store.ListPaymentsByFieldID("customer_id", customerID, &offset, &limit, startDate, endDate)
 	s.NoError(err)
 	s.NotNil(foundPayments)
 	s.NotEmpty(foundPayments)

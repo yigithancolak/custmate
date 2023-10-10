@@ -82,41 +82,46 @@ func (s *Store) GetGroupByID(id string) (*model.Group, error) {
 
 //
 
-func (s *Store) ListGroupsByFieldID(field string, ID string, offset *int, limit *int, includeTimes bool, includeInstructor bool, includeCustomers bool) ([]*model.Group, error) {
-	query := fmt.Sprintf("SELECT id, name, instructor_id FROM org_groups WHERE %s = $1 LIMIT $2 OFFSET $3", field)
+func (s *Store) ListGroupsByFieldID(field string, ID string, offset *int, limit *int, includeTimes bool, includeInstructor bool, includeCustomers bool) ([]*model.Group, int, error) {
+	query := fmt.Sprintf(`
+	SELECT id, name, instructor_id, COUNT(*) OVER() as total_count
+	FROM org_groups 
+	WHERE %s = $1 
+	LIMIT $2 OFFSET $3`, field)
 
 	rows, err := s.DB.Query(query, ID, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
 	var groups []*model.Group
+	var totalCount int
 	for rows.Next() {
 		var group model.Group
 		var insID string
-		if err := rows.Scan(&group.ID, &group.Name, &insID); err != nil {
-			return nil, err
+		if err := rows.Scan(&group.ID, &group.Name, &insID, &totalCount); err != nil {
+			return nil, 0, err
 		}
 
 		if includeTimes {
 			group.Times, err = s.GetTimesByGroupID(group.ID)
 			if err != nil {
-				return nil, err
+				return nil, 0, err
 			}
 		}
 
 		if includeInstructor {
 			group.Instructor, err = s.GetInstructorByID(insID)
 			if err != nil {
-				return nil, err
+				return nil, 0, err
 			}
 		}
 
 		if includeCustomers {
 			group.Customers, err = s.GetCustomersByGroupID(group.ID)
 			if err != nil {
-				return nil, err
+				return nil, 0, err
 			}
 		}
 
@@ -124,10 +129,10 @@ func (s *Store) ListGroupsByFieldID(field string, ID string, offset *int, limit 
 
 	}
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return groups, nil
+	return groups, totalCount, nil
 }
 
 //

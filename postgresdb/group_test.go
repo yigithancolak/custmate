@@ -176,7 +176,7 @@ func (s *GroupTestSuite) TestListGroupsByOrganizationID() {
 	offset := 0
 	limit := n
 
-	foundGroups, err := s.store.ListGroupsByFieldID("organization_id", s.Organization.ID, &offset, &limit, false, false, false)
+	foundGroups, _, err := s.store.ListGroupsByFieldID("organization_id", s.Organization.ID, &offset, &limit, false, false, false)
 	s.NoError(err)
 	s.NotNil(foundGroups)
 	s.NotEmpty(foundGroups)
