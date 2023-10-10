@@ -207,12 +207,12 @@ func (s *CustomerTestSuite) createMockCustomersForFilterSearch(n int, orgID stri
 			Name:        util.RandomName(),
 			PhoneNumber: util.RandomPhoneNumber(8),
 			Groups:      groupIDs,
-			LastPayment: time.Now().AddDate(0, -1, 0).Format("2006-01-02"),
-			NextPayment: time.Now().AddDate(0, 0, 6).Format("2006-01-02"), // 6 days later customer must pay
+			LastPayment: time.Now().AddDate(0, -1, 0).Format(dateFormat),
+			NextPayment: time.Now().AddDate(0, 0, 6).Format(dateFormat), // 6 days later customer must pay
 		}
 
 		if i%2 != 0 {
-			args.NextPayment = time.Now().AddDate(0, 0, -5).Format("2006-01-02") // 5 days passed from next payment
+			args.NextPayment = time.Now().AddDate(0, 0, -5).Format(dateFormat) // 5 days passed from next payment
 
 		}
 
@@ -271,7 +271,7 @@ func (s *CustomerTestSuite) TestListCustomersWithSearchFilter() {
 		s.True(existing)
 		s.NotNil(expectedCustomer)
 
-		parsedNextPayment, err := time.Parse("2006-01-02", strings.Split(expectedCustomer.NextPayment, "T")[0])
+		parsedNextPayment, err := time.Parse(dateFormat, strings.Split(expectedCustomer.NextPayment, "T")[0])
 		s.NoError(err)
 
 		s.True(time.Now().After(parsedNextPayment))
@@ -294,7 +294,7 @@ func (s *CustomerTestSuite) TestListCustomersWithSearchFilter() {
 		s.True(existing)
 		s.NotNil(expectedCustomer)
 
-		parsedNextPayment, err := time.Parse("2006-01-02", strings.Split(expectedCustomer.NextPayment, "T")[0])
+		parsedNextPayment, err := time.Parse(dateFormat, strings.Split(expectedCustomer.NextPayment, "T")[0])
 		s.NoError(err)
 
 		now := time.Now()

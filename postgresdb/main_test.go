@@ -109,3 +109,5 @@ func (s *StoreTestSuite) TearDownSuite() {
 func TestRunSuite(t *testing.T) {
 	suite.Run(t, new(StoreTestSuite))
 }
+
+const dateFormat = "2006-01-02"

@@ -38,8 +38,8 @@ func (s *PaymentTestSuite) createRandomPayment(orgID, customerID, groupID string
 		GroupID:    groupID,
 		//
 		Amount:          util.RandomIntBetween(100, 500),
-		Date:            time.Now().Format("2006-01-02"),
-		NextPaymentDate: time.Now().AddDate(0, 1, 0).Format("2006-01-02"),
+		Date:            time.Now().Format(dateFormat),
+		NextPaymentDate: time.Now().AddDate(0, 1, 0).Format(dateFormat),
 		PaymentType:     util.RandomPaymentType(),
 		Currency:        util.RandomCurrency(),
 	}
@@ -130,11 +130,11 @@ func (s *PaymentTestSuite) TestListPaymentsByFieldID() {
 	offset := 0
 	limit := 10
 	payments, orgID, groupID, customerID := s.createRandomPayments(limit)
-	date, err := time.Parse("2006-01-02", strings.Split(payments[0].Date, "T")[0])
+	date, err := time.Parse(dateFormat, strings.Split(payments[0].Date, "T")[0])
 	s.NoError(err)
 	s.T().Log()
-	startDate := date.AddDate(0, -1, 0).Format("2006-01-02")
-	endDate := date.AddDate(0, 1, 0).Format("2006-01-02")
+	startDate := date.AddDate(0, -1, 0).Format(dateFormat)
+	endDate := date.AddDate(0, 1, 0).Format(dateFormat)
 
 	foundPayments, _, err := s.store.ListPaymentsByFieldID("organization_id", orgID, &offset, &limit, startDate, endDate)
 	s.NoError(err)
