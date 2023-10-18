@@ -81,6 +81,11 @@ type ComplexityRoot struct {
 		TotalCount func(childComplexity int) int
 	}
 
+	ListInstructorsResponse struct {
+		Items      func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
 	ListPaymentsResponse struct {
 		Items      func(childComplexity int) int
 		TotalCount func(childComplexity int) int
@@ -178,7 +183,7 @@ type QueryResolver interface {
 	GetGroup(ctx context.Context, id string) (*model.Group, error)
 	ListGroupsByOrganization(ctx context.Context, offset *int, limit *int) (*model.ListGroupsResponse, error)
 	GetInstructor(ctx context.Context, id string) (*model.Instructor, error)
-	ListInstructors(ctx context.Context, offset *int, limit *int) ([]*model.Instructor, error)
+	ListInstructors(ctx context.Context, offset *int, limit *int) (*model.ListInstructorsResponse, error)
 	GetCustomer(ctx context.Context, id string) (*model.Customer, error)
 	ListCustomersByGroup(ctx context.Context, groupID string, offset *int, limit *int) ([]*model.Customer, error)
 	ListCustomersByOrganization(ctx context.Context, offset *int, limit *int) ([]*model.Customer, error)
@@ -343,6 +348,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ListGroupsResponse.TotalCount(childComplexity), true
+
+	case "ListInstructorsResponse.items":
+		if e.complexity.ListInstructorsResponse.Items == nil {
+			break
+		}
+
+		return e.complexity.ListInstructorsResponse.Items(childComplexity), true
+
+	case "ListInstructorsResponse.totalCount":
+		if e.complexity.ListInstructorsResponse.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.ListInstructorsResponse.TotalCount(childComplexity), true
 
 	case "ListPaymentsResponse.items":
 		if e.complexity.ListPaymentsResponse.Items == nil {
@@ -2638,6 +2657,104 @@ func (ec *executionContext) _ListGroupsResponse_totalCount(ctx context.Context, 
 func (ec *executionContext) fieldContext_ListGroupsResponse_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ListGroupsResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ListInstructorsResponse_items(ctx context.Context, field graphql.CollectedField, obj *model.ListInstructorsResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ListInstructorsResponse_items(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Items, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Instructor)
+	fc.Result = res
+	return ec.marshalNInstructor2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐInstructorᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ListInstructorsResponse_items(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ListInstructorsResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Instructor_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Instructor_name(ctx, field)
+			case "organizationId":
+				return ec.fieldContext_Instructor_organizationId(ctx, field)
+			case "groups":
+				return ec.fieldContext_Instructor_groups(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ListInstructorsResponse_totalCount(ctx context.Context, field graphql.CollectedField, obj *model.ListInstructorsResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ListInstructorsResponse_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ListInstructorsResponse_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ListInstructorsResponse",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -4968,10 +5085,10 @@ func (ec *executionContext) _Query_listInstructors(ctx context.Context, field gr
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.([]*model.Instructor); ok {
+		if data, ok := tmp.(*model.ListInstructorsResponse); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/yigithancolak/custmate/graph/model.Instructor`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/yigithancolak/custmate/graph/model.ListInstructorsResponse`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4983,9 +5100,9 @@ func (ec *executionContext) _Query_listInstructors(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Instructor)
+	res := resTmp.(*model.ListInstructorsResponse)
 	fc.Result = res
-	return ec.marshalNInstructor2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐInstructorᚄ(ctx, field.Selections, res)
+	return ec.marshalNListInstructorsResponse2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐListInstructorsResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_listInstructors(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4996,16 +5113,12 @@ func (ec *executionContext) fieldContext_Query_listInstructors(ctx context.Conte
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Instructor_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Instructor_name(ctx, field)
-			case "organizationId":
-				return ec.fieldContext_Instructor_organizationId(ctx, field)
-			case "groups":
-				return ec.fieldContext_Instructor_groups(ctx, field)
+			case "items":
+				return ec.fieldContext_ListInstructorsResponse_items(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_ListInstructorsResponse_totalCount(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Instructor", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type ListInstructorsResponse", field.Name)
 		},
 	}
 	defer func() {
@@ -8829,6 +8942,50 @@ func (ec *executionContext) _ListGroupsResponse(ctx context.Context, sel ast.Sel
 	return out
 }
 
+var listInstructorsResponseImplementors = []string{"ListInstructorsResponse"}
+
+func (ec *executionContext) _ListInstructorsResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ListInstructorsResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, listInstructorsResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ListInstructorsResponse")
+		case "items":
+			out.Values[i] = ec._ListInstructorsResponse_items(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._ListInstructorsResponse_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var listPaymentsResponseImplementors = []string{"ListPaymentsResponse"}
 
 func (ec *executionContext) _ListPaymentsResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ListPaymentsResponse) graphql.Marshaler {
@@ -10260,6 +10417,20 @@ func (ec *executionContext) marshalNListGroupsResponse2ᚖgithubᚗcomᚋyigitha
 		return graphql.Null
 	}
 	return ec._ListGroupsResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNListInstructorsResponse2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐListInstructorsResponse(ctx context.Context, sel ast.SelectionSet, v model.ListInstructorsResponse) graphql.Marshaler {
+	return ec._ListInstructorsResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNListInstructorsResponse2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐListInstructorsResponse(ctx context.Context, sel ast.SelectionSet, v *model.ListInstructorsResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ListInstructorsResponse(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNListPaymentsResponse2githubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐListPaymentsResponse(ctx context.Context, sel ast.SelectionSet, v model.ListPaymentsResponse) graphql.Marshaler {

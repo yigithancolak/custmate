@@ -284,21 +284,24 @@ func (r *queryResolver) GetInstructor(ctx context.Context, id string) (*model.In
 	return instructor, err
 }
 
-func (r *queryResolver) ListInstructors(ctx context.Context, offset *int, limit *int) ([]*model.Instructor, error) {
+func (r *queryResolver) ListInstructors(ctx context.Context, offset *int, limit *int) (*model.ListInstructorsResponse, error) {
 	org := middleware.ForContext(ctx)
 	includeGroups := false
 
-	fields := graphql.CollectAllFields(ctx)
-	if util.Contains[string](fields, "groups") {
+	fields := GetPreloads(ctx) // Use the same method to get fields
+	if util.Contains[string](fields, "items.groups") {
 		includeGroups = true
 	}
 
-	instructors, err := r.Store.ListInstructorsByOrganizationID(org.ID, offset, limit, includeGroups)
+	instructors, count, err := r.Store.ListInstructorsByOrganizationID(org.ID, offset, limit, includeGroups)
 	if err != nil {
 		return nil, err
 	}
 
-	return instructors, nil
+	return &model.ListInstructorsResponse{
+		Items:      instructors,
+		TotalCount: count,
+	}, nil
 }
 
 func (r *queryResolver) GetCustomer(ctx context.Context, id string) (*model.Customer, error) {

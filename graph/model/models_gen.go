@@ -83,6 +83,11 @@ type ListGroupsResponse struct {
 	TotalCount int      `json:"totalCount"`
 }
 
+type ListInstructorsResponse struct {
+	Items      []*Instructor `json:"items"`
+	TotalCount int           `json:"totalCount"`
+}
+
 type ListPaymentsResponse struct {
 	Items      []*Payment `json:"items"`
 	TotalCount int        `json:"totalCount"`

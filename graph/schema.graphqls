@@ -87,6 +87,11 @@ type ListGroupsResponse {
   totalCount: Int!
 }
 
+type ListInstructorsResponse {
+  items: [Instructor!]!
+  totalCount: Int!
+}
+
 type Query {
   # Organization
   getOrganization: Organization! @auth
@@ -100,7 +105,8 @@ type Query {
 
   # Instructor
   getInstructor(id: ID!): Instructor! @auth
-  listInstructors(offset: Int = 0, limit: Int = 10): [Instructor!]! @auth
+  listInstructors(offset: Int = 0, limit: Int = 10): ListInstructorsResponse!
+    @auth
 
   # Customer
   getCustomer(id: ID!): Customer! @auth

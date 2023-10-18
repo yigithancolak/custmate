@@ -96,7 +96,7 @@ func (s *InstructorTestSuite) TestListInstructorsByOrganizationID() {
 	instructors := s.createRandomInstructorsForOneOrganization(8)
 	offset := 0
 	limit := 10
-	instructorsOfOrg, err := s.store.ListInstructorsByOrganizationID(instructors[0].OrganizationID, &offset, &limit, false)
+	instructorsOfOrg, _, err := s.store.ListInstructorsByOrganizationID(instructors[0].OrganizationID, &offset, &limit, false)
 	s.NoError(err)
 	s.NotEmpty(instructorsOfOrg)
 	s.Equal(len(instructors), len(instructorsOfOrg))

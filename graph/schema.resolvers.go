@@ -234,23 +234,27 @@ import (
 // 	includeInstructor := false
 // 	includeCustomers := false
 
-// 	fields := graphql.CollectAllFields(ctx)
-// 	if util.Contains[string](fields, "times") {
+// 	fields := GetPreloads(ctx)
+// 	log.Printf("%+v", fields)
+// 	if util.Contains[string](fields, "items.times") {
 // 		includeTimes = true
 // 	}
-// 	if util.Contains[string](fields, "instructor") {
+// 	if util.Contains[string](fields, "items.instructor") {
 // 		includeInstructor = true
 // 	}
-// 	if util.Contains[string](fields, "customers") {
+// 	if util.Contains[string](fields, "items.customers") {
 // 		includeCustomers = true
 // 	}
 
-// 	groups, err := r.Store.ListGroupsByFieldID("organization_id", org.ID, offset, limit, includeTimes, includeInstructor, includeCustomers)
+// 	groups, count, err := r.Store.ListGroupsByFieldID("organization_id", org.ID, offset, limit, includeTimes, includeInstructor, includeCustomers)
 // 	if err != nil {
 // 		return nil, err
 // 	}
 
-// 	return groups, nil
+// 	return &model.ListGroupsResponse{
+// 		Items:      groups,
+// 		TotalCount: count,
+// 	}, nil
 // }
 
 // // GetInstructor is the resolver for the getInstructor field.
@@ -272,7 +276,7 @@ import (
 // }
 
 // // ListInstructors is the resolver for the listInstructors field.
-// func (r *queryResolver) ListInstructors(ctx context.Context, offset *int, limit *int) ([]*model.Instructor, error) {
+// func (r *queryResolver) ListInstructors(ctx context.Context, offset *int, limit *int) (*model.ListInstructorsResponse, error) {
 // 	org := middleware.ForContext(ctx)
 // 	includeGroups := false
 

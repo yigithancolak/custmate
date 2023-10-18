@@ -69,31 +69,55 @@ func (s *Store) GetInstructorByID(id string) (*model.Instructor, error) {
 	return &instructor, nil
 }
 
-func (s *Store) ListInstructorsByOrganizationID(orgID string, offset *int, limit *int, includeGroups bool) ([]*model.Instructor, error) {
-	query := "SELECT id, name FROM instructors WHERE organization_id = $1 LIMIT $2 OFFSET $3"
-	rows, err := s.DB.Query(query, orgID, limit, offset)
+func (s *Store) ListInstructorsByOrganizationID(orgID string, offset *int, limit *int, includeGroups bool) ([]*model.Instructor, int, error) {
+	// Base query without LIMIT and OFFSET
+	query := `
+	SELECT id, name, COUNT(*) OVER() as total_count
+	FROM instructors 
+	WHERE organization_id = $1`
+
+	var args []interface{}
+	args = append(args, orgID)
+
+	// If limit is provided, append it to the base query and add to the arguments
+	if limit != nil {
+		query += ` LIMIT $2`
+		args = append(args, limit)
+
+		// Only consider offset if limit is provided
+		if offset != nil {
+			query += ` OFFSET $3`
+			args = append(args, offset)
+		}
+	}
+
+	rows, err := s.DB.Query(query, args...)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
 	var instructors []*model.Instructor
+	var totalCount int
 	for rows.Next() {
 		var instructor model.Instructor
-		err = rows.Scan(&instructor.ID, &instructor.Name)
-		if err != nil {
-			return nil, err
+		if err := rows.Scan(&instructor.ID, &instructor.Name, &totalCount); err != nil {
+			return nil, 0, err
 		}
 
 		if includeGroups {
 			instructor.Groups, err = s.ListGroupsByInstructorID(instructor.ID)
 			if err != nil {
-				return nil, err
+				return nil, 0, err
 			}
 		}
 
 		instructors = append(instructors, &instructor)
 	}
 
-	return instructors, nil
+	if err := rows.Err(); err != nil {
+		return nil, 0, err
+	}
+
+	return instructors, totalCount, nil
 }
