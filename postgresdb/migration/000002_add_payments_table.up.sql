@@ -9,9 +9,9 @@ CREATE TABLE payments (
     payment_type payment_methods NOT NULL DEFAULT 'cash',
     currency currencies NOT NULL DEFAULT 'try',
     date DATE NOT NULL DEFAULT CURRENT_DATE,
-    customer_id UUID NOT NULL REFERENCES customers(id),
-    org_group_id UUID NOT NULL REFERENCES org_groups(id),
-    organization_id UUID NOT NULL REFERENCES organizations(id)
+    customer_id UUID NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+    org_group_id UUID NOT NULL REFERENCES org_groups(id) ON DELETE CASCADE,
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_payments_date ON payments(date);
