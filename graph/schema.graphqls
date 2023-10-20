@@ -207,7 +207,7 @@ input CreateGroupInput {
 input UpdateGroupInput {
   name: String
   instructor: ID
-  times: [UpdateTimeInput!]
+  times: [CreateTimeInput!]
 }
 
 # Input for Instructor

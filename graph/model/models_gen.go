@@ -140,7 +140,7 @@ type UpdateCustomerInput struct {
 type UpdateGroupInput struct {
 	Name       *string            `json:"name,omitempty"`
 	Instructor *string            `json:"instructor,omitempty"`
-	Times      []*UpdateTimeInput `json:"times,omitempty"`
+	Times      []*CreateTimeInput `json:"times,omitempty"`
 }
 
 type UpdateInstructorInput struct {

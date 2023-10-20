@@ -224,6 +224,15 @@ import (
 // 		group.Times = time
 // 	}
 
+// 	if util.Contains[string](fields, "instructor") {
+// 		instructor, err := r.Store.GetInstructorByGroupID(id)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+
+// 		group.Instructor = instructor
+// 	}
+
 // 	return group, err
 // }
 
@@ -280,17 +289,20 @@ import (
 // 	org := middleware.ForContext(ctx)
 // 	includeGroups := false
 
-// 	fields := graphql.CollectAllFields(ctx)
-// 	if util.Contains[string](fields, "groups") {
+// 	fields := GetPreloads(ctx) // Use the same method to get fields
+// 	if util.Contains[string](fields, "items.groups") {
 // 		includeGroups = true
 // 	}
 
-// 	instructors, err := r.Store.ListInstructorsByOrganizationID(org.ID, offset, limit, includeGroups)
+// 	instructors, count, err := r.Store.ListInstructorsByOrganizationID(org.ID, offset, limit, includeGroups)
 // 	if err != nil {
 // 		return nil, err
 // 	}
 
-// 	return instructors, nil
+// 	return &model.ListInstructorsResponse{
+// 		Items:      instructors,
+// 		TotalCount: count,
+// 	}, nil
 // }
 
 // // GetCustomer is the resolver for the getCustomer field.

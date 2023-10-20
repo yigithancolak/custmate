@@ -94,21 +94,18 @@ func (s *GroupTestSuite) TestUpdateGroup() {
 	group := s.Group
 
 	name := util.RandomName()
-	var times []*model.UpdateTimeInput
+	var newTimes []*model.CreateTimeInput
 
-	for _, t := range group.Times {
-		day := util.RandomDay()
-		start := util.RandomTime()
-		finish := util.RandomTime()
+	n := 3
+	for i := 0; i < n; i++ {
 
-		timeArgs := model.UpdateTimeInput{
-			ID:         t.ID,
-			Day:        &day,
-			StartHour:  &start,
-			FinishHour: &finish,
+		timeArgs := model.CreateTimeInput{
+			Day:        util.RandomDay(),
+			StartHour:  util.RandomTime(),
+			FinishHour: util.RandomTime(),
 		}
 
-		times = append(times, &timeArgs)
+		newTimes = append(newTimes, &timeArgs)
 	}
 
 	newInstructor := s.createRandomInstructor(s.Organization.ID)
@@ -116,7 +113,7 @@ func (s *GroupTestSuite) TestUpdateGroup() {
 	args := model.UpdateGroupInput{
 		Name:       &name,
 		Instructor: &newInstructor.ID,
-		Times:      times,
+		Times:      newTimes,
 	}
 
 	err := s.store.UpdateGroupWithTimeTx(group.ID, args)

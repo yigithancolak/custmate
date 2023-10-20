@@ -14,6 +14,7 @@ type Store struct {
 
 type queryer interface {
 	QueryRow(query string, args ...interface{}) *sql.Row
+	Exec(query string, args ...interface{}) (sql.Result, error)
 }
 
 func NewStore(db *sqlx.DB, jwtMaker *token.JWTMaker) *Store {

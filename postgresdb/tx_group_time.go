@@ -42,14 +42,20 @@ func (s *Store) UpdateGroupWithTimeTx(id string, groupInput model.UpdateGroupInp
 
 	_, err = s.UpdateGroup(tx, id, &groupInput)
 	if err != nil {
-		if rbErr := tx.Rollback(); rbErr != nil {
-			return rbErr
-		}
+		tx.Rollback()
 		return err
 	}
 
+	// Delete all times for the group
+	err = s.DeleteTimesForGroup(tx, id)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Create new times for the group
 	for _, t := range groupInput.Times {
-		_, err := s.UpdateTime(tx, t)
+		_, err := s.CreateTime(tx, id, t)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -57,9 +63,7 @@ func (s *Store) UpdateGroupWithTimeTx(id string, groupInput model.UpdateGroupInp
 	}
 
 	if err = tx.Commit(); err != nil {
-		if rbErr := tx.Rollback(); rbErr != nil {
-			return rbErr
-		}
+		tx.Rollback()
 		return err
 	}
 

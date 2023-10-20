@@ -8480,7 +8480,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("times"))
-			data, err := ec.unmarshalOUpdateTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdateTimeInputᚄ(ctx, v)
+			data, err := ec.unmarshalOCreateTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCreateTimeInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -10607,11 +10607,6 @@ func (ec *executionContext) unmarshalNUpdateTimeInput2githubᚗcomᚋyigithancol
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateTimeInput2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdateTimeInput(ctx context.Context, v interface{}) (*model.UpdateTimeInput, error) {
-	res, err := ec.unmarshalInputUpdateTimeInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
 	return ec.___Directive(ctx, sel, &v)
 }
@@ -10891,6 +10886,26 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
+func (ec *executionContext) unmarshalOCreateTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCreateTimeInputᚄ(ctx context.Context, v interface{}) ([]*model.CreateTimeInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*model.CreateTimeInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNCreateTimeInput2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCreateTimeInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) unmarshalOCurrency2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐCurrency(ctx context.Context, v interface{}) (*model.Currency, error) {
 	if v == nil {
 		return nil, nil
@@ -11149,26 +11164,6 @@ func (ec *executionContext) marshalOTime2ᚕᚖgithubᚗcomᚋyigithancolakᚋcu
 	}
 
 	return ret
-}
-
-func (ec *executionContext) unmarshalOUpdateTimeInput2ᚕᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdateTimeInputᚄ(ctx context.Context, v interface{}) ([]*model.UpdateTimeInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*model.UpdateTimeInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNUpdateTimeInput2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐUpdateTimeInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

@@ -67,6 +67,15 @@ func (s *Store) DeleteTime(id string) error {
 	return err
 }
 
+func (s *Store) DeleteTimesForGroup(q queryer, groupId string) error {
+	query := `DELETE FROM times WHERE org_group_id = $1`
+	_, err := q.Exec(query, groupId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *Store) GetTimesByGroupID(id string) ([]*model.Time, error) {
 	query := "SELECT id, org_group_id, day, start_hour, finish_hour FROM times WHERE org_group_id = $1"
 
