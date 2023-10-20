@@ -234,6 +234,15 @@ func (r *queryResolver) GetGroup(ctx context.Context, id string) (*model.Group, 
 		group.Times = time
 	}
 
+	if util.Contains[string](fields, "instructor") {
+		instructor, err := r.Store.GetInstructorByGroupID(id)
+		if err != nil {
+			return nil, err
+		}
+
+		group.Instructor = instructor
+	}
+
 	return group, err
 }
 
