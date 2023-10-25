@@ -83,13 +83,22 @@ func (s *Store) GetGroupByID(id string) (*model.Group, error) {
 //
 
 func (s *Store) ListGroupsByFieldID(field string, ID string, offset *int, limit *int, includeTimes bool, includeInstructor bool, includeCustomers bool) ([]*model.Group, int, error) {
-	query := fmt.Sprintf(`
+	baseQuery := `
 	SELECT id, name, instructor_id, COUNT(*) OVER() as total_count
 	FROM org_groups 
-	WHERE %s = $1 
-	LIMIT $2 OFFSET $3`, field)
+	WHERE %s = $1`
 
-	rows, err := s.DB.Query(query, ID, limit, offset)
+	// Conditional addition of LIMIT and OFFSET clauses
+	var args []interface{}
+	args = append(args, ID)
+	if limit != nil && offset != nil {
+		baseQuery += ` LIMIT $2 OFFSET $3`
+		args = append(args, limit, offset)
+	}
+
+	query := fmt.Sprintf(baseQuery, field)
+
+	rows, err := s.DB.Query(query, args...)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -126,7 +135,6 @@ func (s *Store) ListGroupsByFieldID(field string, ID string, offset *int, limit 
 		}
 
 		groups = append(groups, &group)
-
 	}
 	if err := rows.Err(); err != nil {
 		return nil, 0, err

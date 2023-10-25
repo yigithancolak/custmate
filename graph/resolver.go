@@ -4,7 +4,6 @@ package graph
 
 import (
 	"context"
-	"log"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/yigithancolak/custmate/graph/model"
@@ -253,7 +252,6 @@ func (r *queryResolver) ListGroupsByOrganization(ctx context.Context, offset *in
 	includeCustomers := false
 
 	fields := GetPreloads(ctx)
-	log.Printf("%+v", fields)
 	if util.Contains[string](fields, "items.times") {
 		includeTimes = true
 	}
