@@ -172,13 +172,22 @@ func (s *Store) GetPaymentByID(id string, includeCustomer bool) (*model.Payment,
 // }
 
 func (s *Store) ListPaymentsByFieldID(fieldName string, ID string, offset *int, limit *int, startDate string, endDate string) ([]*model.Payment, int, error) {
-	query := fmt.Sprintf(`
-	SELECT id, amount, payment_type, currency, date, COUNT(*) OVER() FROM payments
-	WHERE %s = $1
-	AND date BETWEEN $2 AND $3 
-	LIMIT $4 OFFSET $5
-	`, fieldName)
-	rows, err := s.DB.Query(query, ID, startDate, endDate, limit, offset)
+	baseQuery := `
+    SELECT id, amount, payment_type, currency, date, COUNT(*) OVER() FROM payments
+    WHERE %s = $1
+    AND date BETWEEN $2 AND $3`
+
+	// Conditional addition of LIMIT and OFFSET clauses
+	var args []interface{}
+	args = append(args, ID, startDate, endDate)
+	if limit != nil && offset != nil {
+		baseQuery += ` LIMIT $4 OFFSET $5`
+		args = append(args, limit, offset)
+	}
+
+	query := fmt.Sprintf(baseQuery, fieldName)
+
+	rows, err := s.DB.Query(query, args...)
 	if err != nil {
 		return nil, 0, err
 	}
