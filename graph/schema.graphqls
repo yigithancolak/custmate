@@ -71,6 +71,13 @@ type TokenResponse {
   # refreshToken: String!
 }
 
+type Earning {
+  group: Group!
+  try: Int!
+  usd: Int!
+  eur: Int!
+}
+
 #List types
 type ListCustomersResponse {
   items: [Customer!]!
@@ -89,6 +96,11 @@ type ListGroupsResponse {
 
 type ListInstructorsResponse {
   items: [Instructor!]!
+  totalCount: Int!
+}
+
+type ListEarningsResponse {
+  items: [Earning!]!
   totalCount: Int!
 }
 
@@ -147,6 +159,13 @@ type Query {
     startDate: String!
     endDate: String!
   ): ListPaymentsResponse! @auth
+
+  listEarningsByOrganization(
+    offset: Int
+    limit: Int
+    startDate: String!
+    endDate: String!
+  ): ListEarningsResponse! @auth
 }
 
 type Mutation {

@@ -58,6 +58,13 @@ type Customer struct {
 	Active      *bool    `json:"active,omitempty"`
 }
 
+type Earning struct {
+	Group *Group `json:"group"`
+	Try   int    `json:"try"`
+	Usd   int    `json:"usd"`
+	Eur   int    `json:"eur"`
+}
+
 type Group struct {
 	ID         string      `json:"id"`
 	Name       string      `json:"name"`
@@ -76,6 +83,11 @@ type Instructor struct {
 type ListCustomersResponse struct {
 	Items      []*Customer `json:"items"`
 	TotalCount int         `json:"totalCount"`
+}
+
+type ListEarningsResponse struct {
+	Items      []*Earning `json:"items"`
+	TotalCount int        `json:"totalCount"`
 }
 
 type ListGroupsResponse struct {

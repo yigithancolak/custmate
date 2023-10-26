@@ -31,7 +31,7 @@ func (s *PaymentTestSuite) SetupTest() {
 	s.Payment = s.createRandomPayment(s.Organization.ID, s.Customer.ID, s.Group.ID)
 }
 
-func (s *PaymentTestSuite) createRandomPayment(orgID, customerID, groupID string) *model.Payment {
+func (s *StoreTestSuite) createRandomPayment(orgID, customerID, groupID string) *model.Payment {
 	args := &model.CreatePaymentInput{
 		CustomerID: customerID,
 		GroupID:    groupID,
