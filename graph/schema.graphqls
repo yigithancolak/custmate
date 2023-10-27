@@ -110,52 +110,44 @@ type Query {
 
   # Group
   getGroup(id: ID!): Group! @auth
-  listGroupsByOrganization(
-    offset: Int = 0
-    limit: Int = 10
-  ): ListGroupsResponse! @auth
+  listGroupsByOrganization(offset: Int, limit: Int): ListGroupsResponse! @auth
 
   # Instructor
   getInstructor(id: ID!): Instructor! @auth
-  listInstructors(offset: Int = 0, limit: Int = 10): ListInstructorsResponse!
-    @auth
+  listInstructors(offset: Int, limit: Int): ListInstructorsResponse! @auth
 
   # Customer
   getCustomer(id: ID!): Customer! @auth
-  listCustomersByGroup(
-    groupId: ID!
-    offset: Int = 0
-    limit: Int = 10
-  ): [Customer!]! @auth
-  listCustomersByOrganization(offset: Int = 0, limit: Int = 10): [Customer!]!
+  listCustomersByGroup(groupId: ID!, offset: Int, limit: Int): [Customer!]!
     @auth
+  listCustomersByOrganization(offset: Int, limit: Int): [Customer!]! @auth
   searchCustomers(
     filter: SearchCustomerFilter!
-    offset: Int = 0
-    limit: Int = 10
+    offset: Int
+    limit: Int
   ): ListCustomersResponse! @auth
 
   #Payment
   getPayment(id: ID!): Payment! @auth
   listPaymentsByOrganization(
-    offset: Int = 0
-    limit: Int = 10
+    offset: Int
+    limit: Int
     startDate: String!
     endDate: String!
   ): ListPaymentsResponse! @auth
 
   listPaymentsByGroup(
     groupId: ID!
-    offset: Int = 0
-    limit: Int = 10
+    offset: Int
+    limit: Int
     startDate: String!
     endDate: String!
   ): ListPaymentsResponse! @auth
 
   listPaymentsByCustomer(
     customerId: ID!
-    offset: Int = 0
-    limit: Int = 10
+    offset: Int
+    limit: Int
     startDate: String!
     endDate: String!
   ): ListPaymentsResponse! @auth
