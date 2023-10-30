@@ -414,14 +414,15 @@ import (
 // // ListEarningsByOrganization is the resolver for the listEarningsByOrganization field.
 // func (r *queryResolver) ListEarningsByOrganization(ctx context.Context, offset *int, limit *int, startDate string, endDate string) (*model.ListEarningsResponse, error) {
 // 	org := middleware.ForContext(ctx)
-// 	earnings, count, err := r.Store.ListEarningsByOrganization(org.ID, offset, limit, startDate, endDate)
+// 	earnings, count, totalEarning, err := r.Store.ListEarningsByOrganization(org.ID, offset, limit, startDate, endDate)
 // 	if err != nil {
 // 		return nil, err
 // 	}
 
 // 	return &model.ListEarningsResponse{
-// 		Items:      earnings,
-// 		TotalCount: count,
+// 		Items:        earnings,
+// 		TotalCount:   count,
+// 		TotalEarning: totalEarning,
 // 	}, nil
 // }
 

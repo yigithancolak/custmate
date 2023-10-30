@@ -86,8 +86,9 @@ type ListCustomersResponse struct {
 }
 
 type ListEarningsResponse struct {
-	Items      []*Earning `json:"items"`
-	TotalCount int        `json:"totalCount"`
+	Items        []*Earning `json:"items"`
+	TotalCount   int        `json:"totalCount"`
+	TotalEarning *Earning   `json:"totalEarning"`
 }
 
 type ListGroupsResponse struct {

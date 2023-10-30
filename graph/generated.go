@@ -84,8 +84,9 @@ type ComplexityRoot struct {
 	}
 
 	ListEarningsResponse struct {
-		Items      func(childComplexity int) int
-		TotalCount func(childComplexity int) int
+		Items        func(childComplexity int) int
+		TotalCount   func(childComplexity int) int
+		TotalEarning func(childComplexity int) int
 	}
 
 	ListGroupsResponse struct {
@@ -390,6 +391,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ListEarningsResponse.TotalCount(childComplexity), true
+
+	case "ListEarningsResponse.totalEarning":
+		if e.complexity.ListEarningsResponse.TotalEarning == nil {
+			break
+		}
+
+		return e.complexity.ListEarningsResponse.TotalEarning(childComplexity), true
 
 	case "ListGroupsResponse.items":
 		if e.complexity.ListGroupsResponse.Items == nil {
@@ -2958,6 +2966,60 @@ func (ec *executionContext) fieldContext_ListEarningsResponse_totalCount(ctx con
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ListEarningsResponse_totalEarning(ctx context.Context, field graphql.CollectedField, obj *model.ListEarningsResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ListEarningsResponse_totalEarning(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalEarning, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Earning)
+	fc.Result = res
+	return ec.marshalNEarning2ᚖgithubᚗcomᚋyigithancolakᚋcustmateᚋgraphᚋmodelᚐEarning(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ListEarningsResponse_totalEarning(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ListEarningsResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "group":
+				return ec.fieldContext_Earning_group(ctx, field)
+			case "try":
+				return ec.fieldContext_Earning_try(ctx, field)
+			case "usd":
+				return ec.fieldContext_Earning_usd(ctx, field)
+			case "eur":
+				return ec.fieldContext_Earning_eur(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Earning", field.Name)
 		},
 	}
 	return fc, nil
@@ -6280,6 +6342,8 @@ func (ec *executionContext) fieldContext_Query_listEarningsByOrganization(ctx co
 				return ec.fieldContext_ListEarningsResponse_items(ctx, field)
 			case "totalCount":
 				return ec.fieldContext_ListEarningsResponse_totalCount(ctx, field)
+			case "totalEarning":
+				return ec.fieldContext_ListEarningsResponse_totalEarning(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ListEarningsResponse", field.Name)
 		},
@@ -9447,6 +9511,11 @@ func (ec *executionContext) _ListEarningsResponse(ctx context.Context, sel ast.S
 			}
 		case "totalCount":
 			out.Values[i] = ec._ListEarningsResponse_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalEarning":
+			out.Values[i] = ec._ListEarningsResponse_totalEarning(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

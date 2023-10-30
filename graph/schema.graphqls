@@ -102,6 +102,7 @@ type ListInstructorsResponse {
 type ListEarningsResponse {
   items: [Earning!]!
   totalCount: Int!
+  totalEarning: Earning!
 }
 
 type Query {
