@@ -233,7 +233,8 @@ func (s *CustomerTestSuite) TestListCustomersWithSearchFilter() {
 		Active:      s.Customer.Active,
 	}
 
-	foundCustomers, count, err := s.store.ListCustomersWithSearchFilter(args, s.Organization.ID, nil, nil)
+	//TODO: INCLUDE GROUPS CHANGE THE FALSE VALUE
+	foundCustomers, count, err := s.store.ListCustomersWithSearchFilter(args, s.Organization.ID, nil, nil, false)
 	s.NoError(err)
 	s.Equal(1, count)
 	s.Equal(foundCustomers[0].Name, s.Customer.Name)
@@ -252,7 +253,7 @@ func (s *CustomerTestSuite) TestListCustomersWithSearchFilter() {
 		LatePayment: &latePayment,
 	}
 
-	foundCustomers, count, err = s.store.ListCustomersWithSearchFilter(args, org.ID, &offset, &limit)
+	foundCustomers, count, err = s.store.ListCustomersWithSearchFilter(args, org.ID, &offset, &limit, false)
 	s.NoError(err)
 	s.Equal(limit/2-limit%2, count) //only i%2 != 0  are late payment
 	s.NotNil(foundCustomers)
@@ -282,7 +283,7 @@ func (s *CustomerTestSuite) TestListCustomersWithSearchFilter() {
 		UpcomingPayment: &upcomingPayment,
 	}
 
-	foundCustomers, count, err = s.store.ListCustomersWithSearchFilter(upcomingArgs, org.ID, &offset, &limit)
+	foundCustomers, count, err = s.store.ListCustomersWithSearchFilter(upcomingArgs, org.ID, &offset, &limit, false)
 	s.NoError(err)
 	s.Equal(limit/2+limit%2, count) //only i%2 == 0  are late payment
 	s.NotNil(foundCustomers)

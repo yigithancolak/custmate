@@ -347,8 +347,13 @@ func (r *queryResolver) ListCustomersByOrganization(ctx context.Context, offset 
 
 func (r *queryResolver) SearchCustomers(ctx context.Context, filter model.SearchCustomerFilter, offset *int, limit *int) (*model.ListCustomersResponse, error) {
 	org := middleware.ForContext(ctx)
+	includeGroups := false
+	fields := GetPreloads(ctx)
+	if util.Contains[string](fields, "items.groups") {
+		includeGroups = true
+	}
 
-	customers, totalCount, err := r.Store.ListCustomersWithSearchFilter(filter, org.ID, offset, limit)
+	customers, totalCount, err := r.Store.ListCustomersWithSearchFilter(filter, org.ID, offset, limit, includeGroups)
 	if err != nil {
 		return nil, err
 	}

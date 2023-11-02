@@ -184,7 +184,7 @@ func (s *Store) ListCustomersByOrganizationID(orgID string, offset *int, limit *
 
 }
 
-func (s *Store) ListCustomersWithSearchFilter(filter model.SearchCustomerFilter, orgID string, offset *int, limit *int) ([]*model.Customer, int, error) {
+func (s *Store) ListCustomersWithSearchFilter(filter model.SearchCustomerFilter, orgID string, offset *int, limit *int, includeGroups bool) ([]*model.Customer, int, error) {
 	query := `
 		SELECT id, name, phone_number, last_payment, next_payment, active, COUNT(*) OVER() AS total_count 
 		FROM customers 
@@ -239,6 +239,14 @@ func (s *Store) ListCustomersWithSearchFilter(filter model.SearchCustomerFilter,
 		if err := rows.Scan(&customer.ID, &customer.Name, &customer.PhoneNumber, &customer.LastPayment, &customer.NextPayment, &customer.Active, &totalCount); err != nil {
 			return nil, 0, err
 		}
+
+		if includeGroups {
+			customer.Groups, err = s.ListGroupsByCustomerID(customer.ID)
+			if err != nil {
+				return nil, 0, err
+			}
+		}
+
 		customers = append(customers, &customer)
 	}
 
