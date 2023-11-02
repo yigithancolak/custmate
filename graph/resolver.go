@@ -326,7 +326,13 @@ func (r *queryResolver) GetCustomer(ctx context.Context, id string) (*model.Cust
 }
 
 func (r *queryResolver) ListCustomersByGroup(ctx context.Context, groupID string, offset *int, limit *int) ([]*model.Customer, error) {
-	customers, err := r.Store.ListCustomersByGroupID(groupID, offset, limit)
+	includeGroups := false
+	fields := GetPreloads(ctx)
+	if util.Contains[string](fields, "groups") {
+		includeGroups = true
+	}
+
+	customers, err := r.Store.ListCustomersByGroupID(groupID, offset, limit, includeGroups)
 	if err != nil {
 		return nil, err
 	}

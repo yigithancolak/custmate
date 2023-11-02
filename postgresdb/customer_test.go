@@ -176,7 +176,7 @@ func (s *CustomerTestSuite) TestListCustomersByGroupID() {
 
 	///
 
-	foundCustomers, err := s.store.ListCustomersByGroupID(group.ID, &offset, &limit)
+	foundCustomers, err := s.store.ListCustomersByGroupID(group.ID, &offset, &limit, false)
 	s.NoError(err)
 	s.NotEmpty(foundCustomers)
 	s.NotNil(foundCustomers)

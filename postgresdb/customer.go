@@ -129,7 +129,7 @@ func (s *Store) GetCustomerByID(id string, includeGroups bool) (*model.Customer,
 	return &customer, nil
 }
 
-func (s *Store) ListCustomersByGroupID(groupID string, offset *int, limit *int) ([]*model.Customer, error) {
+func (s *Store) ListCustomersByGroupID(groupID string, offset *int, limit *int, includeGroups bool) ([]*model.Customer, error) {
 	query := `
 	SELECT id, name, phone_number, last_payment, next_payment, active FROM customers c
 	JOIN customer_groups cg ON c.id = cg.customer_id
@@ -152,7 +152,12 @@ func (s *Store) ListCustomersByGroupID(groupID string, offset *int, limit *int) 
 			return nil, err
 		}
 
-		// GROUPS ARE NO NEEDED BECAUSE THEY ALL IN SAME GROUP
+		if includeGroups {
+			customer.Groups, err = s.ListGroupsByCustomerID(customer.ID)
+			if err != nil {
+				return nil, err
+			}
+		}
 
 		customers = append(customers, &customer)
 	}
