@@ -217,12 +217,23 @@ func (s *Store) ListCustomersWithSearchFilter(filter model.SearchCustomerFilter,
 		argCount++
 	}
 
+	var latePaymentCondition, upcomingPaymentCondition string
+
 	if filter.LatePayment != nil && *filter.LatePayment {
-		query += " AND next_payment <= CURRENT_DATE"
+		latePaymentCondition = "next_payment <= CURRENT_DATE"
 	}
 
 	if filter.UpcomingPayment != nil && *filter.UpcomingPayment {
-		query += " AND next_payment > CURRENT_DATE AND next_payment <= CURRENT_DATE + INTERVAL '7 days'"
+		upcomingPaymentCondition = "next_payment > CURRENT_DATE AND next_payment <= CURRENT_DATE + INTERVAL '7 days'"
+	}
+
+	// If both conditions are provided, combine them with OR
+	if latePaymentCondition != "" && upcomingPaymentCondition != "" {
+		query += fmt.Sprintf(" AND (%s OR %s)", latePaymentCondition, upcomingPaymentCondition)
+	} else if latePaymentCondition != "" {
+		query += " AND " + latePaymentCondition
+	} else if upcomingPaymentCondition != "" {
+		query += " AND " + upcomingPaymentCondition
 	}
 
 	if offset != nil && limit != nil {
